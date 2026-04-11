@@ -4,18 +4,75 @@ import shutil
 import tempfile
 import subprocess
 import argparse
+import re
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse, unquote
 
 import requests
 from PIL import Image
 
 ATLAS_COLS = 10
 ATLAS_ROWS = 7
+IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
+IMGBB_KEY_FILE = "imgbb.key"
 
 
 def parse_spreadsheet_id(sheet_url):
     return sheet_url.split("/d/")[1].split("/")[0]
+
+
+def parse_filename_from_disposition(content_disposition):
+    if not content_disposition:
+        return None
+
+    utf8_match = re.search(
+        r"filename\*=UTF-8''([^;]+)",
+        content_disposition,
+        flags=re.IGNORECASE,
+    )
+    if utf8_match:
+        return unquote(utf8_match.group(1).strip().strip('"'))
+
+    plain_match = re.search(
+        r'filename="([^"]+)"|filename=([^;]+)',
+        content_disposition,
+        flags=re.IGNORECASE,
+    )
+    if not plain_match:
+        return None
+
+    filename = plain_match.group(1) or plain_match.group(2)
+    return filename.strip().strip('"')
+
+
+def get_sheet_tab_name(spreadsheet_id, gid):
+    csv_url = (
+        f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}"
+        f"/export?format=csv&gid={gid}"
+    )
+
+    with requests.get(csv_url, timeout=60, stream=True) as response:
+        response.raise_for_status()
+        disposition = response.headers.get("content-disposition", "")
+
+    filename = parse_filename_from_disposition(disposition)
+    if not filename:
+        return None
+
+    base_name = Path(filename).stem
+    if " - " in base_name:
+        # Export filename is usually "Spreadsheet Name - Sheet Name.csv".
+        return base_name.rsplit(" - ", 1)[1].strip()
+
+    return base_name.strip() or None
+
+
+def sanitize_sheet_name(name):
+    cleaned = name.strip().replace(" ", "_")
+    cleaned = re.sub(r"[^A-Za-z0-9._-]", "_", cleaned)
+    cleaned = re.sub(r"_+", "_", cleaned)
+    cleaned = cleaned.strip("._")
+    return cleaned or "sheet"
 
 
 def parse_gid(sheet_url):
@@ -53,6 +110,79 @@ def export_tab_as_pdf(spreadsheet_id, gid):
         )
 
     return response.content
+
+
+def upload_to_imgbb(image_path, api_key, upload_name):
+    params = {"key": api_key}
+    data = {"name": upload_name}
+
+    with open(image_path, "rb") as image_file:
+        files = {
+            "image": (f"{upload_name}.png", image_file, "image/png"),
+        }
+        response = requests.post(
+            IMGBB_UPLOAD_URL,
+            params=params,
+            data=data,
+            files=files,
+            timeout=180,
+        )
+
+    response.raise_for_status()
+    payload = response.json()
+
+    if not payload.get("success"):
+        raise RuntimeError(f"ImgBB upload failed: {payload}")
+
+    upload_data = payload.get("data", {})
+    image_url = upload_data.get("url")
+    viewer_url = upload_data.get("url_viewer")
+    delete_url = upload_data.get("delete_url")
+    if not image_url:
+        raise RuntimeError("ImgBB upload did not return an image URL.")
+
+    return image_url, viewer_url, delete_url
+
+
+def load_imgbb_key_from_file():
+    candidates = [
+        Path.cwd() / IMGBB_KEY_FILE,
+        Path(__file__).resolve().parent / IMGBB_KEY_FILE,
+    ]
+    checked = set()
+
+    for key_path in candidates:
+        key_path = key_path.resolve()
+        if key_path in checked:
+            continue
+        checked.add(key_path)
+
+        if not key_path.is_file():
+            continue
+
+        try:
+            raw = key_path.read_text(encoding="utf-8")
+        except OSError as err:
+            print(f"  WARNING: Could not read {key_path.name} ({err}).")
+            return None
+
+        first_non_empty = ""
+        for line in raw.splitlines():
+            line = line.strip()
+            if line:
+                first_non_empty = line
+                break
+
+        if not first_non_empty:
+            return None
+
+        if "=" in first_non_empty:
+            first_non_empty = first_non_empty.split("=", 1)[1].strip()
+
+        key = first_non_empty.strip().strip("\"'")
+        return key or None
+
+    return None
 
 
 def extract_card_images_from_pdf(pdf_bytes):
@@ -143,7 +273,7 @@ def main():
     )
     parser.add_argument("--sheet-url", help="Full Google Sheets URL")
     parser.add_argument("--gid", type=int, help="Sheet tab gid (optional)")
-    parser.add_argument("--out", default="atlas.png", help="Output PNG filename")
+    parser.add_argument("--out", help="Output PNG filename (default: <sheet_name>.png)")
     args = parser.parse_args()
 
     if args.sheet_url:
@@ -157,6 +287,19 @@ def main():
         gid = 0
 
     print(f"\nUsing gid={gid}")
+
+    tab_name = None
+    try:
+        tab_name = get_sheet_tab_name(spreadsheet_id, gid)
+    except requests.RequestException as err:
+        print(f"  WARNING: Could not resolve sheet tab name ({err}).")
+
+    if not tab_name:
+        tab_name = f"sheet_{gid}"
+    safe_sheet_name = sanitize_sheet_name(tab_name)
+    print(f"  Sheet tab name: {tab_name}")
+
+    output_path = args.out or f"{safe_sheet_name}.png"
 
     print("Exporting tab as PDF...")
     pdf_bytes = export_tab_as_pdf(spreadsheet_id, gid)
@@ -181,7 +324,27 @@ def main():
     print(f"  {len(face_cards)} total face slots from {len(card_images) - 2} deck cards")
 
     print(f"\nBuilding {ATLAS_COLS}×{ATLAS_ROWS} atlas...")
-    build_atlas(card_back, face_cards, args.out)
+    build_atlas(card_back, face_cards, output_path)
+
+    imgbb_key = load_imgbb_key_from_file()
+    if not imgbb_key:
+        print("\nSkipping ImgBB upload (no API key found).")
+        print("  you forgor the imgbb.key file")
+        return
+
+    print("\nUploading atlas to ImgBB...")
+    image_url, viewer_url, delete_url = upload_to_imgbb(
+        output_path,
+        imgbb_key,
+        safe_sheet_name,
+    )
+    print(f"  Image URL:  {image_url}")
+
+    try:
+        Path(output_path).unlink()
+        print(f"  Deleted local file: {output_path}")
+    except OSError as err:
+        print(f"  WARNING: Uploaded but could not delete '{output_path}': {err}")
 
 
 if __name__ == "__main__":
