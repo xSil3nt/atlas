@@ -1,12 +1,17 @@
 import os
 import sys
+import shutil
+import tempfile
+import subprocess
 import argparse
+from pathlib import Path
 
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 import requests
+from PIL import Image
 
 
 SCOPES = [
@@ -94,7 +99,50 @@ def export_tab_as_pdf(spreadsheet_id, gid, creds):
     return r2.content
 
 
+def extract_card_images_from_pdf(pdf_bytes):
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "sheet.pdf")
+        image_prefix = os.path.join(tmp_dir, "img")
+
+        with open(pdf_path, "wb") as pdf_file:
+            pdf_file.write(pdf_bytes)
+
+        result = subprocess.run(
+            ["pdfimages", "-png", pdf_path, image_prefix],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"pdfimages failed: {result.stderr}")
+
+        image_paths = sorted(Path(tmp_dir).glob("img-*.png"))
+        images = [Image.open(path).convert("RGB") for path in image_paths]
+
+    return images
+
+
+def apply_deck_rules(images):
+    if len(images) < 3:
+        raise ValueError(f"Expected at least 3 images from the sheet, got {len(images)}.")
+
+    card_back = images[0]
+    # images[1] is the resource card, and does not go in the deck.
+
+    face_cards = []
+    for index, image in enumerate(images[2:], start=2):
+        copies = 2 if index <= 3 else 3
+        face_cards.extend([image] * copies)
+
+    return card_back, face_cards
+
+
 def main():
+    if not shutil.which("pdfimages"):
+        print("ERROR: 'pdfimages' not found on PATH.")
+        print("  Install poppler-utils:  sudo pacman -S poppler  (Arch)")
+        print("                          sudo apt install poppler-utils  (Debian/Ubuntu)")
+        sys.exit(1)
+
     parser = argparse.ArgumentParser(
         description="Build a TTS atlas from a Google Sheet (in-cell images)."
     )
@@ -133,7 +181,25 @@ def main():
     pdf_bytes = export_tab_as_pdf(spreadsheet_id, gid, creds)
     print(f"  PDF size: {len(pdf_bytes) // 1024} KB")
 
-    print("PDF export step complete. Next commit will extract images.")
+    print("Extracting card images via pdfimages...")
+    card_images = extract_card_images_from_pdf(pdf_bytes)
+    print(f"  Found {len(card_images)} card image(s)")
+
+    if not card_images:
+        print("\nNo card images found in the PDF.")
+        print("  Make sure cards are inserted with Insert → Image → In cell.")
+        sys.exit(1)
+
+    print("\nApplying deck rules:")
+    print("  Slot 1 → card back art")
+    print("  Slot 2 → skipped (resource card)")
+    print("  Slot 3 → 2 copies")
+    print("  Slot 4 → 2 copies")
+    print("  Slots 5+ → 3 copies each")
+    _card_back, face_cards = apply_deck_rules(card_images)
+    print(f"  {len(face_cards)} total face slots from {len(card_images) - 2} deck cards")
+
+    print("Image extraction step complete. Next commit will build the atlas.")
 
 
 if __name__ == "__main__":
