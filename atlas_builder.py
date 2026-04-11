@@ -57,8 +57,8 @@ def parse_spreadsheet_id(sheet_url):
 def get_sheet_tabs(service, spreadsheet_id):
     meta = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
     return [
-        (sheet["properties"]["title"], sheet["properties"]["sheetId"])
-        for sheet in meta["sheets"]
+        (tab["properties"]["title"], tab["properties"]["sheetId"])
+        for tab in meta["sheets"]
     ]
 
 
@@ -76,7 +76,7 @@ def export_tab_as_pdf(spreadsheet_id, gid, creds):
     )
     auth_headers = {"Authorization": f"Bearer {creds.token}"}
 
-    # Follow redirect manually so auth header stays attached.
+    # Keep auth header across the docs.google.com -> googleusercontent redirect.
     r1 = requests.get(
         export_url,
         headers=auth_headers,
@@ -100,9 +100,9 @@ def export_tab_as_pdf(spreadsheet_id, gid, creds):
 
 
 def extract_card_images_from_pdf(pdf_bytes):
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        pdf_path = os.path.join(tmp_dir, "sheet.pdf")
-        image_prefix = os.path.join(tmp_dir, "img")
+    with tempfile.TemporaryDirectory() as tmp:
+        pdf_path = os.path.join(tmp, "sheet.pdf")
+        image_prefix = os.path.join(tmp, "img")
 
         with open(pdf_path, "wb") as pdf_file:
             pdf_file.write(pdf_bytes)
@@ -115,7 +115,7 @@ def extract_card_images_from_pdf(pdf_bytes):
         if result.returncode != 0:
             raise RuntimeError(f"pdfimages failed: {result.stderr}")
 
-        image_paths = sorted(Path(tmp_dir).glob("img-*.png"))
+        image_paths = sorted(Path(tmp).glob("img-*.png"))
         images = [Image.open(path).convert("RGB") for path in image_paths]
 
     return images
@@ -201,7 +201,7 @@ def main():
         spreadsheet_id = parse_spreadsheet_id(url)
 
     tabs = get_sheet_tabs(service, spreadsheet_id)
-    tab_names = [name for name, _ in tabs]
+    tab_names = [title for title, _ in tabs]
     print(f"\nAvailable tabs: {tab_names}")
 
     if args.tab:
