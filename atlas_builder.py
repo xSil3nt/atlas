@@ -136,6 +136,45 @@ def apply_deck_rules(images):
     return card_back, face_cards
 
 
+def build_atlas(card_back, face_cards, output_path):
+    max_slots = ATLAS_COLS * ATLAS_ROWS
+    face_slots = max_slots - 1
+
+    if len(face_cards) > face_slots:
+        print(
+            f"  WARNING: {len(face_cards)} face slots needed but only {face_slots} available. "
+            "Extra cards dropped."
+        )
+        face_cards = face_cards[:face_slots]
+
+    card_w, card_h = face_cards[0].size
+
+    atlas_w = ATLAS_COLS * card_w
+    atlas_h = ATLAS_ROWS * card_h
+    atlas = Image.new("RGB", (atlas_w, atlas_h), (0, 0, 0))
+
+    for index, image in enumerate(face_cards):
+        col = index % ATLAS_COLS
+        row = index // ATLAS_COLS
+        atlas.paste(image.convert("RGB"), (col * card_w, row * card_h))
+
+    back_col = (max_slots - 1) % ATLAS_COLS
+    back_row = (max_slots - 1) // ATLAS_COLS
+    atlas.paste(
+        card_back.convert("RGB").resize((card_w, card_h), Image.LANCZOS),
+        (back_col * card_w, back_row * card_h),
+    )
+
+    atlas.save(output_path, "PNG")
+    print(f"\nAtlas saved → {output_path}")
+    print(f"  {len(face_cards)} face slots + 1 card back")
+    print(f"  Atlas size: {atlas_w}×{atlas_h}px  ({ATLAS_COLS} cols × {ATLAS_ROWS} rows)")
+    print(f"  Card slot:  {card_w}×{card_h}px")
+    print("\n  TTS deck JSON settings:")
+    print(f"    NumWidth:  {ATLAS_COLS}")
+    print(f"    NumHeight: {ATLAS_ROWS}")
+
+
 def main():
     if not shutil.which("pdfimages"):
         print("ERROR: 'pdfimages' not found on PATH.")
@@ -196,10 +235,11 @@ def main():
     print("  Slot 3 → 2 copies")
     print("  Slot 4 → 2 copies")
     print("  Slots 5+ → 3 copies each")
-    _card_back, face_cards = apply_deck_rules(card_images)
+    card_back, face_cards = apply_deck_rules(card_images)
     print(f"  {len(face_cards)} total face slots from {len(card_images) - 2} deck cards")
 
-    print("Image extraction step complete. Next commit will build the atlas.")
+    print(f"\nBuilding {ATLAS_COLS}×{ATLAS_ROWS} atlas...")
+    build_atlas(card_back, face_cards, args.out)
 
 
 if __name__ == "__main__":
