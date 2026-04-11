@@ -51,7 +51,7 @@ def get_sheet_tab_name(spreadsheet_id, gid):
         f"/export?format=csv&gid={gid}"
     )
 
-    with requests.get(csv_url, timeout=60, stream=True) as response:
+    with requests.get(csv_url, timeout=60) as response:
         response.raise_for_status()
         disposition = response.headers.get("content-disposition", "")
 
@@ -136,51 +136,27 @@ def upload_to_imgbb(image_path, api_key, upload_name):
 
     upload_data = payload.get("data", {})
     image_url = upload_data.get("url")
-    viewer_url = upload_data.get("url_viewer")
-    delete_url = upload_data.get("delete_url")
     if not image_url:
         raise RuntimeError("ImgBB upload did not return an image URL.")
 
-    return image_url, viewer_url, delete_url
+    return image_url
 
 
 def load_imgbb_key_from_file():
-    candidates = [
-        Path.cwd() / IMGBB_KEY_FILE,
-        Path(__file__).resolve().parent / IMGBB_KEY_FILE,
-    ]
-    checked = set()
+    key_path = Path.cwd() / IMGBB_KEY_FILE
+    if not key_path.is_file():
+        return None
 
-    for key_path in candidates:
-        key_path = key_path.resolve()
-        if key_path in checked:
-            continue
-        checked.add(key_path)
+    try:
+        raw = key_path.read_text(encoding="utf-8")
+    except OSError as err:
+        print(f"  WARNING: Could not read {key_path.name} ({err}).")
+        return None
 
-        if not key_path.is_file():
-            continue
-
-        try:
-            raw = key_path.read_text(encoding="utf-8")
-        except OSError as err:
-            print(f"  WARNING: Could not read {key_path.name} ({err}).")
-            return None
-
-        first_non_empty = ""
-        for line in raw.splitlines():
-            line = line.strip()
-            if line:
-                first_non_empty = line
-                break
-
-        if not first_non_empty:
-            return None
-
-        if "=" in first_non_empty:
-            first_non_empty = first_non_empty.split("=", 1)[1].strip()
-
-        key = first_non_empty.strip().strip("\"'")
-        return key or None
+    for line in raw.splitlines():
+        key = line.strip()
+        if key:
+            return key
 
     return None
 
@@ -329,11 +305,11 @@ def main():
     imgbb_key = load_imgbb_key_from_file()
     if not imgbb_key:
         print("\nSkipping ImgBB upload (no API key found).")
-        print("  you forgor the imgbb.key file")
+        print("  Create imgbb.key in this directory with the API key as plain text.")
         return
 
     print("\nUploading atlas to ImgBB...")
-    image_url, viewer_url, delete_url = upload_to_imgbb(
+    image_url = upload_to_imgbb(
         output_path,
         imgbb_key,
         safe_sheet_name,
