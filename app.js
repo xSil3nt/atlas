@@ -160,8 +160,62 @@ function renderSidebar() {
   });
 }
 
+function exportAtlas() {
+  const flat = [];
+  for (const { deckIdx, cardIdx, count } of myDeck) {
+    const url = decks[deckIdx]?.faces?.[cardIdx];
+    if (url) {
+      for (let i = 0; i < count; i++) flat.push(url);
+    }
+  }
+  if (!flat.length) return;
+
+  const maxSlots = ATLAS_COLS * ATLAS_ROWS;
+  if (flat.length > maxSlots - 1) flat.length = maxSlots - 1;
+
+  const imgs = flat.map(url => Object.assign(new Image(), { src: url }));
+  const backUrl = decks.find(d => d.back)?.back ?? null;
+  const backImg = backUrl ? Object.assign(new Image(), { src: backUrl }) : null;
+
+  const all = [...imgs, ...(backImg ? [backImg] : [])];
+  Promise.all(
+    all.map(i => i.complete
+      ? Promise.resolve()
+      : new Promise(r => { i.onload = r; i.onerror = r; })
+    )
+  ).then(() => {
+    const cardW = imgs[0].naturalWidth;
+    const cardH = imgs[0].naturalHeight;
+
+    const atlas = document.createElement("canvas");
+    atlas.width  = ATLAS_COLS * cardW;
+    atlas.height = ATLAS_ROWS * cardH;
+    const ctx = atlas.getContext("2d");
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, atlas.width, atlas.height);
+
+    imgs.forEach((img, i) => {
+      ctx.drawImage(img, (i % ATLAS_COLS) * cardW, Math.floor(i / ATLAS_COLS) * cardH, cardW, cardH);
+    });
+
+    if (backImg) {
+      const last = maxSlots - 1;
+      ctx.drawImage(backImg, (last % ATLAS_COLS) * cardW, Math.floor(last / ATLAS_COLS) * cardH, cardW, cardH);
+    }
+
+    atlas.toBlob(blob => {
+      const a = Object.assign(document.createElement("a"), {
+        href: URL.createObjectURL(blob),
+        download: "my-deck-atlas.png",
+      });
+      a.click();
+    }, "image/png");
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadCardsJson();
+  document.getElementById("export-btn").addEventListener("click", exportAtlas);
   document.getElementById("clear-btn").addEventListener("click", () => {
     if (!myDeck.length) return;
     myDeck = [];
