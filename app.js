@@ -213,9 +213,34 @@ function exportAtlas() {
   });
 }
 
+async function triggerRefresh() {
+  const btn = document.getElementById("refresh-btn");
+  const msg = document.getElementById("refresh-msg");
+
+  btn.disabled = true;
+  msg.style.color = "var(--muted)";
+  msg.textContent = "triggering workflow…";
+
+  try {
+    const res = await fetch("/api/refresh", { method: "POST" });
+    const data = await res.json();
+    if (res.ok) {
+      msg.textContent = "workflow started — takes ~30s, then reload the page";
+      setTimeout(() => { btn.disabled = false; msg.textContent = ""; }, 60000);
+    } else {
+      throw new Error(data.error || res.status);
+    }
+  } catch (e) {
+    msg.textContent = `failed: ${e.message}`;
+    msg.style.color = "var(--danger)";
+    btn.disabled = false;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadCardsJson();
   document.getElementById("export-btn").addEventListener("click", exportAtlas);
+  document.getElementById("refresh-btn").addEventListener("click", triggerRefresh);
   document.getElementById("clear-btn").addEventListener("click", () => {
     if (!myDeck.length) return;
     myDeck = [];
