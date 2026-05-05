@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>deck builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>deck builder</h1>
+  <button id="refresh-btn" title="re-fetch cards from the sheet">↻ refresh cards</button>
+  <span id="refresh-msg"></span>
+</header>
+
+<div id="layout">
+  <div id="browser">
+    <div id="tabs"></div>
+    <div id="grid"></div>
+  </div>
+  <aside id="sidebar">
+    <div id="sidebar-top">
+      <h2>your deck</h2>
+      <span id="card-total">0 cards</span>
+    </div>
+    <div id="deck-list"></div>
+    <div id="sidebar-bottom">
+      <button id="clear-btn">clear</button>
+      <button id="export-btn" disabled>export atlas</button>
+    </div>
+  </aside>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
