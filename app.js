@@ -99,4 +99,73 @@ function renderGrid(idx) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", loadCardsJson);
+function addCard(deckIdx, cardIdx) {
+  const existing = myDeck.find(c => c.deckIdx === deckIdx && c.cardIdx === cardIdx);
+  if (existing) existing.count++;
+  else myDeck.push({ deckIdx, cardIdx, count: 1 });
+  renderGrid(activeTab);
+  renderSidebar();
+}
+
+function removeCard(deckIdx, cardIdx) {
+  const i = myDeck.findIndex(c => c.deckIdx === deckIdx && c.cardIdx === cardIdx);
+  if (i === -1) return;
+  if (myDeck[i].count > 1) myDeck[i].count--;
+  else myDeck.splice(i, 1);
+  renderGrid(activeTab);
+  renderSidebar();
+}
+
+function renderSidebar() {
+  const list = document.getElementById("deck-list");
+  const total = myDeck.reduce((s, c) => s + c.count, 0);
+
+  document.getElementById("card-total").textContent =
+    `${total} card${total !== 1 ? "s" : ""}`;
+  document.getElementById("export-btn").disabled = total === 0;
+
+  list.innerHTML = "";
+  myDeck.forEach(({ deckIdx, cardIdx, count }) => {
+    const dataUrl = decks[deckIdx]?.faces?.[cardIdx];
+    if (!dataUrl) return;
+
+    const row = document.createElement("div");
+    row.className = "deck-row";
+
+    const img = document.createElement("img");
+    img.src = dataUrl;
+
+    const name = document.createElement("span");
+    name.className = "deck-row-name";
+    name.textContent = `${decks[deckIdx].name} #${cardIdx + 1}`;
+
+    const minus = document.createElement("button");
+    minus.textContent = "−";
+    minus.addEventListener("click", () => removeCard(deckIdx, cardIdx));
+
+    const countSpan = document.createElement("span");
+    countSpan.className = "count";
+    countSpan.textContent = count;
+
+    const plus = document.createElement("button");
+    plus.textContent = "+";
+    plus.addEventListener("click", () => addCard(deckIdx, cardIdx));
+
+    const controls = document.createElement("div");
+    controls.className = "deck-row-controls";
+    controls.append(minus, countSpan, plus);
+
+    row.append(img, name, controls);
+    list.appendChild(row);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadCardsJson();
+  document.getElementById("clear-btn").addEventListener("click", () => {
+    if (!myDeck.length) return;
+    myDeck = [];
+    renderGrid(activeTab);
+    renderSidebar();
+  });
+});
