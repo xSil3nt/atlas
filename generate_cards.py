@@ -119,15 +119,14 @@ def main():
         print("  extracting images...")
         images = extract_images(pdf)
 
-        if len(images) < 2:
-            raise ValueError(f"only {len(images)} images found, expected at least 2")
+        if len(images) < 1:
+            raise ValueError("no images found")
 
-        back = images[0]
-        faces = images[1:]
+        faces = images
         print(f"  {len(faces)} resource cards")
 
         resources_out = {
-            "back": img_to_dataurl(back),
+            "back": None,
             "faces": [img_to_dataurl(f) for f in faces],
         }
     except Exception as e:
