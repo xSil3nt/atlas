@@ -153,10 +153,9 @@ function renderResourceGrid(grid) {
 
   resources.faces.forEach((dataUrl, cardIdx) => {
     const count = resourceCounts[cardIdx] ?? 0;
-    const isMaxed = count >= MAX_COPIES;
 
     const slot = document.createElement("div");
-    slot.className = "card-slot" + (isMaxed ? " maxed" : "");
+    slot.className = "card-slot";
 
     const img = document.createElement("img");
     img.src = dataUrl;
@@ -167,13 +166,6 @@ function renderResourceGrid(grid) {
       badge.className = "badge";
       badge.textContent = count;
       slot.appendChild(badge);
-    }
-
-    if (isMaxed) {
-      const overlay = document.createElement("span");
-      overlay.className = "max-overlay";
-      overlay.textContent = "max";
-      slot.appendChild(overlay);
     }
 
     slot.addEventListener("click", () => addResourceCard(cardIdx));
@@ -212,12 +204,7 @@ function removeCard(deckIdx, cardIdx) {
 
 function addResourceCard(cardIdx) {
   const total = resourceCounts.reduce((s, c) => s + c, 0);
-  const count = resourceCounts[cardIdx] ?? 0;
 
-  if (count >= MAX_COPIES) {
-    showWarning(`max ${MAX_COPIES} copies per card`);
-    return;
-  }
   if (total >= RESOURCE_DECK_SIZE) {
     showWarning(`resource deck full — max ${RESOURCE_DECK_SIZE} cards`);
     return;
