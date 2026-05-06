@@ -20,9 +20,13 @@ from PIL import Image
 DECKS = [
     {"name": "Heart", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1001420764#gid=1001420764"},
     {"name": "Brain", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=427720609#gid=427720609"},
-    {"name": "Soul", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1894443892#gid=1894443892"},
-    {"name": "Eye", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1531951145#gid=1531951145"},
+    {"name": "Soul",  "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1894443892#gid=1894443892"},
+    {"name": "Eye",   "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1531951145#gid=1531951145"},
 ]
+
+RESOURCE_SHEET = {
+    "url": "https://docs.google.com/spreadsheets/d/1T0JGXIxMO5O12JURMoGmVnPnJNGxz7rGVik53X4Lvzw/edit?gid=297043409#gid=297043409"
+}
 # ---------------------------------------------------------------------------
 
 
@@ -75,14 +79,14 @@ def main():
         print("ERROR: pdfimages not found — install poppler-utils")
         sys.exit(1)
 
-    output = []
+    decks_out = []
     for deck in DECKS:
         name = deck["name"]
         url = deck["url"].strip()
 
         if not url:
             print(f"{name}: skipped (no URL)")
-            output.append({"name": name, "back": None, "faces": []})
+            decks_out.append({"name": name, "back": None, "faces": []})
             continue
 
         print(f"{name}: fetching PDF...")
@@ -94,24 +98,44 @@ def main():
             if len(images) < 3:
                 raise ValueError(f"only {len(images)} images found, expected at least 3")
 
-            # index 0 = card back, index 1 = resource card, index 2+ = face cards
+            # index 0 = card back, index 1 = skipped (legacy resource slot), index 2+ = face cards
             back = images[0]
-            resource = images[1]
             faces = images[2:]
             print(f"  {len(faces)} face cards")
 
-            output.append({
+            decks_out.append({
                 "name": name,
                 "back": img_to_dataurl(back),
-                "resource": img_to_dataurl(resource),
                 "faces": [img_to_dataurl(f) for f in faces],
             })
         except Exception as e:
             print(f"  ERROR: {e}")
-            output.append({"name": name, "back": None, "faces": [], "error": str(e)})
+            decks_out.append({"name": name, "back": None, "faces": [], "error": str(e)})
+
+    # Resource sheet — index 0 = back, index 1+ = resource card faces
+    print("Resources: fetching PDF...")
+    try:
+        pdf = fetch_pdf(RESOURCE_SHEET["url"])
+        print("  extracting images...")
+        images = extract_images(pdf)
+
+        if len(images) < 2:
+            raise ValueError(f"only {len(images)} images found, expected at least 2")
+
+        back = images[0]
+        faces = images[1:]
+        print(f"  {len(faces)} resource cards")
+
+        resources_out = {
+            "back": img_to_dataurl(back),
+            "faces": [img_to_dataurl(f) for f in faces],
+        }
+    except Exception as e:
+        print(f"  ERROR: {e}")
+        resources_out = {"back": None, "faces": [], "error": str(e)}
 
     with open("cards.json", "w") as f:
-        json.dump(output, f)
+        json.dump({"decks": decks_out, "resources": resources_out}, f)
 
     print("\ndone — cards.json saved")
 

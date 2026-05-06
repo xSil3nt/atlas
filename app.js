@@ -5,6 +5,7 @@ const MAX_COPIES = 3;
 const RESOURCE_DECK_SIZE = 20;
 
 let decks = [];
+let resources = { faces: [], back: null };
 let myDeck = [];
 let resourceCounts = [];
 let activeTab = 0;
@@ -32,8 +33,10 @@ async function loadCardsJson() {
       return;
     }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    decks = await res.json();
-    resourceCounts = decks.map(() => 0);
+    const data = await res.json();
+    decks = data.decks ?? data; // backward compat with old array-only format
+    resources = data.resources ?? { faces: [], back: null };
+    resourceCounts = resources.faces.map(() => 0);
   } catch (e) {
     grid.innerHTML = `<div class="placeholder error">
       <strong>couldn't load cards.json</strong>
@@ -154,27 +157,30 @@ function renderResourceView(grid) {
   `;
   grid.appendChild(intro);
 
+  if (!resources.faces.length) {
+    const msg = document.createElement("div");
+    msg.className = "placeholder" + (resources.error ? " error" : "");
+    msg.textContent = resources.error
+      ? `failed to load resource cards: ${resources.error}`
+      : "no resource cards found — regenerate cards.json";
+    grid.appendChild(msg);
+    return;
+  }
+
   const cards = document.createElement("div");
   cards.className = "resource-cards";
 
-  decks.forEach((deck, i) => {
+  resources.faces.forEach((dataUrl, i) => {
     const item = document.createElement("div");
     item.className = "res-card-item";
 
-    if (deck.resource) {
-      const img = document.createElement("img");
-      img.src = deck.resource;
-      item.appendChild(img);
-    } else {
-      const noImg = document.createElement("div");
-      noImg.className = "res-no-img";
-      noImg.textContent = deck.error ? "load error" : "no resource card";
-      item.appendChild(noImg);
-    }
+    const img = document.createElement("img");
+    img.src = dataUrl;
+    item.appendChild(img);
 
     const label = document.createElement("div");
     label.className = "res-deck-name";
-    label.textContent = deck.name;
+    label.textContent = `resource ${i + 1}`;
     item.appendChild(label);
 
     const controls = document.createElement("div");
@@ -336,16 +342,16 @@ function renderSidebar() {
   });
 }
 
-function buildAndDownloadAtlas(imageUrls, filename) {
+function buildAndDownloadAtlas(imageUrls, filename, backUrl = null) {
   const maxSlots = ATLAS_COLS * ATLAS_ROWS;
   const flat = imageUrls.slice();
   if (flat.length > maxSlots - 1) flat.length = maxSlots - 1;
 
   const imgs = flat.map(url => Object.assign(new Image(), { src: url }));
-  const backUrl = decks.find(d => d.back)?.back ?? null;
-  const backImg = backUrl ? Object.assign(new Image(), { src: backUrl }) : null;
+  const resolvedBack = backUrl ?? decks.find(d => d.back)?.back ?? null;
+  const backImg = resolvedBack ? Object.assign(new Image(), { src: resolvedBack }) : null;
 
-  const all = [...imgs, ...(backImg ? [backImg] : [])];
+  const all = [...imgs, ...(resolvedBack ? [backImg] : [])];
   Promise.all(
     all.map(i => i.complete
       ? Promise.resolve()
@@ -393,13 +399,11 @@ function exportAtlas() {
 
 function exportResourceAtlas() {
   const flat = [];
-  decks.forEach((deck, i) => {
-    if (deck.resource) {
-      for (let j = 0; j < resourceCounts[i]; j++) flat.push(deck.resource);
-    }
+  resources.faces.forEach((dataUrl, i) => {
+    for (let j = 0; j < resourceCounts[i]; j++) flat.push(dataUrl);
   });
   if (!flat.length) return;
-  buildAndDownloadAtlas(flat, "resource-deck-atlas.png");
+  buildAndDownloadAtlas(flat, "resource-deck-atlas.png", resources.back);
 }
 
 async function triggerRefresh() {
