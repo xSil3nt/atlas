@@ -18,10 +18,10 @@ from PIL import Image
 
 # ---- CONFIG ---------------------------------------------------------------
 DECKS = [
-    {"name": "Deck 1", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1001420764#gid=1001420764"},
-    {"name": "Deck 2", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=427720609#gid=427720609"},
-    {"name": "Deck 3", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1894443892#gid=1894443892"},
-    {"name": "Deck 4", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1531951145#gid=1531951145"},
+    {"name": "Heart", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1001420764#gid=1001420764"},
+    {"name": "Brain", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=427720609#gid=427720609"},
+    {"name": "Soul", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1894443892#gid=1894443892"},
+    {"name": "Eye", "url": "https://docs.google.com/spreadsheets/d/1ju6WsTsuWQGEr2l8MtlX94IKGe-h3hBs0dWXNJ5nGGg/edit?gid=1531951145#gid=1531951145"},
 ]
 # ---------------------------------------------------------------------------
 
@@ -94,14 +94,16 @@ def main():
             if len(images) < 3:
                 raise ValueError(f"only {len(images)} images found, expected at least 3")
 
-            # index 0 = card back, index 1 = skip (resource card), index 2+ = face cards
+            # index 0 = card back, index 1 = resource card, index 2+ = face cards
             back = images[0]
+            resource = images[1]
             faces = images[2:]
             print(f"  {len(faces)} face cards")
 
             output.append({
                 "name": name,
                 "back": img_to_dataurl(back),
+                "resource": img_to_dataurl(resource),
                 "faces": [img_to_dataurl(f) for f in faces],
             })
         except Exception as e:
