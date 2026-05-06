@@ -193,160 +193,14 @@ header h1 { font-size: 1.1rem; font-weight: 700; }
 .placeholder.error { color: var(--danger); }
 .placeholder small { font-size: 0.78rem; opacity: 0.7; }
 
-/* ---- resource deck view ---- */
+/* ---- resource deck ---- */
 
-#grid.resource-mode {
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-content: unset;
-  gap: 0;
-  padding: 24px;
-}
-
-.resource-intro {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.resource-intro p {
+.breakdown-label {
+  font-size: 0.68rem;
   color: var(--muted);
-  font-size: 0.88rem;
-  flex: 1;
-  min-width: 200px;
-}
-
-.resource-total-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  align-self: center;
   flex-shrink: 0;
 }
-
-.res-total {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--muted);
-  min-width: 70px;
-  text-align: center;
-  padding: 6px 14px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.res-total.complete {
-  color: var(--success);
-  border-color: var(--success);
-}
-
-.res-total.over {
-  color: var(--danger);
-  border-color: var(--danger);
-}
-
-.res-ok {
-  font-size: 0.82rem;
-  color: var(--success);
-  font-weight: 600;
-}
-
-.resource-cards {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.res-card-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-}
-
-.res-card-item img {
-  height: 20vw;
-  width: auto;
-  border-radius: 6px;
-  display: block;
-}
-
-.res-no-img {
-  height: 200px;
-  width: 140px;
-  background: var(--bg);
-  border: 1px dashed var(--border);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.res-deck-name {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.res-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.res-controls button {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.12s, border-color 0.12s;
-}
-
-.res-controls button:hover:not(:disabled) {
-  background: var(--border);
-  border-color: var(--accent);
-}
-
-.res-controls button:disabled { opacity: 0.35; cursor: default; }
-
-.res-count {
-  font-size: 1.2rem;
-  font-weight: 700;
-  min-width: 28px;
-  text-align: center;
-}
-
-.res-export-btn {
-  margin-top: 28px;
-  background: var(--accent);
-  border: none;
-  color: white;
-  padding: 10px 22px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: background 0.15s;
-  align-self: flex-start;
-}
-
-.res-export-btn:hover:not(:disabled) { background: var(--accent-hover); }
-.res-export-btn:disabled { background: var(--border); color: var(--muted); cursor: default; }
 
 /* ---- sidebar ---- */
 
@@ -371,6 +225,7 @@ header h1 { font-size: 1.1rem; font-weight: 700; }
 #sidebar-top h2 { font-size: 0.95rem; font-weight: 600; }
 #card-total { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
 #card-total.at-max { color: var(--warning); font-weight: 600; }
+#card-total.complete { color: var(--success); font-weight: 600; }
 
 #deck-warning {
   font-size: 0.72rem;
@@ -507,24 +362,20 @@ header h1 { font-size: 1.1rem; font-weight: 700; }
 #export-btn:disabled { background: var(--border); color: var(--muted); cursor: default; }
 
 #export-resource-btn {
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 7px 14px;
+  flex: 1;
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 500;
-  transition: all 0.15s;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s;
 }
 
-#export-resource-btn:hover:not(:disabled) {
-  border-color: var(--success);
-  color: var(--success);
-}
-
-#export-resource-btn:disabled { opacity: 0.4; cursor: default; }
+#export-resource-btn:hover:not(:disabled) { background: var(--accent-hover); }
+#export-resource-btn:disabled { background: var(--border); color: var(--muted); cursor: default; }
 
 /* ---- spinner ---- */
 

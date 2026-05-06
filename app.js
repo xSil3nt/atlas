@@ -47,6 +47,7 @@ async function loadCardsJson() {
 
   renderTabs();
   renderGrid(0);
+  renderSidebar();
 }
 
 function renderTabs() {
@@ -77,19 +78,21 @@ function switchTab(idx) {
     t.classList.toggle("active", j === idx)
   );
   renderGrid(idx);
+  renderSidebar();
+}
+
+function isResourceTab() {
+  return activeTab === decks.length;
 }
 
 function renderGrid(idx) {
   const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
   if (idx === decks.length) {
-    grid.classList.add("resource-mode");
-    renderResourceView(grid);
+    renderResourceGrid(grid);
     return;
   }
-
-  grid.classList.remove("resource-mode");
-  grid.innerHTML = "";
 
   const deck = decks[idx];
   if (deck?.error) {
@@ -104,7 +107,6 @@ function renderGrid(idx) {
   }
 
   const totalCards = myDeck.reduce((s, c) => s + c.count, 0);
-  const deckFull = totalCards >= MAX_DECK;
 
   faces.forEach((dataUrl, cardIdx) => {
     const entry = myDeck.find(c => c.deckIdx === idx && c.cardIdx === cardIdx);
@@ -137,114 +139,46 @@ function renderGrid(idx) {
   });
 }
 
-function renderResourceView(grid) {
-  grid.innerHTML = "";
-
-  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
-  const isComplete = resTotal === RESOURCE_DECK_SIZE;
-  const isOver = resTotal > RESOURCE_DECK_SIZE;
-
-  const intro = document.createElement("div");
-  intro.className = "resource-intro";
-
-  const totalClass = isComplete ? "res-total complete" : isOver ? "res-total over" : "res-total";
-  intro.innerHTML = `
-    <p>pick your 20 resource cards — refer to your main deck in the sidebar to guide your split</p>
-    <div class="resource-total-bar">
-      <span class="${totalClass}">${resTotal} / ${RESOURCE_DECK_SIZE}</span>
-      ${isComplete ? '<span class="res-ok">✓ ready to export</span>' : ''}
-    </div>
-  `;
-  grid.appendChild(intro);
-
+function renderResourceGrid(grid) {
   if (!resources.faces.length) {
-    const msg = document.createElement("div");
-    msg.className = "placeholder" + (resources.error ? " error" : "");
-    msg.textContent = resources.error
-      ? `failed to load resource cards: ${resources.error}`
-      : "no resource cards found — regenerate cards.json";
-    grid.appendChild(msg);
+    grid.innerHTML = `<div class="placeholder${resources.error ? " error" : ""}">
+      ${resources.error
+        ? `failed to load resource cards: ${resources.error}`
+        : "no resource cards — regenerate cards.json"}
+    </div>`;
     return;
   }
 
-  const cards = document.createElement("div");
-  cards.className = "resource-cards";
+  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
 
-  resources.faces.forEach((dataUrl, i) => {
-    const item = document.createElement("div");
-    item.className = "res-card-item";
+  resources.faces.forEach((dataUrl, cardIdx) => {
+    const count = resourceCounts[cardIdx] ?? 0;
+    const isMaxed = count >= MAX_COPIES;
+
+    const slot = document.createElement("div");
+    slot.className = "card-slot" + (isMaxed ? " maxed" : "");
 
     const img = document.createElement("img");
     img.src = dataUrl;
-    item.appendChild(img);
+    slot.appendChild(img);
 
-    const label = document.createElement("div");
-    label.className = "res-deck-name";
-    label.textContent = `resource ${i + 1}`;
-    item.appendChild(label);
+    if (count > 0) {
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = count;
+      slot.appendChild(badge);
+    }
 
-    const controls = document.createElement("div");
-    controls.className = "res-controls";
+    if (isMaxed) {
+      const overlay = document.createElement("span");
+      overlay.className = "max-overlay";
+      overlay.textContent = "max";
+      slot.appendChild(overlay);
+    }
 
-    const minus = document.createElement("button");
-    minus.textContent = "−";
-    minus.disabled = resourceCounts[i] === 0;
-    minus.addEventListener("click", () => {
-      if (resourceCounts[i] > 0) {
-        resourceCounts[i]--;
-        renderResourceView(grid);
-        updateResourceTabLabel();
-        renderSidebar();
-      }
-    });
-
-    const countSpan = document.createElement("span");
-    countSpan.className = "res-count";
-    countSpan.textContent = resourceCounts[i];
-
-    const plus = document.createElement("button");
-    plus.textContent = "+";
-    plus.disabled = resTotal >= RESOURCE_DECK_SIZE;
-    plus.addEventListener("click", () => {
-      const cur = resourceCounts.reduce((s, c) => s + c, 0);
-      if (cur < RESOURCE_DECK_SIZE) {
-        resourceCounts[i]++;
-        renderResourceView(grid);
-        updateResourceTabLabel();
-        renderSidebar();
-      }
-    });
-
-    controls.append(minus, countSpan, plus);
-    item.appendChild(controls);
-    cards.appendChild(item);
+    slot.addEventListener("click", () => addResourceCard(cardIdx));
+    grid.appendChild(slot);
   });
-
-  grid.appendChild(cards);
-
-  const exportBtn = document.createElement("button");
-  exportBtn.className = "res-export-btn";
-  exportBtn.textContent = "export resource atlas";
-  exportBtn.disabled = !isComplete;
-  exportBtn.addEventListener("click", exportResourceAtlas);
-  grid.appendChild(exportBtn);
-}
-
-function updateResourceTabLabel() {
-  const tabs = document.querySelectorAll(".tab");
-  const resIdx = decks.length;
-  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
-  if (tabs[resIdx]) {
-    tabs[resIdx].innerHTML = `resource deck <span class="tab-note">(${resTotal}/${RESOURCE_DECK_SIZE})</span>`;
-  }
-}
-
-function showWarning(msg) {
-  const el = document.getElementById("deck-warning");
-  el.textContent = msg;
-  el.classList.add("visible");
-  clearTimeout(el._timer);
-  el._timer = setTimeout(() => el.classList.remove("visible"), 2200);
 }
 
 function addCard(deckIdx, cardIdx) {
@@ -272,31 +206,79 @@ function removeCard(deckIdx, cardIdx) {
   if (i === -1) return;
   if (myDeck[i].count > 1) myDeck[i].count--;
   else myDeck.splice(i, 1);
-  if (activeTab < decks.length) renderGrid(activeTab);
+  if (!isResourceTab()) renderGrid(activeTab);
   renderSidebar();
 }
 
+function addResourceCard(cardIdx) {
+  const total = resourceCounts.reduce((s, c) => s + c, 0);
+  const count = resourceCounts[cardIdx] ?? 0;
+
+  if (count >= MAX_COPIES) {
+    showWarning(`max ${MAX_COPIES} copies per card`);
+    return;
+  }
+  if (total >= RESOURCE_DECK_SIZE) {
+    showWarning(`resource deck full — max ${RESOURCE_DECK_SIZE} cards`);
+    return;
+  }
+
+  resourceCounts[cardIdx]++;
+  renderGrid(activeTab);
+  renderSidebar();
+}
+
+function removeResourceCard(cardIdx) {
+  if ((resourceCounts[cardIdx] ?? 0) === 0) return;
+  resourceCounts[cardIdx]--;
+  if (isResourceTab()) renderGrid(activeTab);
+  renderSidebar();
+}
+
+function showWarning(msg) {
+  const el = document.getElementById("deck-warning");
+  el.textContent = msg;
+  el.classList.add("visible");
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove("visible"), 2200);
+}
+
 function renderSidebar() {
-  const list = document.getElementById("deck-list");
-  const breakdown = document.getElementById("deck-breakdown");
+  if (isResourceTab()) {
+    renderResourceSidebar();
+  } else {
+    renderDeckSidebar();
+  }
+
+  // Resource tab label always reflects current total
+  const tabs = document.querySelectorAll(".tab");
+  const resTab = tabs[decks.length];
+  if (resTab) {
+    const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
+    resTab.innerHTML = `resource deck <span class="tab-note">(${resTotal}/${RESOURCE_DECK_SIZE})</span>`;
+  }
+}
+
+function renderDeckSidebar() {
   const total = myDeck.reduce((s, c) => s + c.count, 0);
+
+  document.getElementById("sidebar-title").textContent = "your deck";
 
   const totalEl = document.getElementById("card-total");
   totalEl.textContent = `${total} / ${MAX_DECK} card${total !== 1 ? "s" : ""}`;
   totalEl.className = total >= MAX_DECK ? "at-max" : "";
 
   document.getElementById("export-btn").disabled = total === 0;
+  document.getElementById("export-btn").style.display = "";
+  document.getElementById("export-resource-btn").style.display = "none";
 
-  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
-  document.getElementById("export-resource-btn").disabled = resTotal !== RESOURCE_DECK_SIZE;
-
-  // Deck breakdown (helpful when building resource deck)
+  // Deck breakdown chips — handy context when switching to resource tab
+  const breakdown = document.getElementById("deck-breakdown");
   if (total > 0) {
     const counts = decks.map((deck, di) => ({
       name: deck.name,
       count: myDeck.filter(c => c.deckIdx === di).reduce((s, c) => s + c.count, 0),
     })).filter(d => d.count > 0);
-
     breakdown.innerHTML = counts
       .map(d => `<span class="breakdown-chip">${d.name} <strong>${d.count}</strong></span>`)
       .join("");
@@ -306,40 +288,98 @@ function renderSidebar() {
     breakdown.style.display = "none";
   }
 
+  const list = document.getElementById("deck-list");
   list.innerHTML = "";
   myDeck.forEach(({ deckIdx, cardIdx, count }) => {
     const dataUrl = decks[deckIdx]?.faces?.[cardIdx];
     if (!dataUrl) return;
-
-    const row = document.createElement("div");
-    row.className = "deck-row";
-
-    const img = document.createElement("img");
-    img.src = dataUrl;
-
-    const name = document.createElement("span");
-    name.className = "deck-row-name";
-    name.textContent = `${decks[deckIdx].name} #${cardIdx + 1}`;
-
-    const minus = document.createElement("button");
-    minus.textContent = "−";
-    minus.addEventListener("click", () => removeCard(deckIdx, cardIdx));
-
-    const countSpan = document.createElement("span");
-    countSpan.className = "count";
-    countSpan.textContent = count;
-
-    const plus = document.createElement("button");
-    plus.textContent = "+";
-    plus.addEventListener("click", () => addCard(deckIdx, cardIdx));
-
-    const controls = document.createElement("div");
-    controls.className = "deck-row-controls";
-    controls.append(minus, countSpan, plus);
-
-    row.append(img, name, controls);
-    list.appendChild(row);
+    list.appendChild(makeDeckRow(
+      dataUrl,
+      `${decks[deckIdx].name} #${cardIdx + 1}`,
+      count,
+      () => removeCard(deckIdx, cardIdx),
+      () => addCard(deckIdx, cardIdx),
+    ));
   });
+}
+
+function renderResourceSidebar() {
+  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
+  const isComplete = resTotal === RESOURCE_DECK_SIZE;
+
+  document.getElementById("sidebar-title").textContent = "resource deck";
+
+  const totalEl = document.getElementById("card-total");
+  totalEl.textContent = `${resTotal} / ${RESOURCE_DECK_SIZE} cards`;
+  totalEl.className = isComplete ? "complete" : "";
+
+  document.getElementById("export-btn").style.display = "none";
+  const resExportBtn = document.getElementById("export-resource-btn");
+  resExportBtn.style.display = "";
+  resExportBtn.disabled = !isComplete;
+
+  // Keep main deck breakdown visible for reference
+  const breakdown = document.getElementById("deck-breakdown");
+  const total = myDeck.reduce((s, c) => s + c.count, 0);
+  if (total > 0) {
+    const counts = decks.map((deck, di) => ({
+      name: deck.name,
+      count: myDeck.filter(c => c.deckIdx === di).reduce((s, c) => s + c.count, 0),
+    })).filter(d => d.count > 0);
+    breakdown.innerHTML = `<span class="breakdown-label">main deck:</span>` + counts
+      .map(d => `<span class="breakdown-chip">${d.name} <strong>${d.count}</strong></span>`)
+      .join("");
+    breakdown.style.display = "flex";
+  } else {
+    breakdown.innerHTML = "";
+    breakdown.style.display = "none";
+  }
+
+  const list = document.getElementById("deck-list");
+  list.innerHTML = "";
+  resourceCounts.forEach((count, cardIdx) => {
+    if (count === 0) return;
+    const dataUrl = resources.faces[cardIdx];
+    if (!dataUrl) return;
+    list.appendChild(makeDeckRow(
+      dataUrl,
+      `resource ${cardIdx + 1}`,
+      count,
+      () => removeResourceCard(cardIdx),
+      () => addResourceCard(cardIdx),
+    ));
+  });
+}
+
+function makeDeckRow(imgSrc, label, count, onMinus, onPlus) {
+  const row = document.createElement("div");
+  row.className = "deck-row";
+
+  const img = document.createElement("img");
+  img.src = imgSrc;
+
+  const name = document.createElement("span");
+  name.className = "deck-row-name";
+  name.textContent = label;
+
+  const minus = document.createElement("button");
+  minus.textContent = "−";
+  minus.addEventListener("click", onMinus);
+
+  const countSpan = document.createElement("span");
+  countSpan.className = "count";
+  countSpan.textContent = count;
+
+  const plus = document.createElement("button");
+  plus.textContent = "+";
+  plus.addEventListener("click", onPlus);
+
+  const controls = document.createElement("div");
+  controls.className = "deck-row-controls";
+  controls.append(minus, countSpan, plus);
+
+  row.append(img, name, controls);
+  return row;
 }
 
 function buildAndDownloadAtlas(imageUrls, filename, backUrl = null) {
@@ -436,9 +476,16 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("export-resource-btn").addEventListener("click", exportResourceAtlas);
   document.getElementById("refresh-btn").addEventListener("click", triggerRefresh);
   document.getElementById("clear-btn").addEventListener("click", () => {
-    if (!myDeck.length) return;
-    myDeck = [];
-    if (activeTab < decks.length) renderGrid(activeTab);
-    renderSidebar();
+    if (isResourceTab()) {
+      if (!resourceCounts.some(c => c > 0)) return;
+      resourceCounts.fill(0);
+      renderGrid(activeTab);
+      renderSidebar();
+    } else {
+      if (!myDeck.length) return;
+      myDeck = [];
+      renderGrid(activeTab);
+      renderSidebar();
+    }
   });
 });
