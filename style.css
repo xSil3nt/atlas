@@ -132,7 +132,7 @@ header h1 { font-size: 1.1rem; font-weight: 700; }
 
 .card-slot img {
   display: block;
-  height: 150px;
+  height: 18vw;
   width: auto;
   border-radius: 4px;
 }
@@ -271,7 +271,7 @@ header h1 { font-size: 1.1rem; font-weight: 700; }
 }
 
 .res-card-item img {
-  height: 200px;
+  height: 20vw;
   width: auto;
   border-radius: 6px;
   display: block;
