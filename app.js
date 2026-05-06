@@ -1,8 +1,12 @@
 const ATLAS_COLS = 10;
 const ATLAS_ROWS = 7;
+const MAX_DECK = 40;
+const MAX_COPIES = 3;
+const RESOURCE_DECK_SIZE = 20;
 
 let decks = [];
 let myDeck = [];
+let resourceCounts = [];
 let activeTab = 0;
 
 async function loadCardsJson() {
@@ -29,6 +33,7 @@ async function loadCardsJson() {
     }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     decks = await res.json();
+    resourceCounts = decks.map(() => 0);
   } catch (e) {
     grid.innerHTML = `<div class="placeholder error">
       <strong>couldn't load cards.json</strong>
@@ -44,27 +49,46 @@ async function loadCardsJson() {
 function renderTabs() {
   const el = document.getElementById("tabs");
   el.innerHTML = "";
+  const resIdx = decks.length;
+
   decks.forEach((deck, i) => {
     const btn = document.createElement("button");
     btn.className = "tab" + (i === activeTab ? " active" : "");
     const note = deck.error ? "error" : `${deck.faces?.length ?? 0} cards`;
-    btn.innerHTML = `${deck.name} <span style="font-size:0.7em;opacity:0.6">(${note})</span>`;
-    btn.addEventListener("click", () => {
-      activeTab = i;
-      document.querySelectorAll(".tab").forEach((t, j) =>
-        t.classList.toggle("active", j === i)
-      );
-      renderGrid(i);
-    });
+    btn.innerHTML = `${deck.name} <span class="tab-note">(${note})</span>`;
+    btn.addEventListener("click", () => switchTab(i));
     el.appendChild(btn);
   });
+
+  const resBtn = document.createElement("button");
+  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
+  resBtn.className = "tab res-tab" + (activeTab === resIdx ? " active" : "");
+  resBtn.innerHTML = `resource deck <span class="tab-note">(${resTotal}/${RESOURCE_DECK_SIZE})</span>`;
+  resBtn.addEventListener("click", () => switchTab(resIdx));
+  el.appendChild(resBtn);
+}
+
+function switchTab(idx) {
+  activeTab = idx;
+  document.querySelectorAll(".tab").forEach((t, j) =>
+    t.classList.toggle("active", j === idx)
+  );
+  renderGrid(idx);
 }
 
 function renderGrid(idx) {
   const grid = document.getElementById("grid");
-  const deck = decks[idx];
+
+  if (idx === decks.length) {
+    grid.classList.add("resource-mode");
+    renderResourceView(grid);
+    return;
+  }
+
+  grid.classList.remove("resource-mode");
   grid.innerHTML = "";
 
+  const deck = decks[idx];
   if (deck?.error) {
     grid.innerHTML = `<div class="placeholder error"><strong>failed to load this deck</strong><small>${deck.error}</small></div>`;
     return;
@@ -76,12 +100,16 @@ function renderGrid(idx) {
     return;
   }
 
+  const totalCards = myDeck.reduce((s, c) => s + c.count, 0);
+  const deckFull = totalCards >= MAX_DECK;
+
   faces.forEach((dataUrl, cardIdx) => {
     const entry = myDeck.find(c => c.deckIdx === idx && c.cardIdx === cardIdx);
     const count = entry?.count ?? 0;
+    const isMaxed = count >= MAX_COPIES;
 
     const slot = document.createElement("div");
-    slot.className = "card-slot";
+    slot.className = "card-slot" + (isMaxed ? " maxed" : "");
 
     const img = document.createElement("img");
     img.src = dataUrl;
@@ -94,13 +122,139 @@ function renderGrid(idx) {
       slot.appendChild(badge);
     }
 
+    if (isMaxed) {
+      const overlay = document.createElement("span");
+      overlay.className = "max-overlay";
+      overlay.textContent = "max";
+      slot.appendChild(overlay);
+    }
+
     slot.addEventListener("click", () => addCard(idx, cardIdx));
     grid.appendChild(slot);
   });
 }
 
+function renderResourceView(grid) {
+  grid.innerHTML = "";
+
+  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
+  const isComplete = resTotal === RESOURCE_DECK_SIZE;
+  const isOver = resTotal > RESOURCE_DECK_SIZE;
+
+  const intro = document.createElement("div");
+  intro.className = "resource-intro";
+
+  const totalClass = isComplete ? "res-total complete" : isOver ? "res-total over" : "res-total";
+  intro.innerHTML = `
+    <p>pick your 20 resource cards — refer to your main deck in the sidebar to guide your split</p>
+    <div class="resource-total-bar">
+      <span class="${totalClass}">${resTotal} / ${RESOURCE_DECK_SIZE}</span>
+      ${isComplete ? '<span class="res-ok">✓ ready to export</span>' : ''}
+    </div>
+  `;
+  grid.appendChild(intro);
+
+  const cards = document.createElement("div");
+  cards.className = "resource-cards";
+
+  decks.forEach((deck, i) => {
+    const item = document.createElement("div");
+    item.className = "res-card-item";
+
+    if (deck.resource) {
+      const img = document.createElement("img");
+      img.src = deck.resource;
+      item.appendChild(img);
+    } else {
+      const noImg = document.createElement("div");
+      noImg.className = "res-no-img";
+      noImg.textContent = deck.error ? "load error" : "no resource card";
+      item.appendChild(noImg);
+    }
+
+    const label = document.createElement("div");
+    label.className = "res-deck-name";
+    label.textContent = deck.name;
+    item.appendChild(label);
+
+    const controls = document.createElement("div");
+    controls.className = "res-controls";
+
+    const minus = document.createElement("button");
+    minus.textContent = "−";
+    minus.disabled = resourceCounts[i] === 0;
+    minus.addEventListener("click", () => {
+      if (resourceCounts[i] > 0) {
+        resourceCounts[i]--;
+        renderResourceView(grid);
+        updateResourceTabLabel();
+        renderSidebar();
+      }
+    });
+
+    const countSpan = document.createElement("span");
+    countSpan.className = "res-count";
+    countSpan.textContent = resourceCounts[i];
+
+    const plus = document.createElement("button");
+    plus.textContent = "+";
+    plus.disabled = resTotal >= RESOURCE_DECK_SIZE;
+    plus.addEventListener("click", () => {
+      const cur = resourceCounts.reduce((s, c) => s + c, 0);
+      if (cur < RESOURCE_DECK_SIZE) {
+        resourceCounts[i]++;
+        renderResourceView(grid);
+        updateResourceTabLabel();
+        renderSidebar();
+      }
+    });
+
+    controls.append(minus, countSpan, plus);
+    item.appendChild(controls);
+    cards.appendChild(item);
+  });
+
+  grid.appendChild(cards);
+
+  const exportBtn = document.createElement("button");
+  exportBtn.className = "res-export-btn";
+  exportBtn.textContent = "export resource atlas";
+  exportBtn.disabled = !isComplete;
+  exportBtn.addEventListener("click", exportResourceAtlas);
+  grid.appendChild(exportBtn);
+}
+
+function updateResourceTabLabel() {
+  const tabs = document.querySelectorAll(".tab");
+  const resIdx = decks.length;
+  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
+  if (tabs[resIdx]) {
+    tabs[resIdx].innerHTML = `resource deck <span class="tab-note">(${resTotal}/${RESOURCE_DECK_SIZE})</span>`;
+  }
+}
+
+function showWarning(msg) {
+  const el = document.getElementById("deck-warning");
+  el.textContent = msg;
+  el.classList.add("visible");
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove("visible"), 2200);
+}
+
 function addCard(deckIdx, cardIdx) {
+  const total = myDeck.reduce((s, c) => s + c.count, 0);
   const existing = myDeck.find(c => c.deckIdx === deckIdx && c.cardIdx === cardIdx);
+  const copies = existing?.count ?? 0;
+
+  if (copies >= MAX_COPIES) {
+    showWarning(`max ${MAX_COPIES} copies per card`);
+    return;
+  }
+  if (total >= MAX_DECK) {
+    showWarning(`deck full — max ${MAX_DECK} cards`);
+    return;
+  }
+
   if (existing) existing.count++;
   else myDeck.push({ deckIdx, cardIdx, count: 1 });
   renderGrid(activeTab);
@@ -112,17 +266,39 @@ function removeCard(deckIdx, cardIdx) {
   if (i === -1) return;
   if (myDeck[i].count > 1) myDeck[i].count--;
   else myDeck.splice(i, 1);
-  renderGrid(activeTab);
+  if (activeTab < decks.length) renderGrid(activeTab);
   renderSidebar();
 }
 
 function renderSidebar() {
   const list = document.getElementById("deck-list");
+  const breakdown = document.getElementById("deck-breakdown");
   const total = myDeck.reduce((s, c) => s + c.count, 0);
 
-  document.getElementById("card-total").textContent =
-    `${total} card${total !== 1 ? "s" : ""}`;
+  const totalEl = document.getElementById("card-total");
+  totalEl.textContent = `${total} / ${MAX_DECK} card${total !== 1 ? "s" : ""}`;
+  totalEl.className = total >= MAX_DECK ? "at-max" : "";
+
   document.getElementById("export-btn").disabled = total === 0;
+
+  const resTotal = resourceCounts.reduce((s, c) => s + c, 0);
+  document.getElementById("export-resource-btn").disabled = resTotal !== RESOURCE_DECK_SIZE;
+
+  // Deck breakdown (helpful when building resource deck)
+  if (total > 0) {
+    const counts = decks.map((deck, di) => ({
+      name: deck.name,
+      count: myDeck.filter(c => c.deckIdx === di).reduce((s, c) => s + c.count, 0),
+    })).filter(d => d.count > 0);
+
+    breakdown.innerHTML = counts
+      .map(d => `<span class="breakdown-chip">${d.name} <strong>${d.count}</strong></span>`)
+      .join("");
+    breakdown.style.display = "flex";
+  } else {
+    breakdown.innerHTML = "";
+    breakdown.style.display = "none";
+  }
 
   list.innerHTML = "";
   myDeck.forEach(({ deckIdx, cardIdx, count }) => {
@@ -160,17 +336,9 @@ function renderSidebar() {
   });
 }
 
-function exportAtlas() {
-  const flat = [];
-  for (const { deckIdx, cardIdx, count } of myDeck) {
-    const url = decks[deckIdx]?.faces?.[cardIdx];
-    if (url) {
-      for (let i = 0; i < count; i++) flat.push(url);
-    }
-  }
-  if (!flat.length) return;
-
+function buildAndDownloadAtlas(imageUrls, filename) {
   const maxSlots = ATLAS_COLS * ATLAS_ROWS;
+  const flat = imageUrls.slice();
   if (flat.length > maxSlots - 1) flat.length = maxSlots - 1;
 
   const imgs = flat.map(url => Object.assign(new Image(), { src: url }));
@@ -206,11 +374,32 @@ function exportAtlas() {
     atlas.toBlob(blob => {
       const a = Object.assign(document.createElement("a"), {
         href: URL.createObjectURL(blob),
-        download: "my-deck-atlas.png",
+        download: filename,
       });
       a.click();
     }, "image/png");
   });
+}
+
+function exportAtlas() {
+  const flat = [];
+  for (const { deckIdx, cardIdx, count } of myDeck) {
+    const url = decks[deckIdx]?.faces?.[cardIdx];
+    if (url) for (let i = 0; i < count; i++) flat.push(url);
+  }
+  if (!flat.length) return;
+  buildAndDownloadAtlas(flat, "my-deck-atlas.png");
+}
+
+function exportResourceAtlas() {
+  const flat = [];
+  decks.forEach((deck, i) => {
+    if (deck.resource) {
+      for (let j = 0; j < resourceCounts[i]; j++) flat.push(deck.resource);
+    }
+  });
+  if (!flat.length) return;
+  buildAndDownloadAtlas(flat, "resource-deck-atlas.png");
 }
 
 async function triggerRefresh() {
@@ -240,11 +429,12 @@ async function triggerRefresh() {
 document.addEventListener("DOMContentLoaded", () => {
   loadCardsJson();
   document.getElementById("export-btn").addEventListener("click", exportAtlas);
+  document.getElementById("export-resource-btn").addEventListener("click", exportResourceAtlas);
   document.getElementById("refresh-btn").addEventListener("click", triggerRefresh);
   document.getElementById("clear-btn").addEventListener("click", () => {
     if (!myDeck.length) return;
     myDeck = [];
-    renderGrid(activeTab);
+    if (activeTab < decks.length) renderGrid(activeTab);
     renderSidebar();
   });
 });
