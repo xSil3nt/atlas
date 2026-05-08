@@ -518,6 +518,46 @@ header h1 {
   border: 1px solid var(--border);
 }
 
+/* ---- resource card type tags ---- */
+
+.card-type-tag {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #9ca3af;
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 3px;
+  pointer-events: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card-type-tag.peculiar {
+  background: rgba(147, 51, 234, 0.5);
+  color: #e9d5ff;
+}
+
+.deck-row-type {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: var(--surface2);
+  color: var(--muted);
+  vertical-align: middle;
+  letter-spacing: 0.03em;
+}
+
+.deck-row-type.peculiar {
+  background: rgba(147, 51, 234, 0.25);
+  color: #c4b5fd;
+}
+
 /* ---- alt-hover card preview ---- */
 
 #card-preview {

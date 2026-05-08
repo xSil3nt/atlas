@@ -3,6 +3,7 @@ const ATLAS_ROWS = 7;
 const MAX_DECK = 40;
 const MAX_COPIES = 3;
 const RESOURCE_DECK_SIZE = 20;
+const RESOURCE_MAX_PECULIAR = 3;
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 
@@ -36,11 +37,14 @@ async function loadCards() {
 }
 
 function renderNavTabs() {
-  const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
+  const deckTotal = Object.values(myDeck).reduce((s, e) => s + e.count, 0);
+  const resTotal  = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
   document.querySelectorAll(".nav-tab").forEach(btn => {
     const tab = btn.dataset.tab;
     btn.classList.toggle("active", tab === activeTab);
-    if (tab === "Resource") {
+    if (tab === "All") {
+      btn.innerHTML = `Main Deck <span class="nav-tab-note">${deckTotal}/${MAX_DECK}</span>`;
+    } else if (tab === "Resource") {
       btn.innerHTML = `Resource Deck <span class="nav-tab-note">${resTotal}/${RESOURCE_DECK_SIZE}</span>`;
     }
   });
@@ -200,9 +204,11 @@ function renderResourceGrid(grid) {
 
   filtered.forEach(card => {
     const count = resourceCounts[card.url] ?? 0;
+    const isPeculiar = card.type === "peculiar";
+    const isMaxed = isPeculiar && count >= RESOURCE_MAX_PECULIAR;
 
     const slot = document.createElement("div");
-    slot.className = "card-slot";
+    slot.className = "card-slot" + (isMaxed ? " maxed" : "");
 
     const img = document.createElement("img");
     img.crossOrigin = "anonymous";
@@ -215,6 +221,18 @@ function renderResourceGrid(grid) {
       badge.textContent = count;
       slot.appendChild(badge);
     }
+
+    if (isMaxed) {
+      const overlay = document.createElement("span");
+      overlay.className = "max-overlay";
+      overlay.textContent = "max";
+      slot.appendChild(overlay);
+    }
+
+    const typeTag = document.createElement("span");
+    typeTag.className = "card-type-tag" + (isPeculiar ? " peculiar" : "");
+    typeTag.textContent = isPeculiar ? "Peculiar" : "Common";
+    slot.appendChild(typeTag);
 
     slot.addEventListener("click", () => addResourceCard(card));
     attachPreviewListeners(slot, card.url);
@@ -254,13 +272,18 @@ function removeCard(cardUrl) {
 
 function addResourceCard(card) {
   const total = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
+  const count = resourceCounts[card.url] ?? 0;
 
+  if (card.type === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
+    showWarning(`max ${RESOURCE_MAX_PECULIAR} copies of a peculiar card`);
+    return;
+  }
   if (total >= RESOURCE_DECK_SIZE) {
     showWarning(`resource deck full — max ${RESOURCE_DECK_SIZE} cards`);
     return;
   }
 
-  resourceCounts[card.url] = (resourceCounts[card.url] ?? 0) + 1;
+  resourceCounts[card.url] = count + 1;
   renderGrid();
   renderSidebar();
 }
@@ -379,11 +402,12 @@ function renderResourceSidebar() {
       count,
       () => removeResourceCard(card.url),
       () => addResourceCard(card),
+      card.type,
     ));
   });
 }
 
-function makeDeckRow(imgSrc, label, count, onMinus, onPlus) {
+function makeDeckRow(imgSrc, label, count, onMinus, onPlus, type) {
   const row = document.createElement("div");
   row.className = "deck-row";
 
@@ -394,6 +418,14 @@ function makeDeckRow(imgSrc, label, count, onMinus, onPlus) {
   const name = document.createElement("span");
   name.className = "deck-row-name";
   name.textContent = label;
+
+  if (type) {
+    const typeTag = document.createElement("span");
+    typeTag.className = "deck-row-type" + (type === "peculiar" ? " peculiar" : "");
+    typeTag.textContent = type === "peculiar" ? "P" : "C";
+    typeTag.title = type === "peculiar" ? "Peculiar" : "Common";
+    name.appendChild(typeTag);
+  }
 
   const minus = document.createElement("button");
   minus.textContent = "−";

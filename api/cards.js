@@ -79,8 +79,11 @@ export default async function handler(req, res) {
       const res_codes = parseBrackets(filename);
       decks.Multi.push({ name, folder: "Multi", resources: res_codes, url });
     } else if (folder === "Resource") {
+      const subfolder = parts.length === 3 ? parts[1] : null;
+      if (subfolder !== "Common" && subfolder !== "Peculiar") continue;
+      const type = subfolder === "Peculiar" ? "peculiar" : "common";
       const res_codes = parseBrackets(filename);
-      resources.push({ name, folder: "Resource", resources: res_codes, url });
+      resources.push({ name, folder: "Resource", type, resources: res_codes, url });
     }
   }
 
