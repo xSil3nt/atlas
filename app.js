@@ -168,6 +168,7 @@ function renderGrid() {
     }
 
     slot.addEventListener("click", () => addCard(card));
+    attachPreviewListeners(slot, card.url);
     grid.appendChild(slot);
   });
 }
@@ -206,6 +207,7 @@ function renderResourceGrid(grid) {
     }
 
     slot.addEventListener("click", () => addResourceCard(card));
+    attachPreviewListeners(slot, card.url);
     grid.appendChild(slot);
   });
 }
@@ -469,6 +471,73 @@ function exportResourceAtlas() {
   });
   if (!flat.length) return;
   buildAndDownloadAtlas(flat, "resource-deck-atlas.png", allCards?.backs?.resource ?? null);
+}
+
+// ---- card preview (Alt + hover) ----
+
+let hoveredImgSrc = null;
+let mouseX = 0, mouseY = 0;
+
+const previewEl = document.createElement("div");
+previewEl.id = "card-preview";
+const previewImg = document.createElement("img");
+previewEl.appendChild(previewImg);
+document.body.appendChild(previewEl);
+
+document.addEventListener("mousemove", e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  if (previewEl.classList.contains("visible")) positionPreview();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Alt") {
+    e.preventDefault();
+    if (hoveredImgSrc) showPreview(hoveredImgSrc);
+  }
+});
+
+document.addEventListener("keyup", e => {
+  if (e.key === "Alt") hidePreview();
+});
+
+function showPreview(src) {
+  previewImg.src = src;
+  previewEl.classList.add("visible");
+  positionPreview();
+}
+
+function hidePreview() {
+  previewEl.classList.remove("visible");
+}
+
+function positionPreview() {
+  const pw = previewEl.offsetWidth;
+  const ph = previewEl.offsetHeight;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const offset = 18;
+
+  let x = mouseX + offset;
+  if (x + pw > vw - 10) x = mouseX - pw - offset;
+
+  let y = mouseY - ph / 2;
+  if (y < 10) y = 10;
+  if (y + ph > vh - 10) y = vh - ph - 10;
+
+  previewEl.style.left = x + "px";
+  previewEl.style.top  = y + "px";
+}
+
+function attachPreviewListeners(slot, imgSrc) {
+  slot.addEventListener("mouseenter", e => {
+    hoveredImgSrc = imgSrc;
+    if (e.altKey) showPreview(imgSrc);
+  });
+  slot.addEventListener("mouseleave", () => {
+    hoveredImgSrc = null;
+    hidePreview();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

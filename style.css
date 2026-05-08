@@ -509,6 +509,27 @@ header h1 {
   border: 1px solid var(--border);
 }
 
+/* ---- alt-hover card preview ---- */
+
+#card-preview {
+  position: fixed;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.08s ease;
+  border-radius: 10px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+#card-preview.visible { opacity: 1; }
+
+#card-preview img {
+  display: block;
+  height: 48vh;
+  width: auto;
+  border-radius: 10px;
+}
+
 /* ---- spinner ---- */
 
 .spinner {
