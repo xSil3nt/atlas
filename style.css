@@ -201,6 +201,53 @@ header h1 {
 .filter-S.active  { background: var(--c-s);  border-color: var(--c-s);  color: #fff; }
 .filter-E.active  { background: var(--c-e);  border-color: #aaa;        color: #111; }
 
+.exclusive-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.exclusive-toggle:hover { color: var(--text); }
+
+.exclusive-toggle input[type="checkbox"] {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.exclusive-toggle input[type="checkbox"]::after {
+  content: "";
+  width: 8px;
+  height: 5px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg) translateY(-1px);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.exclusive-toggle input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.exclusive-toggle input[type="checkbox"]:checked::after { opacity: 1; }
+
+.exclusive-toggle:has(input:checked) { color: var(--text); }
+
 #search-input {
   margin-left: auto;
   background: var(--bg);

@@ -12,6 +12,7 @@ let resourceCounts = {};
 let activeTab = "All";
 let searchQuery = "";
 let activeFilters = new Set();
+let exclusiveFilter = false;
 
 async function loadCards() {
   const grid = document.getElementById("grid");
@@ -85,6 +86,19 @@ function renderFilterRow() {
 
   el.appendChild(pillGroup);
 
+  const exclusiveLabel = document.createElement("label");
+  exclusiveLabel.className = "exclusive-toggle";
+  const exclusiveCheck = document.createElement("input");
+  exclusiveCheck.type = "checkbox";
+  exclusiveCheck.checked = exclusiveFilter;
+  exclusiveCheck.addEventListener("change", e => {
+    exclusiveFilter = e.target.checked;
+    renderGrid();
+  });
+  exclusiveLabel.appendChild(exclusiveCheck);
+  exclusiveLabel.append("exact");
+  el.appendChild(exclusiveLabel);
+
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.id = "search-input";
@@ -119,10 +133,12 @@ function isSearchActive() {
 
 function matchesFilter(card) {
   const nameMatch = card.name.toLowerCase().includes(searchQuery.toLowerCase().trim());
-  const filterMatch = activeFilters.size === 0 || (
-    card.resources.length === activeFilters.size &&
-    card.resources.every(r => activeFilters.has(r))
-  );
+  let filterMatch = true;
+  if (activeFilters.size > 0) {
+    filterMatch = exclusiveFilter
+      ? card.resources.length === activeFilters.size && card.resources.every(r => activeFilters.has(r))
+      : card.resources.some(r => activeFilters.has(r));
+  }
   return nameMatch && filterMatch;
 }
 
