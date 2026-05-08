@@ -9,7 +9,7 @@ const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 let allCards = null;
 let myDeck = {};
 let resourceCounts = {};
-let activeTab = "Blood";
+let activeTab = "All";
 let searchQuery = "";
 let activeFilters = new Set();
 
@@ -39,19 +39,12 @@ function renderTabs() {
   const el = document.getElementById("tabs");
   el.innerHTML = "";
 
-  const mainGroup = document.createElement("div");
-  mainGroup.className = "tab-group";
-
-  FOLDERS.forEach(folder => {
-    const btn = document.createElement("button");
-    const count = allCards.decks[folder]?.length ?? 0;
-    btn.className = "tab" + (activeTab === folder ? " active" : "");
-    btn.innerHTML = `${folder} <span class="tab-note">${count}</span>`;
-    btn.addEventListener("click", () => switchTab(folder));
-    mainGroup.appendChild(btn);
-  });
-
-  el.appendChild(mainGroup);
+  const totalCards = FOLDERS.reduce((s, f) => s + (allCards.decks[f]?.length ?? 0), 0);
+  const allBtn = document.createElement("button");
+  allBtn.className = "tab" + (activeTab === "All" ? " active" : "");
+  allBtn.innerHTML = `All Cards <span class="tab-note">${totalCards}</span>`;
+  allBtn.addEventListener("click", () => switchTab("All"));
+  el.appendChild(allBtn);
 
   const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
   const resBtn = document.createElement("button");
@@ -139,22 +132,13 @@ function renderGrid() {
     return;
   }
 
-  let cards;
-  let showFolderTag = false;
-
-  if (isSearchActive()) {
-    cards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []).filter(matchesFilter);
-    showFolderTag = true;
-  } else {
-    cards = allCards.decks[activeTab] ?? [];
-  }
+  const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
+  const cards = allMainCards.filter(matchesFilter);
 
   if (!cards.length) {
-    grid.innerHTML = '<div class="placeholder">no cards</div>';
+    grid.innerHTML = '<div class="placeholder">no cards found</div>';
     return;
   }
-
-  const totalCards = Object.values(myDeck).reduce((s, e) => s + e.count, 0);
 
   cards.forEach(card => {
     const entry = myDeck[card.url];
@@ -181,13 +165,6 @@ function renderGrid() {
       overlay.className = "max-overlay";
       overlay.textContent = "max";
       slot.appendChild(overlay);
-    }
-
-    if (showFolderTag) {
-      const tag = document.createElement("span");
-      tag.className = "folder-tag";
-      tag.textContent = card.folder;
-      slot.appendChild(tag);
     }
 
     slot.addEventListener("click", () => addCard(card));

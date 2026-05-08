@@ -100,12 +100,6 @@ header h1 {
   flex-shrink: 0;
 }
 
-.tab-group {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-}
-
 .tab {
   padding: 5px 13px;
   background: transparent;
@@ -303,20 +297,6 @@ header h1 {
   pointer-events: none;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-}
-
-.folder-tag {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  background: rgba(0, 0, 0, 0.72);
-  color: #d1d5db;
-  font-size: 0.58rem;
-  font-weight: 600;
-  padding: 2px 5px;
-  border-radius: 3px;
-  pointer-events: none;
-  letter-spacing: 0.04em;
 }
 
 .placeholder {
