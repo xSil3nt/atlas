@@ -16,7 +16,7 @@ let exclusiveFilter = false;
 
 async function loadCards() {
   const grid = document.getElementById("grid");
-  grid.innerHTML = '<div class="placeholder"><span class="spinner"></span> loading cards…</div>';
+  grid.innerHTML = '<div class="placeholder"><span class="spinner"></span> Loading cards…</div>';
 
   try {
     const res = await fetch("/api/cards");
@@ -24,35 +24,26 @@ async function loadCards() {
     allCards = await res.json();
   } catch (e) {
     grid.innerHTML = `<div class="placeholder error">
-      <strong>couldn't load cards</strong>
+      <strong>Couldn't load cards</strong>
       <small>${e.message}</small>
     </div>`;
     return;
   }
 
-  renderTabs();
   renderFilterRow();
   renderGrid();
   renderSidebar();
 }
 
-function renderTabs() {
-  const el = document.getElementById("tabs");
-  el.innerHTML = "";
-
-  const totalCards = FOLDERS.reduce((s, f) => s + (allCards.decks[f]?.length ?? 0), 0);
-  const allBtn = document.createElement("button");
-  allBtn.className = "tab" + (activeTab === "All" ? " active" : "");
-  allBtn.innerHTML = `All Cards <span class="tab-note">${totalCards}</span>`;
-  allBtn.addEventListener("click", () => switchTab("All"));
-  el.appendChild(allBtn);
-
+function renderNavTabs() {
   const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
-  const resBtn = document.createElement("button");
-  resBtn.className = "tab res-tab" + (activeTab === "Resource" ? " active" : "");
-  resBtn.innerHTML = `Resources <span class="tab-note">${resTotal}/${RESOURCE_DECK_SIZE}</span>`;
-  resBtn.addEventListener("click", () => switchTab("Resource"));
-  el.appendChild(resBtn);
+  document.querySelectorAll(".nav-tab").forEach(btn => {
+    const tab = btn.dataset.tab;
+    btn.classList.toggle("active", tab === activeTab);
+    if (tab === "Resource") {
+      btn.innerHTML = `Resource Deck <span class="nav-tab-note">${resTotal}/${RESOURCE_DECK_SIZE}</span>`;
+    }
+  });
 }
 
 function renderFilterRow() {
@@ -117,7 +108,7 @@ function switchTab(tab) {
   activeFilters.clear();
   const searchInput = document.getElementById("search-input");
   if (searchInput) searchInput.value = "";
-  renderTabs();
+  renderNavTabs();
   renderFilterRow();
   renderGrid();
   renderSidebar();
@@ -297,17 +288,13 @@ function renderSidebar() {
     renderDeckSidebar();
   }
 
-  const resTab = document.querySelector(".res-tab");
-  if (resTab) {
-    const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
-    resTab.innerHTML = `Resources <span class="tab-note">${resTotal}/${RESOURCE_DECK_SIZE}</span>`;
-  }
+  renderNavTabs();
 }
 
 function renderDeckSidebar() {
   const total = Object.values(myDeck).reduce((s, e) => s + e.count, 0);
 
-  document.getElementById("sidebar-title").textContent = "your deck";
+  document.getElementById("sidebar-title").textContent = "Your Deck";
 
   const totalEl = document.getElementById("card-total");
   totalEl.textContent = `${total} / ${MAX_DECK} card${total !== 1 ? "s" : ""}`;
@@ -351,7 +338,7 @@ function renderResourceSidebar() {
   const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
   const isComplete = resTotal === RESOURCE_DECK_SIZE;
 
-  document.getElementById("sidebar-title").textContent = "resource deck";
+  document.getElementById("sidebar-title").textContent = "Resource Deck";
 
   const totalEl = document.getElementById("card-total");
   totalEl.textContent = `${resTotal} / ${RESOURCE_DECK_SIZE} cards`;
@@ -561,9 +548,13 @@ function attachPreviewListeners(slot, imgSrc) {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadCards();
+
+  document.querySelectorAll(".nav-tab").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
   document.getElementById("export-btn").addEventListener("click", exportAtlas);
   document.getElementById("export-resource-btn").addEventListener("click", exportResourceAtlas);
-  document.getElementById("refresh-btn").addEventListener("click", loadCards);
   document.getElementById("clear-btn").addEventListener("click", () => {
     if (isResourceTab()) {
       if (Object.keys(resourceCounts).length === 0) return;

@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>deck builder</title>
+  <title>Lifestitchr Atlas</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-  <h1>deck builder</h1>
-  <button id="refresh-btn" title="re-fetch cards from GitHub">↻ refresh cards</button>
-  <span id="refresh-msg"></span>
+  <h1>Lifestitchr Atlas</h1>
+  <nav id="header-nav">
+    <button class="nav-tab active" data-tab="All">Main Deck</button>
+    <button class="nav-tab" data-tab="Resource">Resource Deck</button>
+  </nav>
 </header>
 
 <div id="layout">
   <div id="browser">
-    <div id="tabs"></div>
     <div id="filter-row"></div>
     <div id="grid"></div>
   </div>
   <aside id="sidebar">
     <div id="sidebar-top">
-      <h2 id="sidebar-title">your deck</h2>
+      <h2 id="sidebar-title">Your Deck</h2>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
         <span id="card-total">0 cards</span>
         <span id="deck-warning"></span>
@@ -32,9 +33,9 @@
     <div id="deck-list"></div>
     <div id="sidebar-bottom">
       <div class="sidebar-btn-row">
-        <button id="clear-btn">clear</button>
-        <button id="export-btn" disabled>export atlas</button>
-        <button id="export-resource-btn" disabled style="display:none">export resource atlas</button>
+        <button id="clear-btn">Clear</button>
+        <button id="export-btn" disabled>Export Atlas</button>
+        <button id="export-resource-btn" disabled style="display:none">Export Resource Atlas</button>
       </div>
     </div>
   </aside>

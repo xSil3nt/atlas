@@ -53,24 +53,48 @@ header h1 {
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--text);
+  white-space: nowrap;
 }
 
-#refresh-btn {
+#header-nav {
   margin-left: auto;
-  background: transparent;
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
   border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 5px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.78rem;
-  transition: all 0.15s;
+  border-radius: 8px;
+  padding: 3px;
 }
 
-#refresh-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
-#refresh-btn:disabled { opacity: 0.4; cursor: default; }
+.nav-tab {
+  padding: 4px 14px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.12s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
-#refresh-msg { font-size: 0.75rem; color: var(--muted); }
+.nav-tab:hover { color: var(--text); }
+
+.nav-tab.active {
+  background: var(--surface2);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.nav-tab-note {
+  font-size: 0.68em;
+  opacity: 0.55;
+  font-weight: 400;
+}
 
 #layout {
   display: flex;
@@ -87,68 +111,6 @@ header h1 {
   overflow: hidden;
 }
 
-/* ---- tabs ---- */
-
-#tabs {
-  display: flex;
-  align-items: center;
-  padding: 0 14px;
-  height: 44px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.tab {
-  padding: 5px 13px;
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--muted);
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  transition: all 0.12s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.tab:hover { background: var(--surface2); color: var(--text); }
-
-.tab.active {
-  background: var(--accent-dim);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.tab-note {
-  font-size: 0.68em;
-  opacity: 0.55;
-  font-weight: 400;
-}
-
-.tab.active .tab-note { opacity: 0.7; }
-
-/* resource deck tab — separated from main tabs */
-.res-tab {
-  margin-left: auto;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  background: var(--surface2);
-}
-
-.res-tab:hover { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.08); }
-
-.res-tab.active {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: var(--success);
-  color: var(--success);
-}
-
-.res-tab.active .tab-note { opacity: 0.7; }
 
 /* ---- filter + search row ---- */
 
