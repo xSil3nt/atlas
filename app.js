@@ -39,30 +39,24 @@ function renderTabs() {
   const el = document.getElementById("tabs");
   el.innerHTML = "";
 
+  const mainGroup = document.createElement("div");
+  mainGroup.className = "tab-group";
+
   FOLDERS.forEach(folder => {
     const btn = document.createElement("button");
     const count = allCards.decks[folder]?.length ?? 0;
     btn.className = "tab" + (activeTab === folder ? " active" : "");
-    btn.innerHTML = `${folder} <span class="tab-note">(${count})</span>`;
+    btn.innerHTML = `${folder} <span class="tab-note">${count}</span>`;
     btn.addEventListener("click", () => switchTab(folder));
-    el.appendChild(btn);
+    mainGroup.appendChild(btn);
   });
 
-  const searchInput = document.createElement("input");
-  searchInput.type = "text";
-  searchInput.id = "search-input";
-  searchInput.placeholder = "search cards…";
-  searchInput.value = searchQuery;
-  searchInput.addEventListener("input", e => {
-    searchQuery = e.target.value;
-    renderGrid();
-  });
-  el.appendChild(searchInput);
+  el.appendChild(mainGroup);
 
   const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
   const resBtn = document.createElement("button");
   resBtn.className = "tab res-tab" + (activeTab === "Resource" ? " active" : "");
-  resBtn.innerHTML = `resource deck <span class="tab-note">(${resTotal}/${RESOURCE_DECK_SIZE})</span>`;
+  resBtn.innerHTML = `Resources <span class="tab-note">${resTotal}/${RESOURCE_DECK_SIZE}</span>`;
   resBtn.addEventListener("click", () => switchTab("Resource"));
   el.appendChild(resBtn);
 }
@@ -72,12 +66,15 @@ function renderFilterRow() {
   if (!el) return;
   el.innerHTML = "";
 
+  const pillGroup = document.createElement("div");
+  pillGroup.className = "filter-pills";
+
   const pills = [
-    { code: "Bl", label: "Bl" },
-    { code: "H", label: "H" },
-    { code: "Br", label: "Br" },
-    { code: "S", label: "S" },
-    { code: "E", label: "E" },
+    { code: "Bl", label: "Blood" },
+    { code: "H",  label: "Heart" },
+    { code: "Br", label: "Brain" },
+    { code: "S",  label: "Soul"  },
+    { code: "E",  label: "Eye"   },
   ];
 
   pills.forEach(({ code, label }) => {
@@ -90,8 +87,21 @@ function renderFilterRow() {
       renderFilterRow();
       renderGrid();
     });
-    el.appendChild(btn);
+    pillGroup.appendChild(btn);
   });
+
+  el.appendChild(pillGroup);
+
+  const searchInput = document.createElement("input");
+  searchInput.type = "text";
+  searchInput.id = "search-input";
+  searchInput.placeholder = "search cards…";
+  searchInput.value = searchQuery;
+  searchInput.addEventListener("input", e => {
+    searchQuery = e.target.value;
+    renderGrid();
+  });
+  el.appendChild(searchInput);
 }
 
 function switchTab(tab) {
@@ -289,11 +299,10 @@ function renderSidebar() {
     renderDeckSidebar();
   }
 
-  const tabs = document.querySelectorAll(".tab");
-  const resTab = [...tabs].find(t => t.classList.contains("res-tab"));
+  const resTab = document.querySelector(".res-tab");
   if (resTab) {
     const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
-    resTab.innerHTML = `resource deck <span class="tab-note">(${resTotal}/${RESOURCE_DECK_SIZE})</span>`;
+    resTab.innerHTML = `Resources <span class="tab-note">${resTotal}/${RESOURCE_DECK_SIZE}</span>`;
   }
 }
 
