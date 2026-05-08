@@ -229,11 +229,6 @@ function renderResourceGrid(grid) {
       slot.appendChild(overlay);
     }
 
-    const typeTag = document.createElement("span");
-    typeTag.className = "card-type-tag" + (isPeculiar ? " peculiar" : "");
-    typeTag.textContent = isPeculiar ? "Peculiar" : "Common";
-    slot.appendChild(typeTag);
-
     slot.addEventListener("click", () => addResourceCard(card));
     attachPreviewListeners(slot, card.url);
     grid.appendChild(slot);
@@ -402,12 +397,11 @@ function renderResourceSidebar() {
       count,
       () => removeResourceCard(card.url),
       () => addResourceCard(card),
-      card.type,
     ));
   });
 }
 
-function makeDeckRow(imgSrc, label, count, onMinus, onPlus, type) {
+function makeDeckRow(imgSrc, label, count, onMinus, onPlus) {
   const row = document.createElement("div");
   row.className = "deck-row";
 
@@ -419,13 +413,7 @@ function makeDeckRow(imgSrc, label, count, onMinus, onPlus, type) {
   name.className = "deck-row-name";
   name.textContent = label;
 
-  if (type) {
-    const typeTag = document.createElement("span");
-    typeTag.className = "deck-row-type" + (type === "peculiar" ? " peculiar" : "");
-    typeTag.textContent = type === "peculiar" ? "P" : "C";
-    typeTag.title = type === "peculiar" ? "Peculiar" : "Common";
-    name.appendChild(typeTag);
-  }
+
 
   const minus = document.createElement("button");
   minus.textContent = "−";

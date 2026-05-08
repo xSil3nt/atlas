@@ -90,7 +90,10 @@ export default async function handler(req, res) {
   for (const key of Object.keys(decks)) {
     decks[key].sort((a, b) => a.name.localeCompare(b.name));
   }
-  resources.sort((a, b) => a.name.localeCompare(b.name));
+  resources.sort((a, b) => {
+    if (a.type !== b.type) return a.type === "common" ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
 
   res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
   return res.status(200).json({ decks, resources, backs });
