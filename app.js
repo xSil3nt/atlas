@@ -119,7 +119,10 @@ function isSearchActive() {
 
 function matchesFilter(card) {
   const nameMatch = card.name.toLowerCase().includes(searchQuery.toLowerCase().trim());
-  const filterMatch = activeFilters.size === 0 || card.resources.some(r => activeFilters.has(r));
+  const filterMatch = activeFilters.size === 0 || (
+    card.resources.length === activeFilters.size &&
+    card.resources.every(r => activeFilters.has(r))
+  );
   return nameMatch && filterMatch;
 }
 
