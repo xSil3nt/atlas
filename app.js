@@ -499,10 +499,16 @@ function exportResourceAtlas() {
   buildAndDownloadAtlas(flat, "resource-deck-atlas.png", allCards?.backs?.resource ?? null);
 }
 
-// ---- card preview (Alt + hover) ----
+// ---- card preview (Z + hover) ----
 
 let hoveredImgSrc = null;
 let mouseX = 0, mouseY = 0;
+let zHeld = false;
+
+const PREVIEW_SIZE_MIN = 20; // vh
+const PREVIEW_SIZE_MAX = 90; // vh
+const PREVIEW_SIZE_DEFAULT = 48; // vh
+let previewSizeVh = PREVIEW_SIZE_DEFAULT;
 
 const previewEl = document.createElement("div");
 previewEl.id = "card-preview";
@@ -517,18 +523,32 @@ document.addEventListener("mousemove", e => {
 });
 
 document.addEventListener("keydown", e => {
-  if (e.key === "Alt") {
+  if ((e.key === "z" || e.key === "Z") && !e.shiftKey && !zHeld) {
+    zHeld = true;
     e.preventDefault();
     if (hoveredImgSrc) showPreview(hoveredImgSrc);
   }
 });
 
 document.addEventListener("keyup", e => {
-  if (e.key === "Alt") hidePreview();
+  if (e.key === "z" || e.key === "Z") {
+    zHeld = false;
+    hidePreview();
+  }
 });
+
+document.addEventListener("wheel", e => {
+  if (!zHeld || !previewEl.classList.contains("visible")) return;
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? -3 : 3;
+  previewSizeVh = Math.min(PREVIEW_SIZE_MAX, Math.max(PREVIEW_SIZE_MIN, previewSizeVh + delta));
+  previewImg.style.height = previewSizeVh + "vh";
+  positionPreview();
+}, { passive: false });
 
 function showPreview(src) {
   previewImg.src = src;
+  previewImg.style.height = previewSizeVh + "vh";
   previewEl.classList.add("visible");
   positionPreview();
 }
@@ -558,7 +578,7 @@ function positionPreview() {
 function attachPreviewListeners(slot, imgSrc) {
   slot.addEventListener("mouseenter", e => {
     hoveredImgSrc = imgSrc;
-    if (e.altKey) showPreview(imgSrc);
+    if (e.key === "Z") showPreview(imgSrc);
   });
   slot.addEventListener("mouseleave", () => {
     hoveredImgSrc = null;
