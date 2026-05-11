@@ -132,7 +132,7 @@ function matchesFilter(card) {
   if (activeFilters.size > 0) {
     filterMatch = exclusiveFilter
       ? card.resources.length === activeFilters.size && card.resources.every(r => activeFilters.has(r))
-      : card.resources.some(r => activeFilters.has(r));
+      : card.resources.length > 0 && card.resources.every(r => activeFilters.has(r));
   }
   return nameMatch && filterMatch;
 }
