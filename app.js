@@ -553,18 +553,45 @@ function buildAtlasBlob(imageUrls, backUrl = null) {
   });
 }
 
+async function uploadAtlasAndCopyLink(imageUrls, backUrl, btnId) {
+  const btn = document.getElementById(btnId);
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Uploading…";
+
+  try {
+    const blob = await buildAtlasBlob(imageUrls, backUrl);
+    const base64 = await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.readAsDataURL(blob);
+    });
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: base64 }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { url } = await res.json();
+
+    await navigator.clipboard.writeText(url);
+    btn.textContent = "Link copied!";
+  } catch (e) {
+    console.error(e);
+    btn.textContent = "Upload failed";
+  } finally {
+    setTimeout(() => { btn.textContent = origText; btn.disabled = false; }, 2000);
+  }
+}
+
 async function exportAtlas() {
   const flat = [];
   for (const entry of Object.values(myDeck)) {
     for (let i = 0; i < entry.count; i++) flat.push(entry.url);
   }
   if (!flat.length) return;
-  const blob = await buildAtlasBlob(flat, allCards?.backs?.main ?? null);
-  const a = Object.assign(document.createElement("a"), {
-    href: URL.createObjectURL(blob),
-    download: "my-deck-atlas.png",
-  });
-  a.click();
+  await uploadAtlasAndCopyLink(flat, allCards?.backs?.main ?? null, "export-btn");
 }
 
 async function exportResourceAtlas() {
@@ -575,12 +602,7 @@ async function exportResourceAtlas() {
     for (let j = 0; j < count; j++) flat.push(card.url);
   });
   if (!flat.length) return;
-  const blob = await buildAtlasBlob(flat, allCards?.backs?.resource ?? null);
-  const a = Object.assign(document.createElement("a"), {
-    href: URL.createObjectURL(blob),
-    download: "resource-deck-atlas.png",
-  });
-  a.click();
+  await uploadAtlasAndCopyLink(flat, allCards?.backs?.resource ?? null, "export-resource-btn");
 }
 
 // ---- card preview (Z + hover) ----
