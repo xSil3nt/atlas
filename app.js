@@ -602,6 +602,15 @@ function buildAtlasBlob(imageUrls, backUrl = null) {
   });
 }
 
+let _imgbbKey = null;
+async function getImgbbKey() {
+  if (_imgbbKey) return _imgbbKey;
+  const r = await fetch("/api/imgbb-key");
+  if (!r.ok) throw new Error("key endpoint failed");
+  ({ key: _imgbbKey } = await r.json());
+  return _imgbbKey;
+}
+
 async function uploadAtlasAndCopyLink(imageUrls, backUrl, btnId) {
   const btn = document.getElementById(btnId);
   const origText = btn.textContent;
@@ -609,22 +618,24 @@ async function uploadAtlasAndCopyLink(imageUrls, backUrl, btnId) {
   btn.textContent = "Uploading…";
 
   try {
-    const blob = await buildAtlasBlob(imageUrls, backUrl);
+    const [blob, key] = await Promise.all([
+      buildAtlasBlob(imageUrls, backUrl),
+      getImgbbKey(),
+    ]);
+
     const base64 = await new Promise(resolve => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result.split(",")[1]);
       reader.readAsDataURL(blob);
     });
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image: base64 }),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const { url } = await res.json();
+    const form = new URLSearchParams({ key, image: base64 });
+    const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form });
+    if (!res.ok) throw new Error(`imgbb HTTP ${res.status}`);
+    const data = await res.json();
+    if (!data.success) throw new Error("imgbb rejected upload");
 
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(data.data.url);
     btn.textContent = "Link copied!";
   } catch (e) {
     console.error(e);
