@@ -56,6 +56,22 @@ const STARTER_DECKS = {
     { name: "Tower Witch",         count: 3 },
     { name: "False Idol",          count: 3 },
   ],
+  Eye: [
+    { name: "Graveswap",           count: 2 },
+    { name: "The Myriad",          count: 2 },
+    { name: "Altar Familiar",      count: 3 },
+    { name: "Graft",               count: 3 },
+    { name: "Box of Limbs",        count: 3 },
+    { name: "Eminence",            count: 3 },
+    { name: "Eyeguy",              count: 3 },
+    { name: "Focus Lens",          count: 3 },
+    { name: "Follower of the Spiral",count: 3 },
+    { name: "Grasp Possibility",   count: 3 },
+    { name: "Peer Through the Veil",count: 3 },
+    { name: "Vigil Horizon",       count: 3 },
+    { name: "Death's Invitation",  count: 3 },
+    { name: "The Singularity",     count: 3 },
+  ],
 };
 
 let allCards = null;
