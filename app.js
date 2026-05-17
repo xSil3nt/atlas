@@ -602,6 +602,25 @@ function buildAtlasBlob(imageUrls, backUrl = null) {
   });
 }
 
+function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => copyTextFallback(text));
+  }
+  return copyTextFallback(text);
+}
+
+function copyTextFallback(text) {
+  const ta = Object.assign(document.createElement("textarea"), {
+    value: text,
+    style: "position:fixed;opacity:0",
+  });
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
+}
+
 let _imgbbKey = null;
 async function getImgbbKey() {
   if (_imgbbKey) return _imgbbKey;
@@ -635,7 +654,7 @@ async function uploadAtlasAndCopyLink(imageUrls, backUrl, btnId) {
     const data = await res.json();
     if (!data.success) throw new Error("imgbb rejected upload");
 
-    await navigator.clipboard.writeText(data.data.url);
+    await copyText(data.data.url);
     btn.textContent = "Link copied!";
   } catch (e) {
     console.error(e);
@@ -763,7 +782,7 @@ function copyDeckLink() {
   const resEncoded = encodeResourceCounts(resourceCounts, resourceCards);
   if (resEncoded) url.searchParams.set("res", resEncoded);
 
-  navigator.clipboard.writeText(url.toString());
+  copyText(url.toString());
 
   const btn = document.getElementById("share-btn");
   const orig = btn.textContent;
