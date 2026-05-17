@@ -2,6 +2,7 @@
   "functions": {
     "api/refresh.js": { "maxDuration": 10 },
     "api/cards.js": { "maxDuration": 15 },
-    "api/upload.js": { "maxDuration": 20 }
+    "api/upload.js": { "maxDuration": 20 },
+    "api/imgbb-key.js": { "maxDuration": 5 }
   }
 }
