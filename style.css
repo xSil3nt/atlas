@@ -513,6 +513,43 @@ header h1 {
   gap: 8px;
 }
 
+#atlas-link-row {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+#atlas-link-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  outline: none;
+  cursor: default;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#atlas-link-copy {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+#atlas-link-copy:hover { border-color: var(--accent); color: var(--accent); }
+
 #share-btn {
   flex: 1;
   background: transparent;
