@@ -517,60 +517,57 @@ function makeDeckRow(imgSrc, label, count, onMinus, onPlus) {
   return row;
 }
 
-function buildAndDownloadAtlas(imageUrls, filename, backUrl = null) {
-  const maxSlots = ATLAS_COLS * ATLAS_ROWS;
-  const flat = imageUrls.slice();
-  if (flat.length > maxSlots - 1) flat.length = maxSlots - 1;
+function buildAtlasBlob(imageUrls, backUrl = null) {
+  return new Promise(resolve => {
+    const maxSlots = ATLAS_COLS * ATLAS_ROWS;
+    const flat = imageUrls.slice();
+    if (flat.length > maxSlots - 1) flat.length = maxSlots - 1;
 
-  const imgs = flat.map(url => Object.assign(new Image(), { crossOrigin: "anonymous", src: url }));
-  const backImg = backUrl ? Object.assign(new Image(), { crossOrigin: "anonymous", src: backUrl }) : null;
+    const imgs = flat.map(url => Object.assign(new Image(), { crossOrigin: "anonymous", src: url }));
+    const backImg = backUrl ? Object.assign(new Image(), { crossOrigin: "anonymous", src: backUrl }) : null;
 
-  const all = [...imgs, ...(backImg ? [backImg] : [])];
-  Promise.all(
-    all.map(i => i.complete
-      ? Promise.resolve()
-      : new Promise(r => { i.onload = r; i.onerror = r; })
-    )
-  ).then(() => {
-    const cardW = imgs[0].naturalWidth;
-    const cardH = imgs[0].naturalHeight;
+    const all = [...imgs, ...(backImg ? [backImg] : [])];
+    Promise.all(all.map(i => i.complete ? Promise.resolve() : new Promise(r => { i.onload = r; i.onerror = r; })))
+      .then(() => {
+        const cardW = imgs[0].naturalWidth;
+        const cardH = imgs[0].naturalHeight;
 
-    const atlas = document.createElement("canvas");
-    atlas.width  = ATLAS_COLS * cardW;
-    atlas.height = ATLAS_ROWS * cardH;
-    const ctx = atlas.getContext("2d");
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, atlas.width, atlas.height);
+        const atlas = document.createElement("canvas");
+        atlas.width  = ATLAS_COLS * cardW;
+        atlas.height = ATLAS_ROWS * cardH;
+        const ctx = atlas.getContext("2d");
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, atlas.width, atlas.height);
 
-    imgs.forEach((img, i) => {
-      ctx.drawImage(img, (i % ATLAS_COLS) * cardW, Math.floor(i / ATLAS_COLS) * cardH, cardW, cardH);
-    });
+        imgs.forEach((img, i) => {
+          ctx.drawImage(img, (i % ATLAS_COLS) * cardW, Math.floor(i / ATLAS_COLS) * cardH, cardW, cardH);
+        });
 
-    if (backImg) {
-      const last = maxSlots - 1;
-      ctx.drawImage(backImg, (last % ATLAS_COLS) * cardW, Math.floor(last / ATLAS_COLS) * cardH, cardW, cardH);
-    }
+        if (backImg) {
+          const last = maxSlots - 1;
+          ctx.drawImage(backImg, (last % ATLAS_COLS) * cardW, Math.floor(last / ATLAS_COLS) * cardH, cardW, cardH);
+        }
 
-    atlas.toBlob(blob => {
-      const a = Object.assign(document.createElement("a"), {
-        href: URL.createObjectURL(blob),
-        download: filename,
+        atlas.toBlob(resolve, "image/png");
       });
-      a.click();
-    }, "image/png");
   });
 }
 
-function exportAtlas() {
+async function exportAtlas() {
   const flat = [];
   for (const entry of Object.values(myDeck)) {
     for (let i = 0; i < entry.count; i++) flat.push(entry.url);
   }
   if (!flat.length) return;
-  buildAndDownloadAtlas(flat, "my-deck-atlas.png", allCards?.backs?.main ?? null);
+  const blob = await buildAtlasBlob(flat, allCards?.backs?.main ?? null);
+  const a = Object.assign(document.createElement("a"), {
+    href: URL.createObjectURL(blob),
+    download: "my-deck-atlas.png",
+  });
+  a.click();
 }
 
-function exportResourceAtlas() {
+async function exportResourceAtlas() {
   const flat = [];
   const resourceCards = allCards?.resources ?? [];
   resourceCards.forEach(card => {
@@ -578,7 +575,12 @@ function exportResourceAtlas() {
     for (let j = 0; j < count; j++) flat.push(card.url);
   });
   if (!flat.length) return;
-  buildAndDownloadAtlas(flat, "resource-deck-atlas.png", allCards?.backs?.resource ?? null);
+  const blob = await buildAtlasBlob(flat, allCards?.backs?.resource ?? null);
+  const a = Object.assign(document.createElement("a"), {
+    href: URL.createObjectURL(blob),
+    download: "resource-deck-atlas.png",
+  });
+  a.click();
 }
 
 // ---- card preview (Z + hover) ----
