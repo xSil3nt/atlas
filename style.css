@@ -513,6 +513,20 @@ header h1 {
   gap: 8px;
 }
 
+#share-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.15s;
+}
+
+#share-btn:hover { border-color: var(--accent); color: var(--accent); }
+
 #clear-btn {
   background: transparent;
   border: 1px solid var(--border);

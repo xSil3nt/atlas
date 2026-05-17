@@ -741,6 +741,25 @@ function attachPreviewListeners(slot, imgSrc) {
   });
 }
 
+function copyDeckLink() {
+  const url = new URL(window.location.href);
+  url.search = "";
+
+  const deckEncoded = encodeDeck(myDeck);
+  if (deckEncoded) url.searchParams.set("deck", deckEncoded);
+
+  const resourceCards = allCards?.resources ?? [];
+  const resEncoded = encodeResourceCounts(resourceCounts, resourceCards);
+  if (resEncoded) url.searchParams.set("res", resEncoded);
+
+  navigator.clipboard.writeText(url.toString());
+
+  const btn = document.getElementById("share-btn");
+  const orig = btn.textContent;
+  btn.textContent = "Copied!";
+  setTimeout(() => { btn.textContent = orig; }, 1500);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadCards();
 
@@ -752,6 +771,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => loadStarterDeck(btn.dataset.deck));
   });
 
+  document.getElementById("share-btn").addEventListener("click", copyDeckLink);
   document.getElementById("export-btn").addEventListener("click", exportAtlas);
   document.getElementById("export-resource-btn").addEventListener("click", exportResourceAtlas);
   document.getElementById("clear-btn").addEventListener("click", () => {
