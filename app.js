@@ -98,9 +98,58 @@ async function loadCards() {
     return;
   }
 
+  applyDeckFromUrl();
   renderFilterRow();
   renderGrid();
   renderSidebar();
+}
+
+function encodeDeck(deckObj) {
+  const entries = Object.values(deckObj);
+  if (!entries.length) return "";
+  return btoa(entries.map(e => `${e.name}:${e.count}`).join(";"));
+}
+
+function encodeResourceCounts(counts, resourceCards) {
+  const entries = resourceCards.filter(c => (counts[c.url] ?? 0) > 0);
+  if (!entries.length) return "";
+  return btoa(entries.map(c => `${c.name}:${counts[c.url]}`).join(";"));
+}
+
+function applyDeckFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const deckParam = params.get("deck");
+  const resParam  = params.get("res");
+
+  if (deckParam) {
+    try {
+      const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
+      myDeck = {};
+      for (const part of atob(deckParam).split(";")) {
+        const sep = part.lastIndexOf(":");
+        if (sep === -1) continue;
+        const name  = part.slice(0, sep);
+        const count = parseInt(part.slice(sep + 1), 10);
+        const card  = allMainCards.find(c => c.name === name);
+        if (card && count > 0) myDeck[card.url] = { ...card, count };
+      }
+    } catch { /* malformed param */ }
+  }
+
+  if (resParam) {
+    try {
+      const resourceCards = allCards?.resources ?? [];
+      resourceCounts = {};
+      for (const part of atob(resParam).split(";")) {
+        const sep = part.lastIndexOf(":");
+        if (sep === -1) continue;
+        const name  = part.slice(0, sep);
+        const count = parseInt(part.slice(sep + 1), 10);
+        const card  = resourceCards.find(c => c.name === name);
+        if (card && count > 0) resourceCounts[card.url] = count;
+      }
+    } catch { /* malformed param */ }
+  }
 }
 
 function renderNavTabs() {
