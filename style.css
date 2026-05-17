@@ -60,6 +60,8 @@ header h1 {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding-left: 14px;
+  border-left: 1px solid var(--border);
 }
 
 .starter-deck-label {
