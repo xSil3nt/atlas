@@ -40,6 +40,22 @@ const STARTER_DECKS = {
     { name: "Sigma Falls",            count: 3 },
     { name: "Warden of Lost Memories",count: 3 },
   ],
+  Soul: [
+    { name: "Scant Messenger",     count: 2 },
+    { name: "Transient Malevolence",count: 2 },
+    { name: "Altar Familiar",      count: 3 },
+    { name: "Graft",               count: 3 },
+    { name: "Box of Limbs",        count: 3 },
+    { name: "Bearer of the Banner",count: 3 },
+    { name: "Divine Blessing",     count: 3 },
+    { name: "Entwined Shadows",    count: 3 },
+    { name: "Little Newt",         count: 3 },
+    { name: "Spirit Siphon",       count: 3 },
+    { name: "Summoning Circle",    count: 3 },
+    { name: "Symbol of Violence",  count: 3 },
+    { name: "Tower Witch",         count: 3 },
+    { name: "False Idol",          count: 3 },
+  ],
 };
 
 let allCards = null;
