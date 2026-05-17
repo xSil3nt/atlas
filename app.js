@@ -24,6 +24,22 @@ const STARTER_DECKS = {
     { name: "Sky Tyrant",        count: 3 },
     { name: "Venerable Alpha",   count: 3 },
   ],
+  Brain: [
+    { name: "Cruel Ruin",             count: 2 },
+    { name: "Defense Systems",        count: 2 },
+    { name: "Altar Familiar",         count: 3 },
+    { name: "Graft",                  count: 3 },
+    { name: "Box of Limbs",           count: 3 },
+    { name: "Brain Blast",            count: 3 },
+    { name: "Cadaver Study",          count: 3 },
+    { name: "Resupply",               count: 3 },
+    { name: "Draw Upon the Well",     count: 3 },
+    { name: "Defense Engineer",       count: 3 },
+    { name: "The Amygdala",           count: 3 },
+    { name: "Neuron Dealer",          count: 3 },
+    { name: "Sigma Falls",            count: 3 },
+    { name: "Warden of Lost Memories",count: 3 },
+  ],
 };
 
 let allCards = null;
