@@ -7,6 +7,25 @@ const RESOURCE_MAX_PECULIAR = 3;
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 
+const STARTER_DECKS = {
+  Heart: [
+    { name: "Ursa Major",        count: 2 },
+    { name: "Wapiti",            count: 2 },
+    { name: "Altar Familiar",    count: 3 },
+    { name: "Graft",             count: 3 },
+    { name: "Box of Limbs",      count: 3 },
+    { name: "Ambush",            count: 3 },
+    { name: "Gloomtongue",       count: 3 },
+    { name: "Gravebind",         count: 3 },
+    { name: "Gravesworn Brawler",count: 3 },
+    { name: "Jumpstart",         count: 3 },
+    { name: "Lycanhead",         count: 3 },
+    { name: "Rabid Hunt",        count: 3 },
+    { name: "Sky Tyrant",        count: 3 },
+    { name: "Venerable Alpha",   count: 3 },
+  ],
+};
+
 let allCards = null;
 let myDeck = {};
 let resourceCounts = {};
@@ -104,6 +123,21 @@ function renderFilterRow() {
     renderGrid();
   });
   el.appendChild(searchInput);
+}
+
+function loadStarterDeck(deckName) {
+  const deck = STARTER_DECKS[deckName];
+  if (!deck || !allCards) return;
+
+  myDeck = {};
+  const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
+  for (const { name, count } of deck) {
+    const card = allMainCards.find(c => c.name === name);
+    if (card) myDeck[card.url] = { ...card, count };
+  }
+
+  if (activeTab !== "All") switchTab("All");
+  else { renderGrid(); renderSidebar(); }
 }
 
 function switchTab(tab) {
@@ -591,6 +625,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll(".nav-tab").forEach(btn => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  document.querySelectorAll(".starter-deck-btn").forEach(btn => {
+    btn.addEventListener("click", () => loadStarterDeck(btn.dataset.deck));
   });
 
   document.getElementById("export-btn").addEventListener("click", exportAtlas);

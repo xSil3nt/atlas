@@ -56,6 +56,36 @@ header h1 {
   white-space: nowrap;
 }
 
+#starter-deck-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.starter-deck-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.starter-deck-btn {
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.starter-deck-H:hover { border-color: var(--c-h); color: var(--c-h); }
+.starter-deck-S:hover { border-color: var(--c-s); color: var(--c-s); }
+.starter-deck-Br:hover { border-color: var(--c-br); color: var(--c-br); }
+.starter-deck-E:hover { border-color: var(--c-e); color: var(--c-e); }
+
 #header-nav {
   margin-left: auto;
   display: flex;
