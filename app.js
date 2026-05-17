@@ -233,6 +233,7 @@ function loadStarterDeck(deckName) {
     if (card) myDeck[card.url] = { ...card, count };
   }
 
+  clearAtlasLink();
   if (activeTab !== "All") switchTab("All");
   else { renderGrid(); renderSidebar(); }
 }
@@ -383,6 +384,7 @@ function addCard(card) {
   if (entry) entry.count++;
   else myDeck[card.url] = { url: card.url, name: card.name, folder: card.folder, resources: card.resources, count: 1 };
 
+  clearAtlasLink();
   renderGrid();
   renderSidebar();
 }
@@ -392,6 +394,7 @@ function removeCard(cardUrl) {
   if (!entry) return;
   if (entry.count > 1) entry.count--;
   else delete myDeck[cardUrl];
+  clearAtlasLink();
   if (!isResourceTab()) renderGrid();
   renderSidebar();
 }
@@ -410,6 +413,7 @@ function addResourceCard(card) {
   }
 
   resourceCounts[card.url] = count + 1;
+  clearAtlasLink();
   renderGrid();
   renderSidebar();
 }
@@ -418,6 +422,7 @@ function removeResourceCard(cardUrl) {
   if ((resourceCounts[cardUrl] ?? 0) === 0) return;
   resourceCounts[cardUrl]--;
   if (resourceCounts[cardUrl] === 0) delete resourceCounts[cardUrl];
+  clearAtlasLink();
   if (isResourceTab()) renderGrid();
   renderSidebar();
 }
@@ -602,6 +607,18 @@ function buildAtlasBlob(imageUrls, backUrl = null) {
   });
 }
 
+function showAtlasLink(url) {
+  const row = document.getElementById("atlas-link-row");
+  document.getElementById("atlas-link-input").value = url;
+  row.style.display = "flex";
+}
+
+function clearAtlasLink() {
+  const row = document.getElementById("atlas-link-row");
+  row.style.display = "none";
+  document.getElementById("atlas-link-input").value = "";
+}
+
 function copyText(text) {
   if (navigator.clipboard?.writeText) {
     return navigator.clipboard.writeText(text).catch(() => copyTextFallback(text));
@@ -655,6 +672,7 @@ async function uploadAtlasAndCopyLink(imageUrls, backUrl, btnId) {
     if (!data.success) throw new Error("imgbb rejected upload");
 
     await copyText(data.data.url);
+    showAtlasLink(data.data.url);
     btn.textContent = "Link copied!";
   } catch (e) {
     console.error(e);
@@ -804,15 +822,27 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("share-btn").addEventListener("click", copyDeckLink);
   document.getElementById("export-btn").addEventListener("click", exportAtlas);
   document.getElementById("export-resource-btn").addEventListener("click", exportResourceAtlas);
+  document.getElementById("atlas-link-copy").addEventListener("click", () => {
+    const url = document.getElementById("atlas-link-input").value;
+    if (!url) return;
+    copyText(url);
+    const btn = document.getElementById("atlas-link-copy");
+    const orig = btn.textContent;
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+
   document.getElementById("clear-btn").addEventListener("click", () => {
     if (isResourceTab()) {
       if (Object.keys(resourceCounts).length === 0) return;
       resourceCounts = {};
+      clearAtlasLink();
       renderGrid();
       renderSidebar();
     } else {
       if (Object.keys(myDeck).length === 0) return;
       myDeck = {};
+      clearAtlasLink();
       renderGrid();
       renderSidebar();
     }
