@@ -2,9 +2,8 @@
 // We fetch it as a raw file (no GitHub tree API, no token, no rate limit) and
 // stamp image URLs onto each entry.
 //
-// CARDS_REF points at the branch/tag holding the data. Flip this to "main"
-// once the metadata-overhaul branch is merged.
-const CARDS_REF = "metadata-overhaul";
+// CARDS_REF points at the branch/tag holding the data.
+const CARDS_REF = "main";
 const REPO = "xSil3nt/lifestitchr-cards";
 
 function rawUrl(path) {
