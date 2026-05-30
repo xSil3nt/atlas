@@ -744,11 +744,11 @@ async function exportResourceAtlas() {
   await uploadAtlasAndCopyLink(flat, allCards?.backs?.resource ?? null, "export-resource-btn");
 }
 
-// ---- card preview (Z + hover) ----
+// ---- card preview (Z / Alt + hover) ----
 
 let hoveredCard = null;
 let mouseX = 0, mouseY = 0;
-let zHeld = false;
+const previewKeysHeld = new Set(); // hold Z or Alt to preview the hovered card
 
 const PREVIEW_SIZE_MIN = 20; // vh
 const PREVIEW_SIZE_MAX = 90; // vh
@@ -763,6 +763,12 @@ previewDetails.className = "preview-details";
 previewEl.append(previewImg, previewDetails);
 document.body.appendChild(previewEl);
 
+function previewKeyName(key) {
+  if (key === "z" || key === "Z") return "z";
+  if (key === "Alt") return "alt";
+  return null;
+}
+
 document.addEventListener("mousemove", e => {
   mouseX = e.clientX;
   mouseY = e.clientY;
@@ -770,22 +776,29 @@ document.addEventListener("mousemove", e => {
 });
 
 document.addEventListener("keydown", e => {
-  if ((e.key === "z" || e.key === "Z") && !e.shiftKey && !zHeld) {
-    zHeld = true;
-    e.preventDefault();
-    if (hoveredCard) showPreview(hoveredCard);
-  }
+  const key = previewKeyName(e.key);
+  if (!key || e.shiftKey || previewKeysHeld.has(key)) return;
+  previewKeysHeld.add(key);
+  e.preventDefault();
+  if (hoveredCard) showPreview(hoveredCard);
 });
 
 document.addEventListener("keyup", e => {
-  if (e.key === "z" || e.key === "Z") {
-    zHeld = false;
-    hidePreview();
-  }
+  const key = previewKeyName(e.key);
+  if (!key) return;
+  previewKeysHeld.delete(key);
+  if (previewKeysHeld.size === 0) hidePreview();
+});
+
+// releasing a key while the window is unfocused (alt-tab) never fires keyup,
+// which would leave the preview stuck open — clear it on blur
+window.addEventListener("blur", () => {
+  previewKeysHeld.clear();
+  hidePreview();
 });
 
 document.addEventListener("wheel", e => {
-  if (!zHeld || !previewEl.classList.contains("visible")) return;
+  if (previewKeysHeld.size === 0 || !previewEl.classList.contains("visible")) return;
   e.preventDefault();
   const delta = e.deltaY > 0 ? -3 : 3;
   previewSizeVh = Math.min(PREVIEW_SIZE_MAX, Math.max(PREVIEW_SIZE_MIN, previewSizeVh + delta));
@@ -880,7 +893,7 @@ function positionPreview() {
 function attachPreviewListeners(slot, card) {
   slot.addEventListener("mouseenter", () => {
     hoveredCard = card;
-    if (zHeld) showPreview(card);
+    if (previewKeysHeld.size > 0) showPreview(card);
   });
   slot.addEventListener("mouseleave", () => {
     hoveredCard = null;
