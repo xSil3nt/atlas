@@ -439,20 +439,13 @@ header h1 {
 
 .breakdown-chip strong { color: var(--text); }
 
-/* resource pips (small colored dots used in breakdown + card details) */
-.pip {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
+/* resource token icons (used in breakdown + card details + ability text) */
+.rtoken {
+  height: 1.1em;
+  width: auto;
+  vertical-align: -0.2em;
   flex-shrink: 0;
-  display: inline-block;
 }
-
-.pip-Blood { background: var(--c-bl); }
-.pip-Heart { background: var(--c-h);  }
-.pip-Brain { background: var(--c-br); }
-.pip-Soul  { background: var(--c-s);  }
-.pip-Eye   { background: var(--c-e); border: 1px solid #888; }
 
 #deck-list {
   flex: 1;
@@ -702,8 +695,7 @@ header h1 {
   white-space: pre-line;
 }
 
-.detail-ability .pip {
-  vertical-align: -1px;
+.detail-ability .rtoken {
   margin: 0 1px;
 }
 

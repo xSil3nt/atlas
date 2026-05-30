@@ -80,6 +80,7 @@ let myDeck = {};
 let resourceCounts = {};
 let activeTab = "All";
 let searchQuery = "";
+let searchGroups = null;
 let activeFilters = new Set();
 let exclusiveFilter = false;
 
@@ -206,10 +207,11 @@ function renderFilterRow() {
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.id = "search-input";
-  searchInput.placeholder = "search name, ability, artist…";
+  searchInput.placeholder = "search… (try uwais OR eg)";
   searchInput.value = searchQuery;
   searchInput.addEventListener("input", e => {
     searchQuery = e.target.value;
+    searchGroups = parseQuery(searchQuery);
     renderGrid();
   });
   el.appendChild(searchInput);
@@ -234,6 +236,7 @@ function loadStarterDeck(deckName) {
 function switchTab(tab) {
   activeTab = tab;
   searchQuery = "";
+  searchGroups = null;
   activeFilters.clear();
   const searchInput = document.getElementById("search-input");
   if (searchInput) searchInput.value = "";
@@ -251,8 +254,8 @@ function isSearchActive() {
   return searchQuery.trim() !== "" || activeFilters.size > 0;
 }
 
-function cardSearchText(card) {
-  return [
+function cardSearchData(card) {
+  const text = [
     card.name,
     card.type,
     card.artist,
@@ -260,11 +263,46 @@ function cardSearchText(card) {
     ...(card.subtypes ?? []),
     ...(card.keywords ?? []),
   ].filter(Boolean).join(" ").toLowerCase();
+  return { text, words: text.split(/[^a-z0-9]+/).filter(Boolean) };
+}
+
+// A bare term matches a card if any word starts with it (so "eg" hits the
+// artist "eg" but not "regenerator", and "soar" still finds "Soaring").
+// A quoted phrase keeps its spaces and matches as a plain substring.
+function termMatches(term, data) {
+  if (term.includes(" ")) return data.text.includes(term);
+  return data.words.some(w => w.startsWith(term));
+}
+
+// Parse a query into OR-groups of AND-terms. Uppercase OR / AND are operators;
+// space between terms is an implicit AND; double quotes keep a phrase together.
+// A card matches if any group matches, and a group matches if all its terms do.
+//   uwais OR eg          -> [[uwais], [eg]]
+//   draw card            -> [[draw, card]]
+//   "quick scheme" OR eg -> [[quick scheme], [eg]]
+function parseQuery(raw) {
+  const q = raw.trim();
+  if (!q) return null;
+
+  return q.split(/\s+OR\s+/)
+    .map(group => {
+      const terms = [];
+      for (const m of group.matchAll(/"([^"]+)"|(\S+)/g)) {
+        if (m[1] != null) terms.push(m[1].toLowerCase());
+        else if (m[2] !== "AND") terms.push(m[2].toLowerCase());
+      }
+      return terms;
+    })
+    .filter(group => group.length > 0);
 }
 
 function matchesFilter(card) {
-  const query = searchQuery.toLowerCase().trim();
-  const searchMatch = query === "" || cardSearchText(card).includes(query);
+  let searchMatch = true;
+  if (searchGroups && searchGroups.length) {
+    const data = cardSearchData(card);
+    searchMatch = searchGroups.some(group => group.every(term => termMatches(term, data)));
+  }
+
   let filterMatch = true;
   if (activeFilters.size > 0) {
     filterMatch = exclusiveFilter
@@ -440,6 +478,10 @@ function showWarning(msg) {
   el._timer = setTimeout(() => el.classList.remove("visible"), 2200);
 }
 
+function resourceIcon(resource) {
+  return `<img class="rtoken" src="tokens/${resource.toLowerCase()}.png" alt="${resource}" title="${resource}">`;
+}
+
 function deckResourceCost() {
   const totals = { Blood: 0, Heart: 0, Brain: 0, Soul: 0, Eye: 0 };
   for (const entry of Object.values(myDeck)) {
@@ -463,7 +505,7 @@ function renderBreakdown(prefixLabel) {
   }
 
   const chips = present
-    .map(r => `<span class="breakdown-chip"><span class="pip pip-${r}"></span>${totals[r]}</span>`)
+    .map(r => `<span class="breakdown-chip">${resourceIcon(r)}${totals[r]}</span>`)
     .join("");
   breakdown.innerHTML = (prefixLabel ? `<span class="breakdown-label">${prefixLabel}</span>` : "") + chips;
   breakdown.style.display = "flex";
@@ -763,8 +805,7 @@ const TAG_TO_RESOURCE = { blood: "Blood", brain: "Brain", soul: "Soul", eye: "Ey
 
 function renderAbilityText(text) {
   return escapeHtml(text).replace(/&lt;(blood|brain|soul|eye|heart)&gt;/g, (_, tag) => {
-    const r = TAG_TO_RESOURCE[tag];
-    return `<span class="pip pip-${r}" title="${r}"></span>`;
+    return resourceIcon(TAG_TO_RESOURCE[tag]);
   });
 }
 
@@ -773,14 +814,14 @@ function renderCardDetails(card) {
 
   let typeline = card.type ? escapeHtml(card.type) : "";
   if (card.subtypes?.length) {
-    typeline += ` <span class="detail-sub">| ${escapeHtml(card.subtypes.join(" & "))}</span>`;
+    typeline += ` <span class="detail-sub">| ${escapeHtml(card.subtypes.join(" "))}</span>`;
   }
   if (typeline) parts.push(`<div class="detail-type">${typeline}</div>`);
 
   if (card.cost && Object.keys(card.cost).length) {
     const pips = RESOURCES
       .filter(r => card.cost[r])
-      .map(r => `<span class="cost-pip"><span class="pip pip-${r}"></span>${card.cost[r]}</span>`)
+      .map(r => `<span class="cost-pip">${resourceIcon(r)}${card.cost[r]}</span>`)
       .join("");
     if (pips) parts.push(`<div class="detail-cost">${pips}</div>`);
   }
