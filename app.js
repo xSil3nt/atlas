@@ -207,7 +207,7 @@ function renderFilterRow() {
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.id = "search-input";
-  searchInput.placeholder = "search… (try uwais OR eg)";
+  searchInput.placeholder = "Search cards…";
   searchInput.value = searchQuery;
   searchInput.addEventListener("input", e => {
     searchQuery = e.target.value;
@@ -215,6 +215,63 @@ function renderFilterRow() {
     renderGrid();
   });
   el.appendChild(searchInput);
+
+  const searchHelper = document.createElement("div");
+  searchHelper.id = "search-helper";
+  searchHelper.className = "search-helper";
+  searchHelper.innerHTML = `
+    <div class="helper-section">
+      <div class="helper-label">Search</div>
+      <div class="helper-row"><code>lord</code> keyword "lord"</div>
+      <div class="helper-row"><code>draw card</code> both words</div>
+    </div>
+    <div class="helper-section">
+      <div class="helper-label">Operators</div>
+      <div class="helper-row"><code>uwais OR eg</code> either artist</div>
+      <div class="helper-row"><code>soar AND cadaverous</code> both words</div>
+      <div class="helper-row"><code>"quick scheme"</code> exact phrase</div>
+    </div>
+    <div class="helper-section">
+      <div class="helper-label">Tips</div>
+      <div class="helper-row"><code>eg</code> finds artist, not "regen"</div>
+      <div class="helper-row"><code>bury</code> finds text or keywords</div>
+    </div>
+  `;
+  searchHelper.style.display = "none";
+  document.body.appendChild(searchHelper);
+
+  searchInput.addEventListener("focus", () => {
+    const rect = searchInput.getBoundingClientRect();
+    searchHelper.style.position = "fixed";
+    searchHelper.style.top = (rect.bottom + 4) + "px";
+    searchHelper.style.right = (window.innerWidth - rect.right) + "px";
+    searchHelper.style.display = "block";
+    setTimeout(() => searchHelper.classList.add("visible"), 0);
+  });
+
+  searchInput.addEventListener("blur", () => {
+    searchHelper.classList.remove("visible");
+    setTimeout(() => searchHelper.style.display = "none", 200);
+  });
+
+  document.addEventListener("click", e => {
+    if (e.target !== searchInput && !searchHelper.contains(e.target)) {
+      searchHelper.classList.remove("visible");
+      setTimeout(() => searchHelper.style.display = "none", 200);
+    }
+  });
+
+  searchInput.addEventListener("focus", () => {
+    searchHelper.classList.add("visible");
+  });
+  searchInput.addEventListener("blur", () => {
+    setTimeout(() => searchHelper.classList.remove("visible"), 100);
+  });
+  document.addEventListener("click", e => {
+    if (!searchInputWrap.contains(e.target)) {
+      searchHelper.classList.remove("visible");
+    }
+  });
 }
 
 function loadStarterDeck(deckName) {
