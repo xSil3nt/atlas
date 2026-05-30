@@ -629,7 +629,7 @@ header h1 {
 
 #card-preview.visible { opacity: 1; }
 
-#card-preview img {
+#card-preview > img {
   display: block;
   height: 60vh;
   width: auto;
