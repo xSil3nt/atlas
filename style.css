@@ -425,15 +425,34 @@ header h1 {
 }
 
 .breakdown-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   background: var(--bg);
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
   padding: 2px 7px;
   font-size: 0.68rem;
-  color: var(--muted);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 .breakdown-chip strong { color: var(--text); }
+
+/* resource pips (small colored dots used in breakdown + card details) */
+.pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.pip-Blood { background: var(--c-bl); }
+.pip-Heart { background: var(--c-h);  }
+.pip-Brain { background: var(--c-br); }
+.pip-Soul  { background: var(--c-s);  }
+.pip-Eye   { background: var(--c-e); border: 1px solid #888; }
 
 #deck-list {
   flex: 1;

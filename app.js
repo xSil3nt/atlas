@@ -440,6 +440,35 @@ function showWarning(msg) {
   el._timer = setTimeout(() => el.classList.remove("visible"), 2200);
 }
 
+function deckResourceCost() {
+  const totals = { Blood: 0, Heart: 0, Brain: 0, Soul: 0, Eye: 0 };
+  for (const entry of Object.values(myDeck)) {
+    if (!entry.cost) continue;
+    for (const [res, n] of Object.entries(entry.cost)) {
+      if (res in totals) totals[res] += n * entry.count;
+    }
+  }
+  return totals;
+}
+
+function renderBreakdown(prefixLabel) {
+  const breakdown = document.getElementById("deck-breakdown");
+  const totals = deckResourceCost();
+  const present = RESOURCES.filter(r => totals[r] > 0);
+
+  if (!present.length) {
+    breakdown.innerHTML = "";
+    breakdown.style.display = "none";
+    return;
+  }
+
+  const chips = present
+    .map(r => `<span class="breakdown-chip"><span class="pip pip-${r}"></span>${totals[r]}</span>`)
+    .join("");
+  breakdown.innerHTML = (prefixLabel ? `<span class="breakdown-label">${prefixLabel}</span>` : "") + chips;
+  breakdown.style.display = "flex";
+}
+
 function renderSidebar() {
   if (isResourceTab()) {
     renderResourceSidebar();
@@ -463,22 +492,7 @@ function renderDeckSidebar() {
   document.getElementById("export-btn").style.display = "";
   document.getElementById("export-resource-btn").style.display = "none";
 
-  const breakdown = document.getElementById("deck-breakdown");
-  if (total > 0) {
-    const counts = FOLDERS.map(folder => ({
-      name: folder,
-      count: Object.values(myDeck)
-        .filter(e => e.folder === folder)
-        .reduce((s, e) => s + e.count, 0),
-    })).filter(d => d.count > 0);
-    breakdown.innerHTML = counts
-      .map(d => `<span class="breakdown-chip">${d.name} <strong>${d.count}</strong></span>`)
-      .join("");
-    breakdown.style.display = "flex";
-  } else {
-    breakdown.innerHTML = "";
-    breakdown.style.display = "none";
-  }
+  renderBreakdown();
 
   const list = document.getElementById("deck-list");
   list.innerHTML = "";
@@ -508,23 +522,7 @@ function renderResourceSidebar() {
   resExportBtn.style.display = "";
   resExportBtn.disabled = !isComplete;
 
-  const breakdown = document.getElementById("deck-breakdown");
-  const total = Object.values(myDeck).reduce((s, e) => s + e.count, 0);
-  if (total > 0) {
-    const counts = FOLDERS.map(folder => ({
-      name: folder,
-      count: Object.values(myDeck)
-        .filter(e => e.folder === folder)
-        .reduce((s, e) => s + e.count, 0),
-    })).filter(d => d.count > 0);
-    breakdown.innerHTML = `<span class="breakdown-label">main deck:</span>` + counts
-      .map(d => `<span class="breakdown-chip">${d.name} <strong>${d.count}</strong></span>`)
-      .join("");
-    breakdown.style.display = "flex";
-  } else {
-    breakdown.innerHTML = "";
-    breakdown.style.display = "none";
-  }
+  renderBreakdown("main deck:");
 
   const list = document.getElementById("deck-list");
   list.innerHTML = "";
