@@ -681,12 +681,13 @@ header h1 {
 .detail-stats {
   display: flex;
   align-items: baseline;
-  gap: 6px;
-  font-size: 1rem;
+  gap: 18px;
+  font-size: 0.95rem;
 }
 
+.detail-stats span { display: inline-flex; align-items: baseline; gap: 5px; }
 .detail-stats strong { font-variant-numeric: tabular-nums; }
-.detail-stats small { font-size: 0.66rem; color: var(--muted); font-weight: 400; }
+.detail-stats small { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
 
 .detail-ability {
   font-size: 0.8rem;

@@ -828,8 +828,10 @@ function renderCardDetails(card) {
 
   if (card.might != null && card.vigor != null) {
     parts.push(
-      `<div class="detail-stats"><strong>${card.might}</strong> / <strong>${card.vigor}</strong>` +
-      `<small>might / vigor</small></div>`
+      `<div class="detail-stats">` +
+      `<span><small>Might:</small> <strong>${card.might}</strong></span>` +
+      `<span><small>Vigor:</small> <strong>${card.vigor}</strong></span>` +
+      `</div>`
     );
   }
 
