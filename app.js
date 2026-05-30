@@ -319,7 +319,7 @@ function renderGrid() {
     }
 
     slot.addEventListener("click", () => addCard(card));
-    attachPreviewListeners(slot, card.url);
+    attachPreviewListeners(slot, card);
     grid.appendChild(slot);
   });
 }
@@ -367,7 +367,7 @@ function renderResourceGrid(grid) {
     }
 
     slot.addEventListener("click", () => addResourceCard(card));
-    attachPreviewListeners(slot, card.url);
+    attachPreviewListeners(slot, card);
     grid.appendChild(slot);
   });
 }
@@ -498,8 +498,7 @@ function renderDeckSidebar() {
   list.innerHTML = "";
   Object.values(myDeck).forEach(entry => {
     list.appendChild(makeDeckRow(
-      entry.url,
-      entry.name,
+      entry,
       entry.count,
       () => removeCard(entry.url),
       () => addCard(entry),
@@ -531,8 +530,7 @@ function renderResourceSidebar() {
     const count = resourceCounts[card.url] ?? 0;
     if (count === 0) return;
     list.appendChild(makeDeckRow(
-      card.url,
-      card.name,
+      card,
       count,
       () => removeResourceCard(card.url),
       () => addResourceCard(card),
@@ -540,19 +538,17 @@ function renderResourceSidebar() {
   });
 }
 
-function makeDeckRow(imgSrc, label, count, onMinus, onPlus) {
+function makeDeckRow(card, count, onMinus, onPlus) {
   const row = document.createElement("div");
   row.className = "deck-row";
 
   const img = document.createElement("img");
   img.crossOrigin = "anonymous";
-  img.src = imgSrc;
+  img.src = card.url;
 
   const name = document.createElement("span");
   name.className = "deck-row-name";
-  name.textContent = label;
-
-
+  name.textContent = card.name;
 
   const minus = document.createElement("button");
   minus.textContent = "−";
@@ -571,6 +567,7 @@ function makeDeckRow(imgSrc, label, count, onMinus, onPlus) {
   controls.append(minus, countSpan, plus);
 
   row.append(img, name, controls);
+  attachPreviewListeners(row, card);
   return row;
 }
 
@@ -707,19 +704,21 @@ async function exportResourceAtlas() {
 
 // ---- card preview (Z + hover) ----
 
-let hoveredImgSrc = null;
+let hoveredCard = null;
 let mouseX = 0, mouseY = 0;
 let zHeld = false;
 
 const PREVIEW_SIZE_MIN = 20; // vh
 const PREVIEW_SIZE_MAX = 90; // vh
-const PREVIEW_SIZE_DEFAULT = 48; // vh
+const PREVIEW_SIZE_DEFAULT = 60; // vh
 let previewSizeVh = PREVIEW_SIZE_DEFAULT;
 
 const previewEl = document.createElement("div");
 previewEl.id = "card-preview";
 const previewImg = document.createElement("img");
-previewEl.appendChild(previewImg);
+const previewDetails = document.createElement("div");
+previewDetails.className = "preview-details";
+previewEl.append(previewImg, previewDetails);
 document.body.appendChild(previewEl);
 
 document.addEventListener("mousemove", e => {
@@ -732,7 +731,7 @@ document.addEventListener("keydown", e => {
   if ((e.key === "z" || e.key === "Z") && !e.shiftKey && !zHeld) {
     zHeld = true;
     e.preventDefault();
-    if (hoveredImgSrc) showPreview(hoveredImgSrc);
+    if (hoveredCard) showPreview(hoveredCard);
   }
 });
 
@@ -752,9 +751,63 @@ document.addEventListener("wheel", e => {
   positionPreview();
 }, { passive: false });
 
-function showPreview(src) {
-  previewImg.src = src;
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+// metadata stores resource symbols as <blood>, <brain> etc. — render them as pips
+const TAG_TO_RESOURCE = { blood: "Blood", brain: "Brain", soul: "Soul", eye: "Eye", heart: "Heart" };
+
+function renderAbilityText(text) {
+  return escapeHtml(text).replace(/&lt;(blood|brain|soul|eye|heart)&gt;/g, (_, tag) => {
+    const r = TAG_TO_RESOURCE[tag];
+    return `<span class="pip pip-${r}" title="${r}"></span>`;
+  });
+}
+
+function renderCardDetails(card) {
+  const parts = [`<div class="detail-name">${escapeHtml(card.name)}</div>`];
+
+  let typeline = card.type ? escapeHtml(card.type) : "";
+  if (card.subtypes?.length) {
+    typeline += ` <span class="detail-sub">| ${escapeHtml(card.subtypes.join(" & "))}</span>`;
+  }
+  if (typeline) parts.push(`<div class="detail-type">${typeline}</div>`);
+
+  if (card.cost && Object.keys(card.cost).length) {
+    const pips = RESOURCES
+      .filter(r => card.cost[r])
+      .map(r => `<span class="cost-pip"><span class="pip pip-${r}"></span>${card.cost[r]}</span>`)
+      .join("");
+    if (pips) parts.push(`<div class="detail-cost">${pips}</div>`);
+  }
+
+  if (card.might != null && card.vigor != null) {
+    parts.push(
+      `<div class="detail-stats"><strong>${card.might}</strong> / <strong>${card.vigor}</strong>` +
+      `<small>might / vigor</small></div>`
+    );
+  }
+
+  if (card.abilityText) {
+    parts.push(`<div class="detail-ability">${renderAbilityText(card.abilityText)}</div>`);
+  }
+
+  const foot = [];
+  if (card.artist) foot.push(`art by ${escapeHtml(card.artist)}`);
+  if (card.id) foot.push(escapeHtml(card.id));
+  if (foot.length) parts.push(`<div class="detail-foot">${foot.join(" · ")}</div>`);
+
+  return parts.join("");
+}
+
+function showPreview(card) {
+  previewImg.src = card.url;
   previewImg.style.height = previewSizeVh + "vh";
+  previewDetails.innerHTML = renderCardDetails(card);
   previewEl.classList.add("visible");
   positionPreview();
 }
@@ -781,13 +834,13 @@ function positionPreview() {
   previewEl.style.top  = y + "px";
 }
 
-function attachPreviewListeners(slot, imgSrc) {
-  slot.addEventListener("mouseenter", e => {
-    hoveredImgSrc = imgSrc;
-    if (e.key === "Z") showPreview(imgSrc);
+function attachPreviewListeners(slot, card) {
+  slot.addEventListener("mouseenter", () => {
+    hoveredCard = card;
+    if (zHeld) showPreview(card);
   });
   slot.addEventListener("mouseleave", () => {
-    hoveredImgSrc = null;
+    hoveredCard = null;
     hidePreview();
   });
 }
