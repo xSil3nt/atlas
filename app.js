@@ -6,6 +6,7 @@ const RESOURCE_DECK_SIZE = 20;
 const RESOURCE_MAX_PECULIAR = 3;
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
+const RESOURCES = ["Blood", "Heart", "Brain", "Soul", "Eye"];
 
 const STARTER_DECKS = {
   Heart: [
@@ -174,21 +175,13 @@ function renderFilterRow() {
   const pillGroup = document.createElement("div");
   pillGroup.className = "filter-pills";
 
-  const pills = [
-    { code: "Bl", label: "Blood" },
-    { code: "H",  label: "Heart" },
-    { code: "Br", label: "Brain" },
-    { code: "S",  label: "Soul"  },
-    { code: "E",  label: "Eye"   },
-  ];
-
-  pills.forEach(({ code, label }) => {
+  RESOURCES.forEach(resource => {
     const btn = document.createElement("button");
-    btn.className = "filter-pill filter-" + code + (activeFilters.has(code) ? " active" : "");
-    btn.textContent = label;
+    btn.className = "filter-pill filter-" + resource + (activeFilters.has(resource) ? " active" : "");
+    btn.textContent = resource;
     btn.addEventListener("click", () => {
-      if (activeFilters.has(code)) activeFilters.delete(code);
-      else activeFilters.add(code);
+      if (activeFilters.has(resource)) activeFilters.delete(resource);
+      else activeFilters.add(resource);
       renderFilterRow();
       renderGrid();
     });
@@ -213,7 +206,7 @@ function renderFilterRow() {
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.id = "search-input";
-  searchInput.placeholder = "search cards…";
+  searchInput.placeholder = "search name, ability, artist…";
   searchInput.value = searchQuery;
   searchInput.addEventListener("input", e => {
     searchQuery = e.target.value;
@@ -258,15 +251,27 @@ function isSearchActive() {
   return searchQuery.trim() !== "" || activeFilters.size > 0;
 }
 
+function cardSearchText(card) {
+  return [
+    card.name,
+    card.type,
+    card.artist,
+    card.abilityText,
+    ...(card.subtypes ?? []),
+    ...(card.keywords ?? []),
+  ].filter(Boolean).join(" ").toLowerCase();
+}
+
 function matchesFilter(card) {
-  const nameMatch = card.name.toLowerCase().includes(searchQuery.toLowerCase().trim());
+  const query = searchQuery.toLowerCase().trim();
+  const searchMatch = query === "" || cardSearchText(card).includes(query);
   let filterMatch = true;
   if (activeFilters.size > 0) {
     filterMatch = exclusiveFilter
       ? card.resources.length === activeFilters.size && card.resources.every(r => activeFilters.has(r))
       : card.resources.length > 0 && card.resources.every(r => activeFilters.has(r));
   }
-  return nameMatch && filterMatch;
+  return searchMatch && filterMatch;
 }
 
 function renderGrid() {
@@ -336,7 +341,7 @@ function renderResourceGrid(grid) {
 
   filtered.forEach(card => {
     const count = resourceCounts[card.url] ?? 0;
-    const isPeculiar = card.type === "peculiar";
+    const isPeculiar = card.resourceType === "peculiar";
     const isMaxed = isPeculiar && count >= RESOURCE_MAX_PECULIAR;
 
     const slot = document.createElement("div");
@@ -382,7 +387,7 @@ function addCard(card) {
   }
 
   if (entry) entry.count++;
-  else myDeck[card.url] = { url: card.url, name: card.name, folder: card.folder, resources: card.resources, count: 1 };
+  else myDeck[card.url] = { ...card, count: 1 };
 
   clearAtlasLink();
   renderGrid();
@@ -403,7 +408,7 @@ function addResourceCard(card) {
   const total = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
   const count = resourceCounts[card.url] ?? 0;
 
-  if (card.type === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
+  if (card.resourceType === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
     showWarning(`max ${RESOURCE_MAX_PECULIAR} copies of a peculiar card`);
     return;
   }

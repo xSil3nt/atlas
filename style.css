@@ -178,22 +178,22 @@ header h1 {
 
 .filter-pill:hover { color: var(--text); border-color: var(--muted2); }
 
-.filter-Bl { --pill-color: var(--c-bl); }
-.filter-H  { --pill-color: var(--c-h);  }
-.filter-Br { --pill-color: var(--c-br); }
-.filter-S  { --pill-color: var(--c-s);  }
-.filter-E  { --pill-color: var(--c-e);  }
+.filter-Blood { --pill-color: var(--c-bl); }
+.filter-Heart { --pill-color: var(--c-h);  }
+.filter-Brain { --pill-color: var(--c-br); }
+.filter-Soul  { --pill-color: var(--c-s);  }
+.filter-Eye   { --pill-color: var(--c-e);  }
 
 .filter-pill:not(.active):hover {
   border-color: var(--pill-color, var(--muted));
   color: var(--text);
 }
 
-.filter-Bl.active { background: var(--c-bl); border-color: var(--c-bl); color: #fff; }
-.filter-H.active  { background: var(--c-h);  border-color: var(--c-h);  color: #fff; }
-.filter-Br.active { background: var(--c-br); border-color: var(--c-br); color: #fff; }
-.filter-S.active  { background: var(--c-s);  border-color: var(--c-s);  color: #fff; }
-.filter-E.active  { background: var(--c-e);  border-color: #aaa;        color: #111; }
+.filter-Blood.active { background: var(--c-bl); border-color: var(--c-bl); color: #fff; }
+.filter-Heart.active { background: var(--c-h);  border-color: var(--c-h);  color: #fff; }
+.filter-Brain.active { background: var(--c-br); border-color: var(--c-br); color: #fff; }
+.filter-Soul.active  { background: var(--c-s);  border-color: var(--c-s);  color: #fff; }
+.filter-Eye.active   { background: var(--c-e);  border-color: #aaa;        color: #111; }
 
 .exclusive-toggle {
   display: flex;
