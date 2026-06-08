@@ -2,58 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Lifestitchr Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-  <h1>Lifestitchr Atlas</h1>
+  <div class="header-brand">
+    <h1>Lifestitchr Atlas</h1>
+    <span class="header-subtitle">Deckbuilder</span>
+  </div>
+  <div id="starter-deck-btns">
+    <button type="button" id="starter-deck-toggle" class="starter-deck-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="starter-deck-menu">
+      Starter Decks
+      <span class="starter-deck-chevron" aria-hidden="true">▾</span>
+    </button>
+    <div id="starter-deck-menu" class="starter-deck-menu" role="menu" hidden>
+      <button type="button" role="menuitem" class="starter-deck-option starter-deck-H" data-deck="Heart">
+        <span class="starter-option-name">Thrill of the Hunt</span>
+        <span class="starter-option-faction">Heart</span>
+      </button>
+      <button type="button" role="menuitem" class="starter-deck-option starter-deck-Br" data-deck="Brain">
+        <span class="starter-option-name">Academia</span>
+        <span class="starter-option-faction">Brain</span>
+      </button>
+      <button type="button" role="menuitem" class="starter-deck-option starter-deck-S" data-deck="Soul">
+        <span class="starter-option-name">Burn Fast, Burn Bright</span>
+        <span class="starter-option-faction">Soul</span>
+      </button>
+      <button type="button" role="menuitem" class="starter-deck-option starter-deck-E" data-deck="Eye">
+        <span class="starter-option-name">And Then There Was One</span>
+        <span class="starter-option-faction">Eye</span>
+      </button>
+    </div>
+  </div>
   <nav id="header-nav">
     <button class="nav-tab active" data-tab="All">Main Deck</button>
     <button class="nav-tab" data-tab="Resource">Resource Deck</button>
   </nav>
-  <div id="starter-deck-btns">
-    <span class="starter-deck-label">Starter Decks:</span>
-    <button class="starter-deck-btn starter-deck-H" data-deck="Heart">Heart</button>
-    <button class="starter-deck-btn starter-deck-Br" data-deck="Brain">Brain</button>
-    <button class="starter-deck-btn starter-deck-S" data-deck="Soul">Soul</button>
-    <button class="starter-deck-btn starter-deck-E" data-deck="Eye">Eye</button>
-  </div>
 </header>
 
 <div id="layout">
   <div id="browser">
     <div id="filter-row"></div>
-    <div id="grid"></div>
-  </div>
-  <aside id="sidebar">
-    <div id="sidebar-top">
-      <h2 id="sidebar-title">Your Deck</h2>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
-        <span id="card-total">0 cards</span>
-        <span id="deck-warning"></span>
+    <div id="grid-wrap">
+      <div id="grid-meta">
+        <span id="results-count"></span>
+      </div>
+      <div id="grid"></div>
+      <div id="keyboard-hints" aria-hidden="true">
+        <span class="hint-item"><kbd>Z</kbd> or <kbd>Alt</kbd> — preview card</span>
+        <span class="hint-sep">·</span>
+        <span class="hint-item"><kbd>Scroll</kbd> — resize preview</span>
+      </div>
+      <div id="touch-hints" aria-hidden="true">
+        <span class="hint-item">Long press a card to preview</span>
       </div>
     </div>
+  </div>
+
+  <div id="drawer-backdrop" hidden></div>
+
+  <aside id="sidebar" aria-labelledby="sidebar-title">
+    <div id="sidebar-top">
+      <h2 id="sidebar-title">Your Deck</h2>
+      <div class="sidebar-meta">
+        <span id="card-total">0 cards</span>
+      </div>
+      <button type="button" id="drawer-close" class="drawer-close" aria-label="Close deck panel">×</button>
+    </div>
+    <div id="deck-progress" role="progressbar" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0">
+      <div id="deck-progress-fill"></div>
+    </div>
     <div id="deck-breakdown"></div>
-    <div id="deck-list"></div>
+    <div id="deck-list-wrap">
+      <div id="deck-empty" class="visible" aria-hidden="false">
+        <div class="deck-empty-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 72" fill="none" aria-hidden="true">
+            <rect x="14" y="6" width="36" height="50" rx="5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.5" transform="rotate(8 32 31)"/>
+            <rect x="8" y="12" width="36" height="50" rx="5" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5"/>
+            <path d="M26 31v8M22 35h8" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p>Tap or click cards to add them to your deck</p>
+      </div>
+      <div id="deck-list"></div>
+    </div>
     <div id="sidebar-bottom">
       <div class="sidebar-btn-row">
-        <button id="share-btn">Share Deck</button>
+        <button id="share-btn" type="button">Share Deck</button>
       </div>
       <div id="atlas-link-row">
-        <input id="atlas-link-input" type="text" readonly>
-        <button id="atlas-link-copy">Copy</button>
+        <input id="atlas-link-input" type="text" readonly aria-label="Atlas image link">
+        <button id="atlas-link-copy" type="button">Copy</button>
       </div>
       <div class="sidebar-btn-row">
-        <button id="clear-btn">Clear</button>
-        <button id="export-btn" disabled>Copy Atlas Link</button>
-        <button id="export-resource-btn" disabled style="display:none">Copy Resource Link</button>
+        <button id="clear-btn" type="button">Clear</button>
+        <button id="export-btn" type="button" disabled>Copy Atlas Link</button>
+        <button id="export-resource-btn" type="button" disabled hidden>Copy Resource Link</button>
       </div>
     </div>
   </aside>
 </div>
+
+<button id="deck-fab" type="button" aria-label="Open deck panel" hidden>
+  Deck <span id="deck-fab-count">0</span>
+</button>
+
+<div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 <script src="app.js"></script>
 </body>
