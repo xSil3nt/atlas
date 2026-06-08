@@ -3,3 +3,5 @@ imgbb.key
 .venv/
 __pycache__/
 lifestitchr-cards/
+.vercel
+.env*
