@@ -959,7 +959,10 @@ async function exportResourceAtlas() {
   await uploadAtlasAndCopyLink(flat, allCards?.backs?.resource ?? null, "export-resource-btn");
 }
 
-// ---- card preview (Z / Alt + hover) ----
+// ---- card preview (Z / Alt + hover on desktop, long-press modal on touch) ----
+
+const LONG_PRESS_MS = 200;
+const LONG_PRESS_MOVE_TOLERANCE = 14;
 
 function isTouchPreview() {
   return window.matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -995,6 +998,65 @@ previewDetails.className = "preview-details";
 previewCardFrame.append(previewImg);
 previewEl.append(previewCardFrame, previewDetails);
 document.body.appendChild(previewEl);
+
+const previewModal = document.createElement("div");
+previewModal.id = "preview-modal";
+previewModal.setAttribute("role", "dialog");
+previewModal.setAttribute("aria-modal", "true");
+previewModal.setAttribute("aria-hidden", "true");
+previewModal.innerHTML = `
+  <div class="preview-modal-backdrop"></div>
+  <div class="preview-modal-panel">
+    <button type="button" class="preview-modal-close" aria-label="Close preview">×</button>
+    <div class="preview-modal-body">
+      <div class="preview-modal-art" role="img" aria-label="Card art"></div>
+      <div class="preview-details"></div>
+    </div>
+  </div>
+`;
+document.body.appendChild(previewModal);
+
+const previewModalArt = previewModal.querySelector(".preview-modal-art");
+const previewModalDetails = previewModal.querySelector(".preview-modal-body .preview-details");
+
+blockNativeImageMenu(previewModal);
+blockNativeImageMenu(previewModal.querySelector(".preview-modal-panel"));
+
+function showMobilePreview(card) {
+  const label = card.name ?? "Card preview";
+  previewModalArt.style.backgroundImage = `url("${card.url}")`;
+  previewModalArt.setAttribute("aria-label", label);
+  previewModalDetails.innerHTML = renderCardDetails(card);
+  previewModal.classList.add("open");
+  previewModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function hideMobilePreview() {
+  previewModal.classList.remove("open");
+  previewModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+previewModal.querySelector(".preview-modal-backdrop").addEventListener("click", hideMobilePreview);
+previewModal.querySelector(".preview-modal-close").addEventListener("click", hideMobilePreview);
+
+function closeStarterMenu() {
+  const menu = document.getElementById("starter-deck-menu");
+  const toggle = document.getElementById("starter-deck-toggle");
+  if (!menu || menu.hidden) return false;
+  menu.hidden = true;
+  toggle?.classList.remove("open");
+  toggle?.setAttribute("aria-expanded", "false");
+  return true;
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (previewModal.classList.contains("open")) hideMobilePreview();
+  else if (closeStarterMenu()) { /* closed */ }
+  else if (deckDrawerOpen) closeDeckDrawer();
+});
 
 function previewKeyName(key) {
   if (key === "z" || key === "Z") return "z";
@@ -1148,6 +1210,52 @@ function attachPreviewListeners(slot, card) {
     if (hoveredCard === card) hoveredCard = null;
     if (previewKeysHeld.size === 0) hidePreview();
   });
+
+  if (!isTouchPreview()) return;
+
+  let pressTimer = null;
+  let suppressClick = false;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  slot.addEventListener("touchstart", e => {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    suppressClick = false;
+    pressTimer = setTimeout(() => {
+      suppressClick = true;
+      showMobilePreview(card);
+      if (navigator.vibrate) navigator.vibrate(12);
+    }, LONG_PRESS_MS);
+  }, { passive: true });
+
+  slot.addEventListener("touchmove", e => {
+    if (!pressTimer || e.touches.length !== 1) return;
+    const t = e.touches[0];
+    if (Math.hypot(t.clientX - touchStartX, t.clientY - touchStartY) > LONG_PRESS_MOVE_TOLERANCE) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }, { passive: true });
+
+  const endPress = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  };
+
+  slot.addEventListener("touchend", endPress);
+  slot.addEventListener("touchcancel", endPress);
+
+  slot.addEventListener("click", e => {
+    if (!suppressClick) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    suppressClick = false;
+  }, true);
 }
 
 function copyDeckLink() {
@@ -1181,12 +1289,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const starterMenu = document.getElementById("starter-deck-menu");
   const starterContainer = document.getElementById("starter-deck-btns");
 
-  function closeStarterMenu() {
-    starterMenu.hidden = true;
-    starterToggle.classList.remove("open");
-    starterToggle.setAttribute("aria-expanded", "false");
-  }
-
   function openStarterMenu() {
     starterMenu.hidden = false;
     starterToggle.classList.add("open");
@@ -1208,12 +1310,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("click", e => {
     if (!starterContainer.contains(e.target)) closeStarterMenu();
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key !== "Escape") return;
-    if (!starterMenu.hidden) closeStarterMenu();
-    else if (deckDrawerOpen) closeDeckDrawer();
   });
 
   document.getElementById("share-btn").addEventListener("click", copyDeckLink);
