@@ -84,6 +84,101 @@ let searchGroups = null;
 let costFilters = null;
 let activeFilters = new Set();
 let exclusiveFilter = false;
+let deckDrawerOpen = false;
+
+function isMobileLayout() {
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+function showToast(msg, type = "info") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+  const toast = document.createElement("div");
+  toast.className = "toast " + type;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 2800);
+}
+
+function showWarning(msg) {
+  showToast(msg, "warning");
+}
+
+function updateDeckProgress(current, max) {
+  const bar = document.getElementById("deck-progress");
+  const fill = document.getElementById("deck-progress-fill");
+  if (!bar || !fill) return;
+  const pct = max > 0 ? Math.min(100, (current / max) * 100) : 0;
+  fill.style.width = pct + "%";
+  bar.setAttribute("aria-valuenow", String(current));
+  bar.setAttribute("aria-valuemax", String(max));
+  bar.classList.toggle("near-max", current >= max * 0.85 && current < max);
+  bar.classList.toggle("complete", current >= max && max > 0);
+}
+
+function updateResultsCount(count) {
+  const el = document.getElementById("results-count");
+  if (!el) return;
+  el.textContent = count > 0 ? `${count} card${count !== 1 ? "s" : ""}` : "";
+}
+
+function updateDeckEmpty(isEmpty) {
+  const empty = document.getElementById("deck-empty");
+  if (!empty) return;
+  empty.classList.toggle("visible", isEmpty);
+  empty.setAttribute("aria-hidden", isEmpty ? "false" : "true");
+}
+
+function updateDeckFab(count) {
+  const fabCount = document.getElementById("deck-fab-count");
+  if (!fabCount) return;
+  fabCount.textContent = count;
+  updateDrawerA11y();
+}
+
+function updateDrawerA11y() {
+  const sidebar = document.getElementById("sidebar");
+  const fab = document.getElementById("deck-fab");
+  if (!sidebar || !fab) return;
+  if (!isMobileLayout()) {
+    sidebar.removeAttribute("aria-hidden");
+    fab.hidden = true;
+    fab.removeAttribute("aria-expanded");
+    fab.setAttribute("aria-label", "Open deck panel");
+    return;
+  }
+  fab.hidden = deckDrawerOpen;
+  sidebar.setAttribute("aria-hidden", deckDrawerOpen ? "false" : "true");
+  fab.setAttribute("aria-expanded", deckDrawerOpen ? "true" : "false");
+  fab.setAttribute("aria-label", deckDrawerOpen ? "Close deck panel" : "Open deck panel");
+}
+
+function openDeckDrawer() {
+  deckDrawerOpen = true;
+  document.getElementById("sidebar")?.classList.add("drawer-open");
+  const backdrop = document.getElementById("drawer-backdrop");
+  if (backdrop) {
+    backdrop.hidden = false;
+    backdrop.classList.add("visible");
+  }
+  updateDrawerA11y();
+}
+
+function closeDeckDrawer() {
+  deckDrawerOpen = false;
+  document.getElementById("sidebar")?.classList.remove("drawer-open");
+  const backdrop = document.getElementById("drawer-backdrop");
+  if (backdrop) {
+    backdrop.classList.remove("visible");
+    backdrop.hidden = true;
+  }
+  updateDrawerA11y();
+}
+
+function toggleDeckDrawer() {
+  if (deckDrawerOpen) closeDeckDrawer();
+  else openDeckDrawer();
+}
 
 async function loadCards() {
   const grid = document.getElementById("grid");
@@ -169,6 +264,76 @@ function renderNavTabs() {
   });
 }
 
+let searchHelperEl = null;
+let searchHelperDismissWired = false;
+
+function ensureSearchHelper() {
+  if (searchHelperEl) return searchHelperEl;
+  searchHelperEl = document.createElement("div");
+  searchHelperEl.id = "search-helper";
+  searchHelperEl.innerHTML = `
+    <div class="helper-section">
+      <div class="helper-label">Search</div>
+      <div class="helper-row"><code>lord</code> keyword "lord"</div>
+      <div class="helper-row"><code>draw card</code> both words</div>
+    </div>
+    <div class="helper-section">
+      <div class="helper-label">Operators</div>
+      <div class="helper-row"><code>uwais OR eg</code> either artist</div>
+      <div class="helper-row"><code>soar AND cadaverous</code> both words</div>
+      <div class="helper-row"><code>"quick scheme"</code> exact phrase</div>
+    </div>
+    <div class="helper-section">
+      <div class="helper-label">Cost</div>
+      <div class="helper-row"><code>blood<2</code> blood cost less than 2</div>
+      <div class="helper-row"><code>heart>=3</code> heart cost 3 or more</div>
+    </div>
+    <div class="helper-section">
+      <div class="helper-label">Tips</div>
+      <div class="helper-row"><code>eg</code> finds artist, not "regen"</div>
+      <div class="helper-row"><code>bury</code> finds text or keywords</div>
+    </div>
+  `;
+  searchHelperEl.style.display = "none";
+  document.body.appendChild(searchHelperEl);
+  return searchHelperEl;
+}
+
+function positionSearchHelper(input) {
+  const helper = ensureSearchHelper();
+  const rect = input.getBoundingClientRect();
+  helper.style.position = "fixed";
+  helper.style.top = (rect.bottom + 4) + "px";
+  helper.style.right = (window.innerWidth - rect.right) + "px";
+}
+
+function showSearchHelper(input) {
+  if (isTouchPreview()) return;
+  const helper = ensureSearchHelper();
+  positionSearchHelper(input);
+  helper.style.display = "block";
+  requestAnimationFrame(() => helper.classList.add("visible"));
+}
+
+function hideSearchHelper() {
+  if (!searchHelperEl) return;
+  searchHelperEl.classList.remove("visible");
+  setTimeout(() => {
+    if (!searchHelperEl.classList.contains("visible")) searchHelperEl.style.display = "none";
+  }, 150);
+}
+
+function wireSearchHelperDismiss() {
+  if (searchHelperDismissWired) return;
+  searchHelperDismissWired = true;
+  document.addEventListener("click", e => {
+    if (!searchHelperEl?.classList.contains("visible")) return;
+    const input = document.getElementById("search-input");
+    if (input?.contains(e.target) || searchHelperEl.contains(e.target)) return;
+    hideSearchHelper();
+  });
+}
+
 function renderFilterRow() {
   const el = document.getElementById("filter-row");
   if (!el) return;
@@ -205,6 +370,9 @@ function renderFilterRow() {
   exclusiveLabel.append("exact");
   el.appendChild(exclusiveLabel);
 
+  const searchWrap = document.createElement("div");
+  searchWrap.className = "search-wrap";
+
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.id = "search-input";
@@ -217,69 +385,12 @@ function renderFilterRow() {
     costFilters = parsed?.costFilters ?? null;
     renderGrid();
   });
-  el.appendChild(searchInput);
+  searchInput.addEventListener("focus", () => showSearchHelper(searchInput));
+  searchInput.addEventListener("blur", hideSearchHelper);
+  searchWrap.appendChild(searchInput);
+  el.appendChild(searchWrap);
 
-  const searchHelper = document.createElement("div");
-  searchHelper.id = "search-helper";
-  searchHelper.className = "search-helper";
-  searchHelper.innerHTML = `
-    <div class="helper-section">
-      <div class="helper-label">Search</div>
-      <div class="helper-row"><code>lord</code> keyword "lord"</div>
-      <div class="helper-row"><code>draw card</code> both words</div>
-    </div>
-    <div class="helper-section">
-      <div class="helper-label">Operators</div>
-      <div class="helper-row"><code>uwais OR eg</code> either artist</div>
-      <div class="helper-row"><code>soar AND cadaverous</code> both words</div>
-      <div class="helper-row"><code>"quick scheme"</code> exact phrase</div>
-    </div>
-    <div class="helper-section">
-      <div class="helper-label">Cost</div>
-      <div class="helper-row"><code>blood<2</code> blood cost less than 2</div>
-      <div class="helper-row"><code>heart>=3</code> heart cost 3 or more</div>
-    </div>
-    <div class="helper-section">
-      <div class="helper-label">Tips</div>
-      <div class="helper-row"><code>eg</code> finds artist, not "regen"</div>
-      <div class="helper-row"><code>bury</code> finds text or keywords</div>
-    </div>
-  `;
-  searchHelper.style.display = "none";
-  document.body.appendChild(searchHelper);
-
-  searchInput.addEventListener("focus", () => {
-    const rect = searchInput.getBoundingClientRect();
-    searchHelper.style.position = "fixed";
-    searchHelper.style.top = (rect.bottom + 4) + "px";
-    searchHelper.style.right = (window.innerWidth - rect.right) + "px";
-    searchHelper.style.display = "block";
-    setTimeout(() => searchHelper.classList.add("visible"), 0);
-  });
-
-  searchInput.addEventListener("blur", () => {
-    searchHelper.classList.remove("visible");
-    setTimeout(() => searchHelper.style.display = "none", 200);
-  });
-
-  document.addEventListener("click", e => {
-    if (e.target !== searchInput && !searchHelper.contains(e.target)) {
-      searchHelper.classList.remove("visible");
-      setTimeout(() => searchHelper.style.display = "none", 200);
-    }
-  });
-
-  searchInput.addEventListener("focus", () => {
-    searchHelper.classList.add("visible");
-  });
-  searchInput.addEventListener("blur", () => {
-    setTimeout(() => searchHelper.classList.remove("visible"), 100);
-  });
-  document.addEventListener("click", e => {
-    if (!searchInputWrap.contains(e.target)) {
-      searchHelper.classList.remove("visible");
-    }
-  });
+  wireSearchHelperDismiss();
 }
 
 function loadStarterDeck(deckName) {
@@ -302,6 +413,7 @@ function switchTab(tab) {
   activeTab = tab;
   searchQuery = "";
   searchGroups = null;
+  costFilters = null;
   activeFilters.clear();
   const searchInput = document.getElementById("search-input");
   if (searchInput) searchInput.value = "";
@@ -416,8 +528,10 @@ function renderGrid() {
   const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
   const cards = allMainCards.filter(matchesFilter);
 
+  updateResultsCount(cards.length);
+
   if (!cards.length) {
-    grid.innerHTML = '<div class="placeholder">no cards found</div>';
+    grid.innerHTML = '<div class="placeholder"><strong>No cards found</strong><small>Try adjusting your filters or search</small></div>';
     return;
   }
 
@@ -432,6 +546,7 @@ function renderGrid() {
     const img = document.createElement("img");
     img.crossOrigin = "anonymous";
     img.src = card.url;
+    prepCardImage(img, card.name);
     slot.appendChild(img);
 
     if (count > 0) {
@@ -458,14 +573,16 @@ function renderResourceGrid(grid) {
   const cards = allCards?.resources ?? [];
 
   if (!cards.length) {
-    grid.innerHTML = '<div class="placeholder">no resource cards</div>';
+    grid.innerHTML = '<div class="placeholder"><strong>No resource cards</strong><small>Card data may still be loading</small></div>';
+    updateResultsCount(0);
     return;
   }
 
   const filtered = isSearchActive() ? cards.filter(matchesFilter) : cards;
+  updateResultsCount(filtered.length);
 
   if (!filtered.length) {
-    grid.innerHTML = '<div class="placeholder">no matching cards</div>';
+    grid.innerHTML = '<div class="placeholder"><strong>No matching cards</strong><small>Try adjusting your filters or search</small></div>';
     return;
   }
 
@@ -480,6 +597,7 @@ function renderResourceGrid(grid) {
     const img = document.createElement("img");
     img.crossOrigin = "anonymous";
     img.src = card.url;
+    prepCardImage(img, card.name);
     slot.appendChild(img);
 
     if (count > 0) {
@@ -562,14 +680,6 @@ function removeResourceCard(cardUrl) {
   renderSidebar();
 }
 
-function showWarning(msg) {
-  const el = document.getElementById("deck-warning");
-  el.textContent = msg;
-  el.classList.add("visible");
-  clearTimeout(el._timer);
-  el._timer = setTimeout(() => el.classList.remove("visible"), 2200);
-}
-
 function resourceIcon(resource) {
   return `<img class="rtoken" src="tokens/${resource.toLowerCase()}.png" alt="${resource}" title="${resource}">`;
 }
@@ -623,8 +733,12 @@ function renderDeckSidebar() {
   totalEl.className = total >= MAX_DECK ? "at-max" : "";
 
   document.getElementById("export-btn").disabled = total === 0;
-  document.getElementById("export-btn").style.display = "";
-  document.getElementById("export-resource-btn").style.display = "none";
+  document.getElementById("export-btn").hidden = false;
+  document.getElementById("export-resource-btn").hidden = true;
+
+  updateDeckProgress(total, MAX_DECK);
+  updateDeckEmpty(total === 0);
+  updateDeckFab(total);
 
   renderBreakdown();
 
@@ -650,10 +764,14 @@ function renderResourceSidebar() {
   totalEl.textContent = `${resTotal} / ${RESOURCE_DECK_SIZE} cards`;
   totalEl.className = isComplete ? "complete" : "";
 
-  document.getElementById("export-btn").style.display = "none";
+  document.getElementById("export-btn").hidden = true;
   const resExportBtn = document.getElementById("export-resource-btn");
-  resExportBtn.style.display = "";
+  resExportBtn.hidden = false;
   resExportBtn.disabled = !isComplete;
+
+  updateDeckProgress(resTotal, RESOURCE_DECK_SIZE);
+  updateDeckEmpty(resTotal === 0);
+  updateDeckFab(resTotal);
 
   renderBreakdown("main deck:");
 
@@ -679,6 +797,7 @@ function makeDeckRow(card, count, onMinus, onPlus) {
   const img = document.createElement("img");
   img.crossOrigin = "anonymous";
   img.src = card.url;
+  prepCardImage(img, card.name);
 
   const name = document.createElement("span");
   name.className = "deck-row-name";
@@ -686,6 +805,7 @@ function makeDeckRow(card, count, onMinus, onPlus) {
 
   const minus = document.createElement("button");
   minus.textContent = "−";
+  minus.setAttribute("aria-label", "Remove one copy");
   minus.addEventListener("click", onMinus);
 
   const countSpan = document.createElement("span");
@@ -694,6 +814,7 @@ function makeDeckRow(card, count, onMinus, onPlus) {
 
   const plus = document.createElement("button");
   plus.textContent = "+";
+  plus.setAttribute("aria-label", "Add one copy");
   plus.addEventListener("click", onPlus);
 
   const controls = document.createElement("div");
@@ -808,9 +929,11 @@ async function uploadAtlasAndCopyLink(imageUrls, backUrl, btnId) {
     await copyText(data.data.url);
     showAtlasLink(data.data.url);
     btn.textContent = "Link copied!";
+    showToast("Atlas link copied to clipboard", "success");
   } catch (e) {
     console.error(e);
     btn.textContent = "Upload failed";
+    showToast("Upload failed — try again", "warning");
   } finally {
     setTimeout(() => { btn.textContent = origText; btn.disabled = false; }, 2000);
   }
@@ -838,6 +961,21 @@ async function exportResourceAtlas() {
 
 // ---- card preview (Z / Alt + hover) ----
 
+function isTouchPreview() {
+  return window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+}
+
+function prepCardImage(img, alt = "") {
+  img.draggable = false;
+  img.alt = alt;
+  img.setAttribute("draggable", "false");
+  img.addEventListener("dragstart", e => e.preventDefault());
+}
+
+function blockNativeImageMenu(el) {
+  el.addEventListener("contextmenu", e => e.preventDefault());
+}
+
 let hoveredCard = null;
 let mouseX = 0, mouseY = 0;
 const previewKeysHeld = new Set(); // hold Z or Alt to preview the hovered card
@@ -849,10 +987,13 @@ let previewSizeVh = PREVIEW_SIZE_DEFAULT;
 
 const previewEl = document.createElement("div");
 previewEl.id = "card-preview";
+const previewCardFrame = document.createElement("div");
+previewCardFrame.className = "preview-card-frame";
 const previewImg = document.createElement("img");
 const previewDetails = document.createElement("div");
 previewDetails.className = "preview-details";
-previewEl.append(previewImg, previewDetails);
+previewCardFrame.append(previewImg);
+previewEl.append(previewCardFrame, previewDetails);
 document.body.appendChild(previewEl);
 
 function previewKeyName(key) {
@@ -953,15 +1094,28 @@ function renderCardDetails(card) {
 }
 
 function showPreview(card) {
+  const opening = !previewEl.classList.contains("visible");
   previewImg.src = card.url;
   previewImg.style.height = previewSizeVh + "vh";
   previewDetails.innerHTML = renderCardDetails(card);
   previewEl.classList.add("visible");
+  if (opening) {
+    previewEl.classList.remove("preview-expanded");
+    previewDetails.addEventListener("transitionend", onPreviewPanelOpen, { once: true });
+  } else {
+    previewEl.classList.add("preview-expanded");
+  }
+  positionPreview();
+}
+
+function onPreviewPanelOpen(e) {
+  if (e.propertyName !== "transform") return;
+  previewEl.classList.add("preview-expanded");
   positionPreview();
 }
 
 function hidePreview() {
-  previewEl.classList.remove("visible");
+  previewEl.classList.remove("visible", "preview-expanded");
 }
 
 function positionPreview() {
@@ -983,13 +1137,16 @@ function positionPreview() {
 }
 
 function attachPreviewListeners(slot, card) {
+  blockNativeImageMenu(slot);
+
   slot.addEventListener("mouseenter", () => {
     hoveredCard = card;
     if (previewKeysHeld.size > 0) showPreview(card);
   });
-  slot.addEventListener("mouseleave", () => {
-    hoveredCard = null;
-    hidePreview();
+  slot.addEventListener("mouseleave", e => {
+    if (e.relatedTarget && slot.contains(e.relatedTarget)) return;
+    if (hoveredCard === card) hoveredCard = null;
+    if (previewKeysHeld.size === 0) hidePreview();
   });
 }
 
@@ -1005,6 +1162,7 @@ function copyDeckLink() {
   if (resEncoded) url.searchParams.set("res", resEncoded);
 
   copyText(url.toString());
+  showToast("Deck link copied to clipboard", "success");
 
   const btn = document.getElementById("share-btn");
   const orig = btn.textContent;
@@ -1019,8 +1177,43 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
 
-  document.querySelectorAll(".starter-deck-btn").forEach(btn => {
-    btn.addEventListener("click", () => loadStarterDeck(btn.dataset.deck));
+  const starterToggle = document.getElementById("starter-deck-toggle");
+  const starterMenu = document.getElementById("starter-deck-menu");
+  const starterContainer = document.getElementById("starter-deck-btns");
+
+  function closeStarterMenu() {
+    starterMenu.hidden = true;
+    starterToggle.classList.remove("open");
+    starterToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openStarterMenu() {
+    starterMenu.hidden = false;
+    starterToggle.classList.add("open");
+    starterToggle.setAttribute("aria-expanded", "true");
+  }
+
+  starterToggle.addEventListener("click", e => {
+    e.stopPropagation();
+    if (starterMenu.hidden) openStarterMenu();
+    else closeStarterMenu();
+  });
+
+  document.querySelectorAll(".starter-deck-option").forEach(btn => {
+    btn.addEventListener("click", () => {
+      loadStarterDeck(btn.dataset.deck);
+      closeStarterMenu();
+    });
+  });
+
+  document.addEventListener("click", e => {
+    if (!starterContainer.contains(e.target)) closeStarterMenu();
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (!starterMenu.hidden) closeStarterMenu();
+    else if (deckDrawerOpen) closeDeckDrawer();
   });
 
   document.getElementById("share-btn").addEventListener("click", copyDeckLink);
@@ -1030,6 +1223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const url = document.getElementById("atlas-link-input").value;
     if (!url) return;
     copyText(url);
+    showToast("Link copied to clipboard", "success");
     const btn = document.getElementById("atlas-link-copy");
     const orig = btn.textContent;
     btn.textContent = "Copied!";
@@ -1043,12 +1237,25 @@ document.addEventListener("DOMContentLoaded", () => {
       clearAtlasLink();
       renderGrid();
       renderSidebar();
+      showToast("Resource deck cleared", "info");
     } else {
       if (Object.keys(myDeck).length === 0) return;
       myDeck = {};
       clearAtlasLink();
       renderGrid();
       renderSidebar();
+      showToast("Deck cleared", "info");
     }
   });
+
+  document.getElementById("deck-fab")?.addEventListener("click", toggleDeckDrawer);
+  document.getElementById("drawer-backdrop")?.addEventListener("click", closeDeckDrawer);
+  document.getElementById("drawer-close")?.addEventListener("click", closeDeckDrawer);
+
+  window.addEventListener("resize", () => {
+    if (!isMobileLayout()) closeDeckDrawer();
+    updateDrawerA11y();
+  });
+
+  updateDrawerA11y();
 });
