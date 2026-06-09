@@ -86,8 +86,10 @@ let activeFilters = new Set();
 let exclusiveFilter = false;
 let deckDrawerOpen = false;
 
+const LAYOUT_BREAKPOINTS = { compact: 1024, narrow: 600 };
+
 function isMobileLayout() {
-  return window.matchMedia("(max-width: 900px)").matches;
+  return window.matchMedia(`(max-width: ${LAYOUT_BREAKPOINTS.compact}px)`).matches;
 }
 
 function showToast(msg, type = "info") {

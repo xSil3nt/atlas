@@ -44,6 +44,9 @@
   --card-art-radius: 5% / 4%;
   --card-preview-zoom: 1.018;
   --preview-panel-overlap: 36px;
+
+  --bp-compact: 1024px;
+  --bp-narrow: 600px;
 }
 
 body {
@@ -1524,6 +1527,7 @@ header h1 {
 #deck-list::-webkit-scrollbar-track { background: transparent; }
 
 /* ---- responsive ---- */
+/* compact (1024px): header grid, deck drawer, denser card grid — all switch together */
 
 @media (max-width: 1024px) {
   header {
@@ -1575,9 +1579,7 @@ header h1 {
     transform: none;
     width: min(320px, calc(100vw - 28px));
   }
-}
 
-@media (max-width: 900px) {
   #layout {
     flex-direction: column;
   }
@@ -1659,6 +1661,8 @@ header h1 {
     width: 180px;
   }
 }
+
+/* narrow (600px): phone typography and spacing only */
 
 @media (max-width: 600px) {
   header h1 { font-size: 0.92rem; }
