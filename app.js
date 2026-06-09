@@ -347,7 +347,12 @@ function renderFilterRow() {
   RESOURCES.forEach(resource => {
     const btn = document.createElement("button");
     btn.className = "filter-pill filter-" + resource + (activeFilters.has(resource) ? " active" : "");
-    btn.textContent = resource;
+    btn.type = "button";
+    btn.title = resource;
+    btn.setAttribute("aria-label", `Filter ${resource}`);
+    btn.innerHTML =
+      `<img class="rtoken filter-pill-icon" src="tokens/${resource.toLowerCase()}.png" alt="">` +
+      `<span class="filter-pill-label">${resource}</span>`;
     btn.addEventListener("click", () => {
       if (activeFilters.has(resource)) activeFilters.delete(resource);
       else activeFilters.add(resource);
@@ -369,7 +374,11 @@ function renderFilterRow() {
     renderGrid();
   });
   exclusiveLabel.appendChild(exclusiveCheck);
-  exclusiveLabel.append("exact");
+  exclusiveLabel.title = "Exact resource match";
+  const exclusiveText = document.createElement("span");
+  exclusiveText.className = "exclusive-label";
+  exclusiveText.textContent = "exact";
+  exclusiveLabel.appendChild(exclusiveText);
   el.appendChild(exclusiveLabel);
 
   const searchWrap = document.createElement("div");
@@ -378,7 +387,7 @@ function renderFilterRow() {
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.id = "search-input";
-  searchInput.placeholder = "Search cards…";
+  searchInput.placeholder = "Search";
   searchInput.value = searchQuery;
   searchInput.addEventListener("input", e => {
     searchQuery = e.target.value;

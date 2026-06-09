@@ -339,6 +339,10 @@ header h1 {
 }
 
 .filter-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   padding: 5px 13px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border);
@@ -350,6 +354,12 @@ header h1 {
   font-family: inherit;
   letter-spacing: 0.02em;
   transition: all var(--transition);
+}
+
+.filter-pill-icon {
+  height: 1.1em;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .filter-pill:hover { color: var(--text); }
@@ -1646,19 +1656,27 @@ header h1 {
   }
 
   #filter-row {
-    overflow-x: auto;
-    scrollbar-width: none;
-    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 8px 12px;
   }
 
-  #filter-row::-webkit-scrollbar { display: none; }
+  .filter-pill-label { display: none; }
+
+  .filter-pill {
+    padding: 6px 7px;
+    min-width: 32px;
+  }
+
+  .filter-pill-icon {
+    height: 18px;
+  }
 
   #search-input {
-    width: 160px;
+    width: min(132px, 30vw);
   }
 
   #search-input:focus {
-    width: 180px;
+    width: min(168px, 40vw);
   }
 }
 
@@ -1668,6 +1686,18 @@ header h1 {
   header h1 { font-size: 0.92rem; }
 
   .header-subtitle { display: none; }
+
+  .exclusive-label { display: none; }
+
+  #filter-row { gap: 6px; }
+
+  #search-input {
+    width: min(108px, 26vw);
+  }
+
+  #search-input:focus {
+    width: min(148px, 38vw);
+  }
 
   .starter-deck-toggle {
     padding: 6px 9px;
