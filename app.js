@@ -1300,28 +1300,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const starterMenu = document.getElementById("starter-deck-menu");
   const starterContainer = document.getElementById("starter-deck-btns");
 
-  function openStarterMenu() {
-    starterMenu.hidden = false;
-    starterToggle.classList.add("open");
-    starterToggle.setAttribute("aria-expanded", "true");
-  }
+  if (starterToggle && starterMenu && starterContainer) {
+    function openStarterMenu() {
+      starterMenu.hidden = false;
+      starterToggle.classList.add("open");
+      starterToggle.setAttribute("aria-expanded", "true");
+    }
 
-  starterToggle.addEventListener("click", e => {
-    e.stopPropagation();
-    if (starterMenu.hidden) openStarterMenu();
-    else closeStarterMenu();
-  });
-
-  document.querySelectorAll(".starter-deck-option").forEach(btn => {
-    btn.addEventListener("click", () => {
-      loadStarterDeck(btn.dataset.deck);
-      closeStarterMenu();
+    starterToggle.addEventListener("click", e => {
+      e.stopPropagation();
+      if (starterMenu.hidden) openStarterMenu();
+      else closeStarterMenu();
     });
-  });
 
-  document.addEventListener("click", e => {
-    if (!starterContainer.contains(e.target)) closeStarterMenu();
-  });
+    document.querySelectorAll(".starter-deck-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        loadStarterDeck(btn.dataset.deck);
+        closeStarterMenu();
+      });
+    });
+
+    document.addEventListener("click", e => {
+      if (!starterContainer.contains(e.target)) closeStarterMenu();
+    });
+  }
 
   document.getElementById("share-btn").addEventListener("click", copyDeckLink);
   document.getElementById("export-btn").addEventListener("click", exportAtlas);

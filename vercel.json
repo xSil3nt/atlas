@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "functions": {
     "api/refresh.js": { "maxDuration": 10 },
     "api/cards.js": { "maxDuration": 15 },
