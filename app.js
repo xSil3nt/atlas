@@ -4,6 +4,7 @@ const MAX_DECK = 40;
 const MAX_COPIES = 3;
 const RESOURCE_DECK_SIZE = 20;
 const RESOURCE_MAX_PECULIAR = 3;
+const UNRESTRICTED_COPIES = document.body?.dataset.unrestrictedCopies === "true";
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 const RESOURCES = ["Blood", "Heart", "Brain", "Soul", "Eye"];
@@ -549,7 +550,7 @@ function renderGrid() {
   cards.forEach(card => {
     const entry = myDeck[card.url];
     const count = entry?.count ?? 0;
-    const isMaxed = count >= MAX_COPIES;
+    const isMaxed = !UNRESTRICTED_COPIES && count >= MAX_COPIES;
 
     const slot = document.createElement("div");
     slot.className = "card-slot" + (isMaxed ? " maxed" : "");
@@ -600,7 +601,7 @@ function renderResourceGrid(grid) {
   filtered.forEach(card => {
     const count = resourceCounts[card.url] ?? 0;
     const isPeculiar = card.resourceType === "peculiar";
-    const isMaxed = isPeculiar && count >= RESOURCE_MAX_PECULIAR;
+    const isMaxed = !UNRESTRICTED_COPIES && isPeculiar && count >= RESOURCE_MAX_PECULIAR;
 
     const slot = document.createElement("div");
     slot.className = "card-slot" + (isMaxed ? " maxed" : "");
@@ -636,7 +637,7 @@ function addCard(card) {
   const entry = myDeck[card.url];
   const copies = entry?.count ?? 0;
 
-  if (copies >= MAX_COPIES) {
+  if (!UNRESTRICTED_COPIES && copies >= MAX_COPIES) {
     showWarning(`max ${MAX_COPIES} copies per card`);
     return;
   }
@@ -667,7 +668,7 @@ function addResourceCard(card) {
   const total = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
   const count = resourceCounts[card.url] ?? 0;
 
-  if (card.resourceType === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
+  if (!UNRESTRICTED_COPIES && card.resourceType === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
     showWarning(`max ${RESOURCE_MAX_PECULIAR} copies of a peculiar card`);
     return;
   }
