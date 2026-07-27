@@ -5,6 +5,7 @@ const MAX_COPIES = 3;
 const RESOURCE_DECK_SIZE = 20;
 const RESOURCE_MAX_PECULIAR = 3;
 const UNRESTRICTED_COPIES = document.body?.dataset.unrestrictedCopies === "true";
+const LYCANHEAD_FEED = document.body?.dataset.mainDeck === "lycanhead-feed";
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 const RESOURCES = ["Blood", "Heart", "Brain", "Soul", "Eye"];
@@ -86,6 +87,7 @@ let costFilters = null;
 let activeFilters = new Set();
 let exclusiveFilter = false;
 let deckDrawerOpen = false;
+let lycanheadFeedObserver = null;
 
 const LAYOUT_BREAKPOINTS = { compact: 1024, narrow: 600 };
 
@@ -530,10 +532,17 @@ function matchesFilter(card) {
 
 function renderGrid() {
   const grid = document.getElementById("grid");
+  lycanheadFeedObserver?.disconnect();
+  document.getElementById("lycanhead-feed-sentinel")?.remove();
   grid.innerHTML = "";
 
   if (isResourceTab()) {
     renderResourceGrid(grid);
+    return;
+  }
+
+  if (LYCANHEAD_FEED) {
+    renderLycanheadFeed(grid);
     return;
   }
 
@@ -547,38 +556,67 @@ function renderGrid() {
     return;
   }
 
-  cards.forEach(card => {
-    const entry = myDeck[card.url];
-    const count = entry?.count ?? 0;
-    const isMaxed = !UNRESTRICTED_COPIES && count >= MAX_COPIES;
+  cards.forEach(card => grid.appendChild(createMainCardSlot(card)));
+}
 
-    const slot = document.createElement("div");
-    slot.className = "card-slot" + (isMaxed ? " maxed" : "");
+function createMainCardSlot(card) {
+  const entry = myDeck[card.url];
+  const count = entry?.count ?? 0;
+  const isMaxed = !UNRESTRICTED_COPIES && count >= MAX_COPIES;
+  const slot = document.createElement("div");
+  slot.className = "card-slot" + (isMaxed ? " maxed" : "");
 
-    const img = document.createElement("img");
-    img.crossOrigin = "anonymous";
-    img.src = card.url;
-    prepCardImage(img, card.name);
-    slot.appendChild(img);
+  const img = document.createElement("img");
+  img.crossOrigin = "anonymous";
+  img.src = card.url;
+  prepCardImage(img, card.name);
+  slot.appendChild(img);
 
-    if (count > 0) {
-      const badge = document.createElement("span");
-      badge.className = "badge";
-      badge.textContent = count;
-      slot.appendChild(badge);
-    }
+  if (count > 0) {
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = count;
+    slot.appendChild(badge);
+  }
 
-    if (isMaxed) {
-      const overlay = document.createElement("span");
-      overlay.className = "max-overlay";
-      overlay.textContent = "max";
-      slot.appendChild(overlay);
-    }
+  if (isMaxed) {
+    const overlay = document.createElement("span");
+    overlay.className = "max-overlay";
+    overlay.textContent = "max";
+    slot.appendChild(overlay);
+  }
 
-    slot.addEventListener("click", () => addCard(card));
-    attachPreviewListeners(slot, card);
-    grid.appendChild(slot);
-  });
+  slot.addEventListener("click", () => addCard(card));
+  attachPreviewListeners(slot, card);
+  return slot;
+}
+
+function renderLycanheadFeed(grid) {
+  const lycanhead = allCards.decks.Heart?.find(card => card.name === "Lycanhead");
+  updateResultsCount(lycanhead ? 1 : 0);
+
+  if (!lycanhead) {
+    grid.innerHTML = '<div class="placeholder"><strong>Lycanhead not found</strong></div>';
+    return;
+  }
+
+  let sentinel = null;
+  const appendBatch = () => {
+    const cards = document.createDocumentFragment();
+    for (let i = 0; i < 24; i++) cards.appendChild(createMainCardSlot(lycanhead));
+    if (sentinel) grid.insertBefore(cards, sentinel);
+    else grid.appendChild(cards);
+  };
+
+  appendBatch();
+  sentinel = document.createElement("div");
+  sentinel.id = "lycanhead-feed-sentinel";
+  sentinel.setAttribute("aria-hidden", "true");
+  grid.appendChild(sentinel);
+  lycanheadFeedObserver = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) appendBatch();
+  }, { root: grid, rootMargin: "800px 0px" });
+  lycanheadFeedObserver.observe(sentinel);
 }
 
 function renderResourceGrid(grid) {
