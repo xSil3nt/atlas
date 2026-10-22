@@ -1176,7 +1176,7 @@ function renderCardDetails(card) {
   }
   if (typeline) parts.push(`<div class="detail-type">${typeline}</div>`);
 
-  if (card.cost && Object.keys(card.cost).length) {
+  if (card.deck !== "corpse" && card.cost && Object.keys(card.cost).length) {
     const pips = RESOURCES
       .filter(r => card.cost[r])
       .map(r => `<span class="cost-pip">${resourceIcon(r)}${card.cost[r]}</span>`)
