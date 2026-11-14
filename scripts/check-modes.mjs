@@ -24,7 +24,7 @@ await page.locator('#result-grid button').first().click();await page.keyboard.pr
 await main();const ownedMain=all.filter(c=>c.deck==='main'&&acquired[c.path]);await expect(page.locator('#grid .card-slot')).toHaveCount(ownedMain.length);
 expect((await page.locator('#grid .card-slot > img').evaluateAll(imgs=>imgs.map(i=>i.getAttribute('src')))).sort()).toEqual(ownedMain.map(c=>c.url).sort());
 const first=ownedMain[0];const slot=page.locator('#grid .card-slot').filter({has:page.locator(`img[alt="${first.name}"]`)});
-for(let i=0;i<5;i++)await slot.click();const limit=Math.min(3,acquired[first.path]);await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);
+for(let i=0;i<=acquired[first.path];i++)await slot.click();const limit=acquired[first.path];await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);
 await page.locator('#deck-list button[aria-label="Add one copy"]').first().click();await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);
 await page.locator('[data-tab=Resource]').click();await expect(page.locator('#grid .card-slot')).toHaveCount(1);expect(await page.locator('#grid .card-slot > img').getAttribute('src')).toBe(all.find(c=>c.deck==='corpse'&&acquired[c.path]).url);for(let i=0;i<4;i++)await page.locator('#grid .card-slot').click();await expect(page.locator('#card-total')).toContainText('1 / 20');
 await main();await page.reload();await expect(page.locator('#mode-menu [data-mode='+'pack'+']')).toHaveAttribute('aria-checked','true');await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);expect((await state()).inventory).toEqual(acquired);

@@ -101,8 +101,8 @@ const modeMenu = mountModeMenu(document.getElementById('atlas-modes'), next => s
 let mode = entry.mode || 'normal', inventory = {}, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
 modeMenu.update(mode, false);
 function owned(card) { return mode === 'pack' ? inventory[identity(card)] || 0 : Infinity; }
-function mainLimit() { return mode === 'anarchy' ? MAX_DECK : MAX_COPIES; }
-function resourceLimit(card) { return mode !== 'anarchy' && card.resourceType === 'peculiar' ? RESOURCE_MAX_PECULIAR : RESOURCE_DECK_SIZE; }
+function mainLimit() { return mode === 'normal' ? MAX_COPIES : MAX_DECK; }
+function resourceLimit(card) { return mode === 'normal' && card.resourceType === 'peculiar' ? RESOURCE_MAX_PECULIAR : RESOURCE_DECK_SIZE; }
 function snapshot() {
   return {main: Object.fromEntries(Object.values(myDeck).map(c => [identity(c), c.count])),
     resource: Object.fromEntries((allCards?.resources || []).map(c => [identity(c), resourceCounts[c.url] || 0]))};
@@ -789,7 +789,7 @@ function addCard(card) {
   const copies = entry?.count ?? 0;
 
   if (copies >= owned(card)) { showWarning('All owned copies are in your deck.'); return; }
-  if (mode !== 'anarchy' && copies >= MAX_COPIES) {
+  if (copies >= mainLimit()) {
     showWarning(`max ${MAX_COPIES} copies per card`);
     return;
   }
@@ -821,7 +821,7 @@ function addResourceCard(card) {
   const count = resourceCounts[card.url] ?? 0;
 
   if (count >= owned(card)) { showWarning('All owned copies are in your deck.'); return; }
-  if (mode !== 'anarchy' && card.resourceType === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
+  if (mode === 'normal' && card.resourceType === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
     showWarning(`max ${RESOURCE_MAX_PECULIAR} copies of a peculiar card`);
     return;
   }
