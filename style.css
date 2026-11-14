@@ -1638,8 +1638,10 @@ header h1 {
 .mode-option-copy {display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;}
 .mode-option-name {font-size:.79rem;font-weight:600;}
 .mode-option-detail {color:var(--muted);font-size:.66rem;line-height:1.35;}
-.mode-check {font-size:.85rem;color:var(--accent-hover);visibility:hidden;}
-[aria-checked="true"] .mode-check {visibility:visible;}
+.mode-check {display:grid;place-items:center;flex:0 0 16px;width:16px;height:16px;border:1.5px solid var(--border);border-radius:50%;}
+.mode-check::after {content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-hover);transform:scale(0);}
+[aria-checked="true"] .mode-check {border-color:var(--accent-hover);}
+[aria-checked="true"] .mode-check::after {transform:scale(1);}
 #starter-decks {padding:14px 16px 10px;flex-shrink:0;}
 #starter-decks[hidden] {display:none;}
 #starter-title {margin:0 0 10px;font-size:.72rem;font-weight:500;color:var(--muted);}
