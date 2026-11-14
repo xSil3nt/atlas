@@ -4,7 +4,7 @@ const origin=process.env.ATLAS_TEST_URL||'http://127.0.0.1:5174';const browser=a
 try{
 const page=await browser.newPage({viewport:{width:1440,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto(origin+'/?mode=normal',{waitUntil:'domcontentloaded'});await expect(page.locator('#results-count')).toHaveText('132 cards');
-await expect(page.locator('.mode-option-name')).toHaveText(['Normal','Pack mode','Anarchy']);
+await expect(page.locator('.mode-option-name')).toHaveText(['Constructed','Limited','Anarchy']);
 await page.evaluate(()=>window.originalHeader=document.querySelector('header'));
 await page.locator('#grid .card-slot').first().click();
 for(const [mode,count,total] of [['anarchy',4,132]]){

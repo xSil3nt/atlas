@@ -16,11 +16,11 @@ The catalog and artwork load from `xSil3nt/lifestitchr-cards` on GitHub.
 
 ## Modes
 
-- Normal: all cards, standard copy limits.
-- Pack mode: opened cards, limited to copies you own.
+- Constructed: all cards, standard copy limits.
+- Limited: opened cards, limited to copies you own.
 - Anarchy: all cards, unrestricted copies within deck size limits.
 
-Each mode keeps separate main and resource decks. Normal offers starter decks
+Each mode keeps separate main and resource decks. Constructed offers starter decks
 when the main deck is empty. Links use `?mode=normal`, `?mode=pack` or
 `?mode=anarchy`; `#packs` opens the pack viewport. Old Packs and Anarchy URLs
 redirect into the same page.
