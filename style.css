@@ -948,7 +948,9 @@ header h1 {
 
 #atlas-link-copy,
 #share-btn,
-#clear-btn {
+#clear-btn,
+#export-btn,
+#export-resource-btn {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -970,23 +972,15 @@ header h1 {
 #export-btn,
 #export-resource-btn {
   flex: 1;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
-  border: none;
-  color: white;
-  padding: 9px 16px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 600;
-  font-family: inherit;
-  transition: opacity var(--transition), box-shadow var(--transition), transform var(--transition);
-  box-shadow: 0 4px 16px var(--accent-glow);
+  background: var(--surface2);
+  color: var(--text);
 }
 
 #export-btn:hover:not(:disabled),
 #export-resource-btn:hover:not(:disabled) {
-  box-shadow: 0 6px 24px var(--accent-glow);
-  transform: translateY(-1px);
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-hover);
 }
 
 #export-btn:disabled,
@@ -1009,30 +1003,34 @@ header h1 {
   bottom: 20px;
   right: 20px;
   z-index: 85;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
-  border: none;
-  border-radius: var(--radius-full);
-  color: white;
-  font-size: 0.85rem;
-  font-weight: 600;
-  font-family: "Outfit", sans-serif;
+  min-height: 44px;
+  padding: 10px 14px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  box-shadow: 0 6px 24px var(--accent-glow);
-  transition: transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
 }
 
 #deck-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px var(--accent-glow);
+  background: var(--surface2);
+  border-color: var(--accent);
+  color: var(--accent-hover);
 }
 
 #deck-fab-count {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 1px 8px;
-  border-radius: var(--radius-full);
+  min-width: 24px;
+  padding: 2px 6px;
+  border-left: 1px solid var(--border);
   margin-left: 4px;
+  color: var(--muted);
+  text-align: center;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1595,7 +1593,7 @@ header h1 {
 
   #deck-fab {
     right: 16px;
-    padding: 11px 18px;
+    padding: 10px 14px;
     font-size: 0.8rem;
     bottom: max(16px, env(safe-area-inset-bottom, 0) + 10px);
   }
