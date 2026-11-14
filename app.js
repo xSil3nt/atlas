@@ -381,7 +381,7 @@ async function showPacks() {
   if(location.hash!=='#packs')history.replaceState(null,'',location.pathname+location.search+'#packs');
   if(!packsLoading) {
     packsLoading=import('./packs/src/main.js').then(({mountPacks})=>{
-      packsController=mountPacks(document.getElementById('packs-view'),catalogReady,acquireCards, () => packsOpened < MAX_LIMITED_PACKS);
+      packsController=mountPacks(document.getElementById('packs-view'),catalogReady,acquireCards, () => packsOpened < MAX_LIMITED_PACKS, attachPreviewListeners);
       packsController.setActive(packsActive);
     }).catch(()=>{
       document.getElementById('packs-view').textContent='Packs could not load. Reload to try again.';
@@ -1233,7 +1233,7 @@ document.addEventListener("mousemove", e => {
 
 document.addEventListener("keydown", e => {
   const key = previewKeyName(e.key);
-  if (packsActive || !key || e.shiftKey || previewKeysHeld.has(key)) return;
+  if (!key || e.shiftKey || previewKeysHeld.has(key)) return;
   previewKeysHeld.add(key);
   e.preventDefault();
   if (hoveredCard) showPreview(hoveredCard);

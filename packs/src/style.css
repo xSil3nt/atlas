@@ -12,41 +12,25 @@
 .pack-experience #primary:disabled {opacity:.5;cursor:default}
 .pack-experience .text-button {border:0;background:none;color:var(--muted);font:500 .8rem Inter,system-ui,sans-serif;padding:8px;min-height:36px;cursor:pointer}
 .pack-experience .text-button:hover {color:var(--accent-hover)}
-.pack-experience .icon-button {display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);background:var(--surface2);font-size:20px;cursor:pointer}
 .pack-experience #error {position:absolute;z-index:4;top:40%;left:50%;transform:translate(-50%,-50%);width:min(420px,85%);padding:24px;line-height:1.6;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface-solid);color:var(--text);text-align:center}
 .pack-experience .sr-only {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 .pack-experience #results {position:absolute;inset:0 0 64px;overflow:auto;padding:24px;scrollbar-color:var(--muted2) transparent}
 .pack-experience .card-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:22px 14px}
-.pack-experience .result-card {min-width:0;border:0;background:none;padding:0;text-align:left;color:var(--text);font:inherit;cursor:pointer}
+.pack-experience .result-card {min-width:0;border:0;background:none;padding:0;text-align:left;color:var(--text);font:inherit}
 .pack-experience .result-card img {display:block;width:100%;aspect-ratio:375/523;object-fit:contain;border-radius:var(--card-art-radius);clip-path:inset(0 round var(--card-art-radius));background:var(--surface-solid);transition:transform var(--transition)}
 .pack-experience .result-card:hover img {transform:translateY(-3px)}
 .pack-experience .result-card span {display:block;margin-top:4px;color:var(--muted);font-size:.72rem}
 .pack-experience .result-card .card-name {margin-top:9px;color:var(--text);font-size:.8rem}
-.pack-experience dialog {margin:auto;width:min(980px,94vw);max-height:88svh;overflow:auto;padding:24px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface-solid);color:var(--text);box-shadow:0 24px 80px #0008}
-.pack-experience dialog::backdrop {background:rgba(5,7,14,.75);backdrop-filter:blur(12px)}
-.pack-experience .modal-head {display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.pack-experience .inspect-layout {display:grid;grid-template-columns:minmax(0,1.15fr) minmax(220px,1fr);gap:28px}
-.pack-experience .inspect-layout>div:first-child {text-align:center}
-.pack-experience .inspect {display:block;margin:auto;width:min(100%,calc(66svh * 375 / 523));height:auto;aspect-ratio:375/523;object-fit:contain;border-radius:var(--card-art-radius);clip-path:inset(0 round var(--card-art-radius))}
-.pack-experience .inspect-copy h1 {font:600 1.5rem Outfit,Inter,system-ui,sans-serif;margin:8px 0 20px}
-.pack-experience .inspect-copy p {margin:18px 0 0;color:var(--muted);font-size:.85rem;line-height:1.65}
-.pack-experience #inspect-rules {white-space:pre-wrap;color:var(--text)}
 .pack-experience .result-card[data-rarity="Peculiar"] .card-name {color:#aeb8ff}
 .pack-experience .result-card[data-rarity="Exceptional"] .card-name {color:#f2c45e}
 .pack-experience .result-card[data-rarity="Ingenious"] .card-name {color:#d0afff}
 .pack-experience .result-card[data-rarity="Peculiar"] img {border:1px solid #9aa7ff99}
 .pack-experience .result-card[data-rarity="Exceptional"] img {border:1px solid #f2c45eaa}
 .pack-experience .result-card[data-rarity="Ingenious"] img {border:1px solid #bd8affaa}
-.pack-experience .inspect-layout>div[data-rarity="Peculiar"] .inspect {filter:drop-shadow(0 0 5px #9aa7ff99)}
-.pack-experience .inspect-layout>div[data-rarity="Exceptional"] .inspect {filter:drop-shadow(0 0 9px #f2c45eaa)}
-.pack-experience .inspect-layout>div[data-rarity="Ingenious"] .inspect {filter:drop-shadow(0 0 12px #bd8affbb)}
 @media(max-width:1024px){body[data-experience="packs"] #deck-fab {bottom:78px}}
 @media(max-width:700px){
  .pack-experience #results {padding:18px 12px}
  .pack-experience .card-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
- .pack-experience .inspect-layout {grid-template-columns:1fr;gap:18px}
- .pack-experience dialog {padding:18px}
- .pack-experience .inspect {width:min(100%,calc(55svh * 375 / 523))}
  .pack-experience .actions {padding:12px}
 }
 @media(max-height:500px) and (min-width:701px){
