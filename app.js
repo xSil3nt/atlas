@@ -153,7 +153,7 @@ function setMode(next, openPack = true) {
 }
 function clearPacks() {
   if (mode !== 'pack') return;
-  if (!window.confirm('Clear all opened cards and both pack-mode decks? This cannot be undone.')) return;
+  if (!window.confirm('This deletes all acquired cards from packs. It cannot be undone')) return;
   inventory = {}; myDeck = {}; resourceCounts = {};
   savedDecks.pack = {};
   clearAtlasLink(); hidePreview(); hoveredCard = null;
@@ -162,7 +162,7 @@ function clearPacks() {
   history.replaceState(null, '', url.pathname + url.search + url.hash);
   packsController?.restart();
   renderGrid(); renderSidebar();
-  showToast('Packs cleared', 'info');
+  showToast('Collection reset', 'info');
 }
 
 function acquireCards(cards) {

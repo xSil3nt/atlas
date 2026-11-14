@@ -1680,9 +1680,11 @@ button:focus-visible {outline:2px solid var(--accent-hover);outline-offset:3px;}
 }
 
 .packs-link[hidden], #clear-packs-btn[hidden] {display:none;}
-#clear-packs-btn {align-self:stretch;min-height:36px;text-align:left;padding:8px 0;border:0;background:transparent;color:var(--muted);font:500 .72rem Inter,sans-serif;cursor:pointer;}
-#clear-packs-btn:hover {color:var(--danger);}
-
-@media(max-width:1024px){#clear-packs-btn {min-height:44px;}}
+#mode-menu .mode-menu-footer {margin-top:5px;padding-top:5px;border-top:1px solid var(--border);}
+#mode-menu .mode-menu-footer[hidden], #mode-menu #clear-packs-btn[hidden] {display:none;}
+#mode-menu #clear-packs-btn {min-height:44px;gap:11px;color:var(--danger);font-size:.76rem;font-weight:500;}
+#mode-menu #clear-packs-btn:hover, #mode-menu #clear-packs-btn:focus-visible {background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.2);}
+.mode-reset-icon {display:grid;place-items:center;flex:0 0 32px;}
+.mode-reset-icon svg {width:18px;height:18px;}
 
 #starter-decks .starter-deck-option:hover {background:color-mix(in srgb,var(--starter-color) 9%,transparent);}
