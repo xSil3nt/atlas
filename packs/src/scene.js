@@ -13,6 +13,8 @@ const easeOut = (t) => 1 - (1 - t) ** 3;
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 import { D, stackFront, PACK_ATLAS } from './dimensions.js';
 const W = D.width, H = D.height, CW = D.cardWidth, CH = D.cardHeight;
+// Clear the pouch's bounding sphere for every possible rotation.
+export const PACK_BACKDROP_Z = -4;
 
 function cardShape(w, h, r) {
   const s = new THREE.Shape(),
@@ -161,7 +163,9 @@ export class PackScene {
         metalness: 0.04,
       }),
     );
-    plane.position.z = -1.25;
+    // Keep the backdrop behind the full rotation envelope of the pouch.
+    // A nearby plane cuts off corners when the tall pack turns away from us.
+    plane.position.z = PACK_BACKDROP_Z;
     plane.receiveShadow = true;
     this.scene.add(plane);
     // A large, soft contact shadow anchors the floating object without a decorative backdrop.
@@ -181,7 +185,7 @@ export class PackScene {
         depthWrite: false,
       }),
     );
-    shadow.position.set(0.17, -0.3, -1.23);
+    shadow.position.set(0.17, -0.3, PACK_BACKDROP_Z + .02);
     this.scene.add(shadow);
   }
   makeWrapper() {

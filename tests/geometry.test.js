@@ -2,7 +2,23 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import * as THREE from "three";
 import { D, stackFront, stackEnvelope } from "../packs/src/dimensions.js";
-import { PackScene, cardExitPosition } from "../packs/src/scene.js";
+import { PackScene, cardExitPosition, PACK_BACKDROP_Z } from "../packs/src/scene.js";
+
+test('backdrop and contact shadow clear the sealed pouch at every rotation', () => {
+  const m = pouch();
+  m.deformTear(0);
+  // Any rotation preserves distance from the origin. The nearest backdrop
+  // surface must be beyond every vertex, including the seal and side folds.
+  for (const mesh of [m.front, m.back, m.topSeal, m.backSeal,
+    m.makeWrapperEdge(-1, m.front.material), m.makeWrapperEdge(1, m.front.material)]) {
+    const p = mesh.geometry.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const radius = Math.hypot(p.getX(i), p.getY(i), p.getZ(i));
+      assert.ok(radius < -(PACK_BACKDROP_Z + .02),
+        'rotating the pouch must never put a vertex behind the backdrop');
+    }
+  }
+});
 function pouch() {
   const model = Object.create(PackScene.prototype);
   model.scene = new THREE.Scene();
