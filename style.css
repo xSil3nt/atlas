@@ -1689,11 +1689,35 @@ button:focus-visible {outline:2px solid var(--accent-hover);outline-offset:3px;}
 
 #starter-decks .starter-deck-option:hover {background:color-mix(in srgb,var(--starter-color) 9%,transparent);}
 
-/* Keep navigation on the same inset as the deck panel below. */
+/* Let navigation breathe independently of the narrower deck panel. */
 @media (min-width: 1025px) {
   header { padding-right: 0; }
-  #header-nav { width: var(--sidebar-w); align-self: stretch; border: 0; border-left: 1px solid var(--border); border-radius: 0; background: transparent; padding: 8px 16px; gap: 4px; }
-  #header-nav .nav-tab { flex: 1; justify-content: center; padding: 6px 8px; font-size: .75rem; }
+  #header-nav {
+    align-self: stretch;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0 24px;
+    gap: 28px;
+  }
+  #header-nav .nav-tab {
+    justify-content: center;
+    padding: 0 2px;
+    min-height: 0;
+    border-radius: 0;
+    font-size: .78rem;
+  }
+  #header-nav .nav-tab.active { background: transparent; }
+  #header-nav .nav-tab.active::after {
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+  }
+  #sidebar-top { padding: 24px 20px 14px; align-items: center; }
+  #sidebar-top h2 { font-size: .875rem; font-weight: 600; }
+  #card-total { font-size: .72rem; }
+  #deck-progress { height: 2px; margin: 0 20px 16px; }
 }
 #header-nav .nav-tab[hidden] { display: none; }
 #header-nav .nav-tab { justify-content: center; text-decoration: none; line-height: 1.25; }
