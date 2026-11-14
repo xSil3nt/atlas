@@ -7,8 +7,8 @@ const $ = s => root.querySelector(s);
 const escape = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 root.innerHTML = `
 <section class="pack-stage" aria-label="Pack opener"><div id="scene"></div><div id="error" role="alert" hidden></div>
-<section id="results" aria-label="Pack results" hidden><div id="result-grid" class="card-grid"></div></section>
-<div class="actions"><button id="primary" hidden disabled>Open another</button><button id="reveal-all" class="text-button" hidden>Skip</button></div>
+<section id="results" aria-labelledby="pack-results-title" hidden><div class="results-header"><h2 id="pack-results-title">Pack results</h2><button id="primary" type="button" hidden disabled>Next pack <span aria-hidden="true">→</span></button></div><div id="result-grid" class="card-grid"></div></section>
+<div class="actions"><button id="reveal-all" class="text-button" hidden>Skip</button></div>
 <div id="announcement" class="sr-only" aria-live="polite"></div></section>
 `;
 const granted = new WeakSet();
