@@ -25,7 +25,7 @@ function unavailableTexture() {
 }
 export function cardTexture(card, back = false) { return cache.get(back ? backUrl(card) : cardUrl(card)) || null; }
 export function packTexture() {
-  // Keep the team's placeholder atlas active until artists replace this PNG.
+  // The canonical pack artwork is the two-panel PNG in Atlas's public assets.
   return configure(loader.load(import.meta.env.BASE_URL + 'textures/pack.png'));
 }
 export function tableTexture() {

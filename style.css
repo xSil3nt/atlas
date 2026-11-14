@@ -1688,3 +1688,14 @@ button:focus-visible {outline:2px solid var(--accent-hover);outline-offset:3px;}
 .mode-reset-icon svg {width:18px;height:18px;}
 
 #starter-decks .starter-deck-option:hover {background:color-mix(in srgb,var(--starter-color) 9%,transparent);}
+
+/* Keep navigation on the same inset as the deck panel below. */
+@media (min-width: 1025px) {
+  header { padding-right: 0; }
+  #header-nav { width: var(--sidebar-w); align-self: stretch; border: 0; border-left: 1px solid var(--border); border-radius: 0; background: transparent; padding: 8px 16px; gap: 4px; }
+  #header-nav .nav-tab { flex: 1; justify-content: center; padding: 6px 8px; font-size: .75rem; }
+}
+#header-nav .nav-tab[hidden] { display: none; }
+#header-nav .nav-tab { justify-content: center; text-decoration: none; line-height: 1.25; }
+#header-nav .nav-tab.active { box-shadow: none; }
+#header-nav .nav-tab:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: -2px; }

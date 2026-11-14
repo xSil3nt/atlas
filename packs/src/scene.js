@@ -55,9 +55,10 @@ export function cardExitPosition(camera, root, card, direction) {
 }
 
 export class PackScene {
-  constructor(container, { makePack, onState, onError }) {
+  constructor(container, { makePack, onState, onError, canOpen = () => true }) {
     this.container = container;
     this.factory = makePack;
+    this.canOpen = canOpen;
     this.onState = onState;
     this.onError = onError;
     this.phase = "sealed";
@@ -444,7 +445,7 @@ export class PackScene {
     this.phase = phase;
     this.container.dataset.phase = phase;
     this.renderer.domElement.setAttribute('aria-label', phase === 'browsing'
-      ? `${this.pack[this.index].name}. Tap or swipe to advance. Use Inspect for details.`
+      ? `${this.pack[this.index].name}. Drag the background or right-drag the cards to rotate the stack. Tap or swipe a card to advance. Use Inspect for details.`
       : 'Foil pack. Drag the top seal to open, or drag the body to rotate.');
     this.onState({
       phase,
@@ -542,7 +543,7 @@ export class PackScene {
     this.cancelDrag(); this.summary();
   }
   async reset() {
-    if (this.phase !== 'summary') return;
+    if (this.phase !== 'summary' || !this.canOpen()) return;
     this.state('loading');
     try {
       const pack = this.factory(true);
@@ -574,14 +575,15 @@ export class PackScene {
     return this.raycaster.intersectObjects(targets, true)[0];
   }
   pointerDown(e) {
-    if (e.button !== 0 || this.drag) return;
+    if ((e.button !== 0 && !(e.button === 2 && this.phase === 'browsing')) || this.drag) return;
     const hit = this.pick(e);
-    if (!hit) return;
-    const local = this.wrapper.worldToLocal(hit.point.clone());
+    if (!hit && this.phase !== 'browsing') return;
+    const local = hit && this.wrapper.worldToLocal(hit.point.clone());
     const type = ['sealed','tearing'].includes(this.phase)
       ? hit.object.userData.part === 'seal' || local.y > 1.35 ? 'tear' : 'rotate'
-      : this.phase === 'browsing' ? 'advance' : null;
+      : this.phase === 'browsing' ? (!hit || e.button === 2 ? 'rotateStack' : 'advance') : null;
     if (!type) return;
+    this.rotationReturn = null;
     this.renderer.domElement.setPointerCapture(e.pointerId);
     this.drag = {
       type,
@@ -594,7 +596,7 @@ export class PackScene {
       dy: 0,
       progress: this.tearProgress,
       rotation: this.gripRotation.clone(),
-      cardRotation: this.cards[this.index]?.rotation.clone(),
+      stackRotation: this.cardRoot.rotation.clone(),
     };
     this.container.classList.add("grabbing");
     if (type === "tear") {
@@ -613,7 +615,7 @@ export class PackScene {
         ? this.phase === "sealed" && hit.object.userData.part === "seal"
           ? "ew-resize"
           : "grab"
-        : "default";
+        : this.phase === 'browsing' ? 'grab' : "default";
       return;
     }
     const d = this.drag;
@@ -624,6 +626,13 @@ export class PackScene {
     d.lastX = e.clientX;
     d.lastTime = time;
     const unit = Math.min(r.width * 0.65, r.height * 0.48);
+    if (d.type === 'rotateStack') {
+      this.cardRoot.rotation.set(
+        clamp(d.stackRotation.x + d.dy * .007, -1, 1),
+        d.stackRotation.y + d.dx * .009,
+        d.stackRotation.z,
+      );
+    }
     if (d.type === "rotate") {
       this.gripRotation.set(
         clamp(d.rotation.x + d.dy * 0.007, -1, 1),
@@ -656,6 +665,10 @@ export class PackScene {
     this.container.classList.remove('grabbing');
     if (!d) return;
     if (this.renderer.domElement.hasPointerCapture(e.pointerId)) this.renderer.domElement.releasePointerCapture(e.pointerId);
+    if (d.type === 'rotate' || d.type === 'rotateStack') {
+      this.centerRotation(d.type);
+      return;
+    }
     const distance = Math.hypot(d.dx,d.dy);
     if (d.type === 'tear') { if (distance < 7 || this.tearProgress > .8) this.tear(); return; }
     if (d.type === 'advance') {
@@ -673,9 +686,25 @@ export class PackScene {
     await this.move(card, {position: [0,0,-this.index*D.pitch], rotation: [0,0,0]}, .16);
     this.state('browsing');
   }
+  centerRotation(type) {
+    const target = type === 'rotateStack' ? this.cardRoot.rotation : this.gripRotation;
+    const from = {x: target.x, y: target.y};
+    // Return to the nearest front-facing revolution, avoiding a long unwind.
+    const homeY = Math.round(from.y / (2 * Math.PI)) * 2 * Math.PI;
+    const token = this.rotationReturn = {};
+    const phase = this.phase;
+    this.animate(.65, t => {
+      if (this.rotationReturn !== token || this.phase !== phase) return;
+      target.x = THREE.MathUtils.lerp(from.x, 0, t);
+      target.y = THREE.MathUtils.lerp(from.y, homeY, t);
+    }, easeInOut).then(() => {
+      if (this.rotationReturn === token) this.rotationReturn = null;
+    });
+  }
   cancelDrag() {
     const d=this.drag; this.drag=null;
     this.container.classList.remove('grabbing');
+    if (d?.type === 'rotate' || d?.type === 'rotateStack') this.centerRotation(d.type);
     if (d?.type === 'advance') {
       // Cancel synchronously so a subsequent advance cannot race a return tween.
       const c=this.cards[this.index]; c.position.set(0,0,-this.index*D.pitch); c.rotation.set(0,0,0);

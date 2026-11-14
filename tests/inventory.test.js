@@ -34,3 +34,14 @@ test('retired mode state falls back safely without losing active decks or invent
  const loaded=readState({getItem(){return JSON.stringify(state);}}).state;
  assert.equal(loaded.mode,'normal');assert.deepEqual(loaded.inventory,{'main/a':2});assert.equal(loaded.decks.pack.main['main/a'],2);assert.equal('retired' in loaded.decks,false);
 });
+
+
+test('Limited common corpses need no owned copies and survive deck restoration', async () => {
+ const {availableCopies} = await import('../shared/inventory.js');
+ const common = {path:'corpse/common',url:'common',resourceType:'common'};
+ const peculiar = {path:'corpse/peculiar',url:'peculiar',resourceType:'peculiar'};
+ assert.equal(availableCopies(common, {}), Infinity);
+ assert.equal(availableCopies(peculiar, {}), 0);
+ assert.deepEqual(limitDeck([common, peculiar], {'corpse/common':20,'corpse/peculiar':3}, {}, 20, () => 20), {common:20});
+ assert.deepEqual(limitDeck([common], {'corpse/common':99}, {}, 20, () => 20), {common:20});
+});

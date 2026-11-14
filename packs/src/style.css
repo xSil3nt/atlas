@@ -3,22 +3,19 @@
 .pack-experience {position:relative;display:flex;flex:1;min-width:0;min-height:0;overflow:hidden}
 .pack-experience [hidden] {display:none!important}
 .pack-experience .pack-stage {display:flex;flex:1;min-height:0;position:relative;flex-direction:column}
-.pack-experience #scene {position:absolute;inset:0 0 132px;touch-action:none;user-select:none}
+.pack-experience #scene {position:absolute;inset:0 0 64px;touch-action:none;user-select:none}
 .pack-experience #scene canvas {display:block;width:100%;height:100%}
 .pack-experience .grabbing,.pack-experience .grabbing canvas {cursor:grabbing!important}
-.pack-experience .actions {position:absolute;bottom:0;left:0;right:0;min-height:132px;padding:14px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surface);border-top:1px solid var(--border)}
-.pack-experience .action-row,.pack-experience .secondary-row {display:flex;align-items:center;justify-content:center;gap:14px}
+.pack-experience .actions {position:absolute;bottom:0;left:0;right:0;min-height:64px;padding:10px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:transparent}
 .pack-experience #primary {min-height:40px;min-width:160px;padding:10px 20px;border:1px solid var(--accent);border-radius:var(--radius-sm);background:var(--accent);color:#fff;font:600 .8rem Inter,system-ui,sans-serif;cursor:pointer;transition:background var(--transition)}
 .pack-experience #primary:hover {background:var(--accent-hover)}
 .pack-experience #primary:disabled {opacity:.5;cursor:default}
-.pack-experience #card-count {font-size:.8rem;color:var(--text);text-align:center;line-height:1.4;min-height:18px}
-.pack-experience #gesture {font-size:.72rem;color:var(--muted)}
 .pack-experience .text-button {border:0;background:none;color:var(--muted);font:500 .8rem Inter,system-ui,sans-serif;padding:8px;min-height:36px;cursor:pointer}
 .pack-experience .text-button:hover {color:var(--accent-hover)}
 .pack-experience .icon-button {display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);background:var(--surface2);font-size:20px;cursor:pointer}
 .pack-experience #error {position:absolute;z-index:4;top:40%;left:50%;transform:translate(-50%,-50%);width:min(420px,85%);padding:24px;line-height:1.6;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface-solid);color:var(--text);text-align:center}
 .pack-experience .sr-only {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-.pack-experience #results {position:absolute;inset:0 0 132px;overflow:auto;padding:24px;scrollbar-color:var(--muted2) transparent}
+.pack-experience #results {position:absolute;inset:0 0 64px;overflow:auto;padding:24px;scrollbar-color:var(--muted2) transparent}
 .pack-experience .card-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:22px 14px}
 .pack-experience .result-card {min-width:0;border:0;background:none;padding:0;text-align:left;color:var(--text);font:inherit;cursor:pointer}
 .pack-experience .result-card img {display:block;width:100%;aspect-ratio:375/523;object-fit:contain;border-radius:var(--card-art-radius);clip-path:inset(0 round var(--card-art-radius));background:var(--surface-solid);transition:transform var(--transition)}
@@ -43,7 +40,7 @@
 .pack-experience .inspect-layout>div[data-rarity="Peculiar"] .inspect {filter:drop-shadow(0 0 5px #9aa7ff99)}
 .pack-experience .inspect-layout>div[data-rarity="Exceptional"] .inspect {filter:drop-shadow(0 0 9px #f2c45eaa)}
 .pack-experience .inspect-layout>div[data-rarity="Ingenious"] .inspect {filter:drop-shadow(0 0 12px #bd8affbb)}
-@media(max-width:1024px){body[data-experience="packs"] #deck-fab {bottom:146px}}
+@media(max-width:1024px){body[data-experience="packs"] #deck-fab {bottom:78px}}
 @media(max-width:700px){
  .pack-experience #results {padding:18px 12px}
  .pack-experience .card-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
@@ -51,12 +48,10 @@
  .pack-experience dialog {padding:18px}
  .pack-experience .inspect {width:min(100%,calc(55svh * 375 / 523))}
  .pack-experience .actions {padding:12px}
- .pack-experience #card-count {font-size:.75rem}
 }
 @media(max-height:500px) and (min-width:701px){
  .pack-experience #scene {inset:0 200px 0 0}
  .pack-experience .actions {left:auto;top:0;bottom:0;width:200px;padding:12px;border-top:0;border-left:1px solid var(--border)}
- .pack-experience .action-row,.pack-experience .secondary-row {flex-direction:column;gap:4px}
  .pack-experience #results {inset:0 200px 0 0;padding:16px}
  .pack-experience .card-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
 }

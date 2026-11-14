@@ -1,6 +1,6 @@
 import { resolveModeUrl } from './shared/modes.js';
 import { mountModeMenu } from './shared/mode-menu.js';
-import { MODES, STORAGE_KEY, identity, readState, limitDeck, grant } from './shared/inventory.js';
+import { MODES, MAX_LIMITED_PACKS, STORAGE_KEY, identity, readState, limitDeck, grant, availableCopies } from './shared/inventory.js';
 const ATLAS_COLS = 10;
 const ATLAS_ROWS = 7;
 const MAX_DECK = 40;
@@ -98,9 +98,9 @@ if (entry.legacy) {
   history.replaceState(null, '', url.pathname + url.search + url.hash);
 }
 const modeMenu = mountModeMenu(document.getElementById('atlas-modes'), next => setMode(next));
-let mode = entry.mode || 'normal', inventory = {}, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
+let mode = entry.mode || 'normal', inventory = {}, packsOpened = 0, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
 modeMenu.update(mode, false);
-function owned(card) { return mode === 'pack' ? inventory[identity(card)] || 0 : Infinity; }
+function owned(card) { return mode === 'pack' ? availableCopies(card, inventory) : Infinity; }
 function mainLimit() { return mode === 'normal' ? MAX_COPIES : MAX_DECK; }
 function resourceLimit(card) { return mode === 'normal' && card.resourceType === 'peculiar' ? RESOURCE_MAX_PECULIAR : RESOURCE_DECK_SIZE; }
 function snapshot() {
@@ -119,7 +119,7 @@ function saveState() {
   if (!modesEnabled || !allCards) return;
   savedDecks[mode] = snapshot();
   if (!persistenceAvailable) return;
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({version: 1, mode, inventory, decks: savedDecks})); }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({version: 1, mode, inventory, packsOpened, decks: savedDecks})); }
   catch { warnStorage(); }
 }
 function warnStorage() {
@@ -132,7 +132,7 @@ function warnStorage() {
 }
 function renderMode() {
   document.body.dataset.mode = mode;
-  document.querySelector('.packs-link')?.toggleAttribute('hidden', mode !== 'pack');
+  document.querySelector('.packs-link')?.toggleAttribute('hidden', mode !== 'pack' || packsOpened >= MAX_LIMITED_PACKS);
   document.getElementById('clear-packs-btn')?.toggleAttribute('hidden', mode !== 'pack');
   modeMenu.update(mode, !!allCards);
 }
@@ -154,19 +154,23 @@ function setMode(next, openPack = true) {
 function clearPacks() {
   if (mode !== 'pack') return;
   if (!window.confirm('This deletes all acquired cards from packs. It cannot be undone')) return;
-  inventory = {}; myDeck = {}; resourceCounts = {};
+  inventory = {}; packsOpened = 0; myDeck = {}; resourceCounts = {};
   savedDecks.pack = {};
   clearAtlasLink(); hidePreview(); hoveredCard = null;
   const url = new URL(location.href);
   url.searchParams.delete('deck'); url.searchParams.delete('res');
   history.replaceState(null, '', url.pathname + url.search + url.hash);
+  saveState(); renderMode();
   packsController?.restart();
   renderGrid(); renderSidebar();
   showToast('Collection reset', 'info');
 }
 
 function acquireCards(cards) {
+  if (packsOpened >= MAX_LIMITED_PACKS) return false;
+  packsOpened++;
   inventory = grant(inventory, cards);
+  renderMode();
   saveState(); renderStarters();
   renderGrid();
 }
@@ -294,7 +298,7 @@ async function loadCards() {
     let loaded;
     try { loaded = readState(localStorage); } catch { loaded = {failed: true}; }
     if (loaded.failed) warnStorage();
-    if (loaded.state) { inventory = loaded.state.inventory; savedDecks = loaded.state.decks; mode = loaded.state.mode; }
+    if (loaded.state) { inventory = loaded.state.inventory; packsOpened = loaded.state.packsOpened; savedDecks = loaded.state.decks; mode = loaded.state.mode; }
     if (entry.mode) mode = entry.mode;
     else if (new URLSearchParams(location.search).has('deck') || new URLSearchParams(location.search).has('res')) mode = 'normal';
     restoreDeck(savedDecks[mode]); renderMode();
@@ -371,12 +375,13 @@ function setPacksVisible(visible) {
 async function showPacks() {
   if (modesEnabled && !allCards) await catalogReady;
   if (modesEnabled && mode !== 'pack') setMode('pack', false);
+  if (packsOpened >= MAX_LIMITED_PACKS) { switchTab(activeTab); return; }
   closeDeckDrawer(); modeMenu.close(); hidePreview(); hoveredCard=null;
   setPacksVisible(true);
   if(location.hash!=='#packs')history.replaceState(null,'',location.pathname+location.search+'#packs');
   if(!packsLoading) {
     packsLoading=import('./packs/src/main.js').then(({mountPacks})=>{
-      packsController=mountPacks(document.getElementById('packs-view'),catalogReady,acquireCards);
+      packsController=mountPacks(document.getElementById('packs-view'),catalogReady,acquireCards, () => packsOpened < MAX_LIMITED_PACKS);
       packsController.setActive(packsActive);
     }).catch(()=>{
       document.getElementById('packs-view').textContent='Packs could not load. Reload to try again.';
@@ -706,7 +711,7 @@ function createMainCardSlot(card) {
   slot.appendChild(img);
   if (mode === 'pack') {
     const ownedBadge = document.createElement('span'); ownedBadge.className = 'owned-badge';
-    ownedBadge.textContent = `${owned(card)} owned`; slot.appendChild(ownedBadge);
+    ownedBadge.textContent = Number.isFinite(owned(card)) ? `${owned(card)} owned` : 'Unlimited'; slot.appendChild(ownedBadge);
   }
 
   if (count > 0) {
@@ -732,7 +737,7 @@ function renderResourceGrid(grid) {
   const cards = (allCards?.resources ?? []).filter(c => owned(c) > 0);
 
   if (!cards.length) {
-    grid.innerHTML = mode === 'pack' ? '<div class="placeholder"><strong>No resource cards acquired</strong><button class="open-owned-pack">Open a pack</button></div>' : '<div class="placeholder"><strong>No resource cards</strong></div>';
+    grid.innerHTML = mode === 'pack' && packsOpened < MAX_LIMITED_PACKS ? '<div class="placeholder"><strong>No resource cards acquired</strong><button class="open-owned-pack">Open a pack</button></div>' : '<div class="placeholder"><strong>No resource cards</strong></div>';
     grid.querySelector('.open-owned-pack')?.addEventListener('click', showPacks);
     updateResultsCount(0);
     return;
@@ -760,7 +765,7 @@ function renderResourceGrid(grid) {
     slot.appendChild(img);
   if (mode === 'pack') {
     const ownedBadge = document.createElement('span'); ownedBadge.className = 'owned-badge';
-    ownedBadge.textContent = `${owned(card)} owned`; slot.appendChild(ownedBadge);
+    ownedBadge.textContent = Number.isFinite(owned(card)) ? `${owned(card)} owned` : 'Unlimited'; slot.appendChild(ownedBadge);
   }
 
     if (count > 0) {

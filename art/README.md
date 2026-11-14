@@ -2,6 +2,13 @@
 
 The runtime texture is `public/textures/pack.png`.
 
+This is the canonical artwork for the Atlas pack opener. The files in `art/`
+are blank canvases and layout guides, not additional runtime textures.
+`dist/textures/pack.png` is generated from the public asset on each build.
+The sibling `gamble/` project delegates to Atlas; obsolete pack textures,
+duplicated templates and earlier atlas PNG backups have been removed.
+Replace only Atlas's `public/textures/pack.png` when updating the live artwork.
+
 Edit `art/pack-blank.png` at 2048 × 1536. Use `pack-guide.png` or
 `pack-guide-colors.png` as a guide layer, then hide it before export.
 Replace the runtime PNG and refresh. Rebuild before deploying.

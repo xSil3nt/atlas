@@ -2,13 +2,13 @@ import './style.css';
 import { PackScene } from './scene.js';
 import { catalogFrom, makePack, cardUrl, CATALOG_URL, repoUrl } from './pack.js';
 import { preloadCards } from './textures.js';
-export function mountPacks(root, sharedCatalog, onAcquire = () => {}) {
+export function mountPacks(root, sharedCatalog, onAcquire = () => {}, canOpen = () => true) {
 const $ = s => root.querySelector(s);
 const escape = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 root.innerHTML = `
 <section class="pack-stage" aria-label="Pack opener"><div id="scene"></div><div id="error" role="alert" hidden></div>
 <section id="results" aria-label="Pack results" hidden><div id="result-grid" class="card-grid"></div></section>
-<div class="actions"><div id="card-count" aria-live="polite"></div><div class="action-row"><button id="inspect" class="text-button" hidden>Inspect</button><button id="primary" disabled>Loading cards…</button></div><div class="secondary-row"><span id="gesture">Preparing your pack</span><button id="reveal-all" class="text-button" hidden>Reveal all</button></div></div>
+<div class="actions"><button id="primary" hidden disabled>Open another</button><button id="reveal-all" class="text-button" hidden>Skip</button></div>
 <div id="announcement" class="sr-only" aria-live="polite"></div></section>
 <dialog id="inspection" aria-labelledby="inspect-name"><div class="modal-head"><button id="back-inspect" aria-label="Back" class="text-button">← Back</button><button id="close-inspect" class="icon-button" aria-label="Close inspection">×</button></div><div class="inspect-layout"><div><img id="inspect-image" class="inspect" alt=""></div><div class="inspect-copy"><h1 id="inspect-name"></h1><p id="inspect-meta"></p><p id="inspect-type"></p><p id="inspect-rules"></p><p id="inspect-artist"></p></div></div></dialog>
 `;
@@ -27,14 +27,12 @@ function state({phase,index,total}) {
     granted.add(engine.pack);
     onAcquire(engine.pack);
   }
-  const label={sealed:'Open pack',tearing:'Finish tear',browsing:index===total-1?'See results':'Next card',summary:'Open another'}[phase];
-  $('#primary').disabled=!label; $('#primary').textContent=label|| (phase==='loading'?'Loading cards…':'Opening…');
-  $('#inspect').hidden=!browsing; $('#reveal-all').hidden=!browsing;
+  $('#primary').disabled=!summary || !canOpen();
+  $('#primary').hidden=!summary || !canOpen();
+  $('#reveal-all').hidden=!browsing;
   $('#results').hidden=!summary; $('#scene').hidden=summary;
   const c=engine?.pack?.[index] || draft?.[index];
-  $('#card-count').textContent=browsing ? `${index+1} / ${total} · ${c?.name || ''} · ${c?.rarity || ''}` : '';
-  $('#gesture').textContent=phase==='sealed'?'Drag the top seal':phase==='tearing'?'Continue the tear':browsing?'Tap or swipe to advance':'';
-  if(phase==='sealed') $('#announcement').textContent='New pack ready. Drag the top seal or choose Open pack.';
+  if(phase==='sealed') $('#announcement').textContent='New pack ready. Drag the top seal to open.';
   if(browsing) $('#announcement').textContent=`${c?.name}. ${c?.rarity || ''}. Card ${index+1} of ${total}.`;
   if(summary) { results(); $('#announcement').textContent='Pack complete. Select a card to inspect.'; }
 }
@@ -54,6 +52,7 @@ async function start() {
     await preloadCards(draft);
     if (session !== generation) return;
     engine=new PackScene($('#scene'),{
+      canOpen,
       makePack: fresh => fresh ? (draft=makePack(catalog)) : draft,
       onState: next => { if (session === generation) state(next); },
       onError: message => { if (session === generation) showError(message); },
@@ -62,7 +61,6 @@ async function start() {
   } catch(e) { if (session !== generation) return; console.error(e); showError(e.message || 'The scene needs WebGL 2. Enable browser graphics acceleration and reload.'); }
 }
 $('#primary').onclick=()=>engine?.primary();
-$('#inspect').onclick=()=>inspect(engine.pack[engine.index]);
 $('#reveal-all').onclick=()=>engine?.revealAll();
 function inspect(c) {
   if(!c) return;
