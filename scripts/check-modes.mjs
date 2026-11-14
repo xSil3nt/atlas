@@ -1,0 +1,40 @@
+import {chromium,expect} from '@playwright/test';
+import {mkdir} from 'node:fs/promises';
+const origin=process.env.ATLAS_TEST_URL||'http://127.0.0.1:5174';
+const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--use-gl=angle']});
+await mkdir('test-results/modes',{recursive:true});
+const context=await browser.newContext({viewport:{width:1440,height:900}});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+const state=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('atlas-modes-v1')));
+const phase=n=>page.waitForFunction(n=>document.body.dataset.phase===n,n);
+const main=()=>page.locator('[data-tab=All]').click();
+try {
+await page.goto(origin);await expect(page.locator('#results-count')).toHaveText('132 cards');
+const api=await (await page.request.get(origin+'/api/cards')).json();const all=[...Object.values(api.decks).flat(),...api.resources];
+await expect(page.locator('#starter-deck-toggle')).toHaveCount(0);await expect(page.locator('#starter-decks [data-deck]')).toHaveCount(4);
+await page.locator('[data-deck=Heart]').click();await expect(page.locator('#card-total')).toContainText('40 / 40');await expect(page.locator('#starter-decks')).toBeHidden();await page.locator('#clear-btn').click();await expect(page.locator('#starter-decks')).toBeVisible();
+await page.locator('#grid .card-slot').first().click();await page.locator('[data-tab=Resource]').click();await page.locator('#grid .card-slot').first().click();
+await page.locator('#mode-toggle').click();await page.locator('#mode-menu [data-mode='+'pack'+']').click();await phase('sealed');await main();await expect(page.locator('#grid')).toContainText('No cards yet');await expect(page.locator('#card-total')).toContainText('0 / 40');await expect(page.locator('#starter-decks')).toBeHidden();
+expect((await state()).inventory).toEqual({});
+await page.screenshot({path:'test-results/modes/empty.png'});
+await page.locator('.open-owned-pack').click();await page.locator('#primary').click();await phase('browsing');
+const acquired=(await state()).inventory;expect(Object.values(acquired).reduce((a,b)=>a+b,0)).toBe(12);
+await page.locator('#reveal-all').click();await phase('summary');await expect(page.locator('#result-grid button')).toHaveCount(12);expect((await state()).inventory).toEqual(acquired);
+const openedCopies=await page.locator('#result-grid button').evaluateAll(buttons=>buttons.reduce((counts,b)=>{counts[b.dataset.key]=(counts[b.dataset.key]||0)+1;return counts;},{}));expect(acquired).toEqual(openedCopies);
+await page.locator('#result-grid button').first().click();await page.keyboard.press('Escape');await expect(page.locator('#result-grid button').first()).toBeFocused();
+await main();const ownedMain=all.filter(c=>c.deck==='main'&&acquired[c.path]);await expect(page.locator('#grid .card-slot')).toHaveCount(ownedMain.length);
+expect((await page.locator('#grid .card-slot > img').evaluateAll(imgs=>imgs.map(i=>i.getAttribute('src')))).sort()).toEqual(ownedMain.map(c=>c.url).sort());
+const first=ownedMain[0];const slot=page.locator('#grid .card-slot').filter({has:page.locator(`img[alt="${first.name}"]`)});
+for(let i=0;i<5;i++)await slot.click();const limit=Math.min(3,acquired[first.path]);await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);
+await page.locator('#deck-list button[aria-label="Add one copy"]').first().click();await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);
+await page.locator('[data-tab=Resource]').click();await expect(page.locator('#grid .card-slot')).toHaveCount(1);expect(await page.locator('#grid .card-slot > img').getAttribute('src')).toBe(all.find(c=>c.deck==='corpse'&&acquired[c.path]).url);for(let i=0;i<4;i++)await page.locator('#grid .card-slot').click();await expect(page.locator('#card-total')).toContainText('1 / 20');
+await main();await page.reload();await expect(page.locator('#mode-menu [data-mode='+'pack'+']')).toHaveAttribute('aria-checked','true');await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);expect((await state()).inventory).toEqual(acquired);
+await page.locator('#mode-toggle').click();await page.locator('#mode-menu [data-mode='+'normal'+']').click();await expect(page.locator('#results-count')).toHaveText('132 cards');await expect(page.locator('#card-total')).toContainText('1 / 40');await page.locator('[data-tab=Resource]').click();await expect(page.locator('#results-count')).toHaveText('20 cards');await expect(page.locator('#card-total')).toContainText('1 / 20');
+await main();await page.screenshot({path:'test-results/modes/normal.png'});
+const unowned=all.find(c=>c.deck==='main'&&!acquired[c.path]);const imported=Buffer.from(`${first.name}:999;${unowned.name}:999`).toString('base64');
+await page.goto(origin+'/?mode=pack&deck='+encodeURIComponent(imported));await expect(page.locator('#card-total')).toContainText(`${limit} / 40`);await expect(page.locator('#deck-list')).not.toContainText(unowned.name);
+await page.screenshot({path:'test-results/modes/owned.png'});
+await page.locator('#mode-toggle').click();await page.locator('#mode-menu [data-mode='+'pack'+']').click();await phase('sealed');await page.locator('#primary').click();await phase('browsing');expect(Object.values((await state()).inventory).reduce((a,b)=>a+b,0)).toBe(24);await page.locator('#reveal-all').click();await phase('summary');
+for(const width of [320,390,844,1440]) {await page.setViewportSize({width,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);if(width<1025){await page.locator('#deck-fab').click();await page.waitForTimeout(350);await page.screenshot({path:`test-results/modes/sidebar-${width}.png`});await page.locator('#drawer-close').click();}}
+await page.reload();await phase('sealed');expect(Object.values((await state()).inventory).reduce((a,b)=>a+b,0)).toBe(24);
+expect(errors).toEqual([]);console.log('PASS modes: empty inventory, starters, actual 12-card grants, duplicate/copy caps, resource ownership, reload, mode isolation, shared-deck clamp, 2 packs, inspection focus, responsive sidebars');
+}finally{await browser.close();}
