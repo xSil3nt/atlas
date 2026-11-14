@@ -1,8 +1,10 @@
+import { repoUrl as rawUrl } from '../shared/cards-source.js';
+
 // Card data now comes from a single metadata.json in the cards repo.
 // We fetch it as a raw file (no GitHub tree API, no token, no rate limit) and
 // stamp image URLs onto each entry.
 //
-// CARDS_REF points at the branch/tag holding the data.
+// shared/cards-source.js owns the repository and branch.
 const MAIN_GROUPS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 const CORPSE_TYPES = { "Common Corpse": "common", "Peculiar Corpse": "peculiar" };
 
@@ -20,7 +22,7 @@ function legacyCard(card) {
   };
 }
 
-function buildCardCatalog(metadata, imageUrl) {
+export function buildCardCatalog(metadata, imageUrl) {
   const cards = Array.isArray(metadata) ? metadata.map(legacyCard) : metadata?.cards;
   if (!Array.isArray(cards)) throw new Error("metadata must contain a cards array");
 
@@ -61,14 +63,6 @@ function buildCardCatalog(metadata, imageUrl) {
     resources,
     backs: { main: imageUrl("mainback.png"), resource: imageUrl("resback.png") },
   };
-}
-
-const CARDS_REF = "main";
-const REPO = "xSil3nt/lifestitchr-cards";
-
-function rawUrl(path) {
-  const encoded = path.split("/").map(encodeURIComponent).join("/");
-  return `https://raw.githubusercontent.com/${REPO}/${CARDS_REF}/${encoded}`;
 }
 
 export default async function handler(req, res) {
