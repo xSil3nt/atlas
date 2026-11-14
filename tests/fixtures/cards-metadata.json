@@ -1,0 +1,3804 @@
+{
+  "cards": [
+    {
+      "name": "Altar Familiar",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Feline",
+        "Beast"
+      ],
+      "keywords": [
+        "Regenerator"
+      ],
+      "abilityText": "Regenerator:\nWhen my corpse is harvested, [<blood>1], and return me to a grave and I can't be harvested again until round end.\n\nAt round start, if I'm in a support lane, add one organ of any type.",
+      "might": 0,
+      "vigor": 1,
+      "artist": "YL0W",
+      "path": "Blood/Altar Familiar.png"
+    },
+    {
+      "name": "Box of Limbs",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 5
+      },
+      "subtypes": [
+        "Humanoid",
+        "Abomination"
+      ],
+      "keywords": [],
+      "abilityText": "[<blood>2 while I'm in your hand]: Plot this creation. At round start, [bury me], reveal cards from the top of your deck until you reveal a creation, bury that creation, then put the rest on the bottom.",
+      "might": 6,
+      "vigor": 1,
+      "artist": "uwais",
+      "path": "Blood/Box of Limbs.png"
+    },
+    {
+      "name": "Cadaver Study",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Quick Plot"
+      ],
+      "keywords": [],
+      "abilityText": "Plot this scheme. (In a grave or lane.)\nAt round start, if this scheme is plotted, [turn it to dust], and draw two cards.",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W",
+      "path": "Blood/Cadaver Study.png"
+    },
+    {
+      "name": "Death's Invitation",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "[Bury a creation from your hand]: A chosen creation's owner buries it if its might is less than or equal to 2 plus the number of corpses in your grave.",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Blood/Death's Invitation.png"
+    },
+    {
+      "name": "Follower of the Spiral",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 3
+      },
+      "subtypes": [
+        "Humanoid",
+        "Witness"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, choose a creation type. Reveal cards from the top of your deck until you reveal a creation with the chosen type, draw that creation, then put the rest on the bottom.",
+      "might": 2,
+      "vigor": 3,
+      "artist": "FluffyDragonEve",
+      "path": "Blood/Follower of the Spiral.png"
+    },
+    {
+      "name": "Gloomtongue",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Abomination"
+      ],
+      "keywords": [],
+      "abilityText": "When I leave the field, you heal 1.",
+      "might": 0,
+      "vigor": 2,
+      "artist": "noc_hatt",
+      "path": "Blood/Gloomtongue.png"
+    },
+    {
+      "name": "Graft",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Grant all original abilities and traits of one of your dusted creations without Sui Generis to a chosen creation.",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W",
+      "path": "Blood/Graft.png"
+    },
+    {
+      "name": "Gravebind",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "[Bury a creation from your hand]: A chosen creation can't attack until round end.",
+      "might": null,
+      "vigor": null,
+      "artist": "Shazin",
+      "path": "Blood/Gravebind.png"
+    },
+    {
+      "name": "Graveswap",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Return up to one creation from one of your graves to your hand, then either bury a creation from your hand or bury this scheme.\n(Schemes can't be harvested.)",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Blood/Graveswap.png"
+    },
+    {
+      "name": "Jumpstart",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Put a creation from one of your graves onto a frontline lane, then that creation attacks you for damage equal to its cost minus 2.",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W",
+      "path": "Blood/Jumpstart.png"
+    },
+    {
+      "name": "Little Newt",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Amphibian",
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": "Creations in the opposing lane get +1 might.",
+      "might": 2,
+      "vigor": 1,
+      "artist": "YL0W+eg+uwaist+zeek",
+      "path": "Blood/Little Newt.png"
+    },
+    {
+      "name": "Resupply",
+      "id": "CS01-041/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Quick Plot"
+      ],
+      "keywords": [],
+      "abilityText": "Plot this scheme. (In a grave or lane.)\nAt round start, if this scheme is plotted, [turn it to dust], and search your corpse deck for any Corpse card, bury it, then shuffle.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Blood/Resupply.png"
+    },
+    {
+      "name": "Scant Messenger",
+      "id": "CS01-191/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 1
+      },
+      "subtypes": [
+        "Beast",
+        "Cultist"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, draw a card.",
+      "might": 0,
+      "vigor": 1,
+      "artist": "YL0W",
+      "path": "Blood/Scant Messenger.png"
+    },
+    {
+      "name": "Ashes to Ashes",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Turn a chosen corpse or plotted card to dust. If a corpse was turned to dust this way, its owner may search their corpse deck for any Common Corpse card, bury it, then shuffle. Then you do the same. Corpses chosen this way can't be harvested until the chain resolves.",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Blood/Ashes to Ashes.png"
+    },
+    {
+      "name": "Growth",
+      "id": "CS01-041/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Until round end, give a chosen creation Colossal, then if it costs 4 or more, give it +4 vigor and add <blood>. (You may only have one creation with Colossal on your field. When you would take damage, the creation with Colossal takes that damage instead.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Blood/Growth.png"
+    },
+    {
+      "name": "Make a Stand",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Choose a scheme in the chain. If that scheme has chosen one of your creations, turn that scheme to dust unless its owner pays <blood>2. If they do, draw a card.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Blood/Make a Stand.png"
+    },
+    {
+      "name": "Ichor Concentrate",
+      "id": "CS01-041/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Add <blood><blood><blood><blood>. Until round end, you can't play schemes.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Blood/Ichor Concentrate.png"
+    },
+    {
+      "name": "Patchwork Envoy",
+      "id": "CS01-042/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 3
+      },
+      "subtypes": [
+        "Cultist",
+        "Abomination"
+      ],
+      "keywords": [],
+      "abilityText": "When you harvest a corpse, add <blood><blood><blood> instead.\n[<blood>3, bury a creation from your hand]:\nDraw a card. This is a quick ability. Use only once each round.",
+      "might": 1,
+      "vigor": 2,
+      "artist": null,
+      "path": "Blood/Patchwork Envoy.png"
+    },
+    {
+      "name": "Annihilator Titan",
+      "id": "CS01-043/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 8
+      },
+      "subtypes": [
+        "Titan",
+        "Automaton"
+      ],
+      "keywords": [
+        "Colossal"
+      ],
+      "abilityText": "Colossal:\nYou may only have one creation with Colossal on your field. When you would take damage, I take that damage instead.\n\nWhen I would attack normally, you may have me attack any frontline lane.\nWhen I enter, if I usurped another creation, you may have me deal 10 damage to a chosen creation. This ability can be responded to with Quick effects.",
+      "might": 5,
+      "vigor": 5,
+      "artist": null,
+      "path": "Blood/Annihilator Titan.png"
+    },
+    {
+      "name": "Goderek, Ersatz Titan",
+      "id": "CS01-044/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 6
+      },
+      "subtypes": [
+        "Titan",
+        "Abomination"
+      ],
+      "keywords": [
+        "Sui Generis"
+      ],
+      "abilityText": "Sui Generis:\nWhen I enter, reveal your deck, turn all of your cards with the same name as me to dust, then shuffle.\n\nAs I enter, two chosen lifestitchers reveal the top five cards of their deck. Grant me all abilities and traits of three chosen cards revealed this way. Then each lifestitcher shuffles.",
+      "might": 3,
+      "vigor": 3,
+      "artist": null,
+      "path": "Blood/Goderek, Ersatz Titan.png"
+    },
+    {
+      "name": "Sentry Titan",
+      "id": "CS01-041/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 8
+      },
+      "subtypes": [
+        "Titan",
+        "Automaton"
+      ],
+      "keywords": [
+        "Colossal",
+        "Defiant"
+      ],
+      "abilityText": "Colossal:\nYou may only have one creation with Colossal on your field. When you would take damage, I take that damage instead.\n\nDefiant:\nWhen I'm chosen by an opposing scheme or ability, draw a card.",
+      "might": 4,
+      "vigor": 4,
+      "artist": null,
+      "path": "Blood/Sentry Titan.png"
+    },
+    {
+      "name": "Triplex Titan",
+      "id": "CS01-042/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 9
+      },
+      "subtypes": [
+        "Titan",
+        "Automaton"
+      ],
+      "keywords": [
+        "Regenerator",
+        "Colossal",
+        "Defiant"
+      ],
+      "abilityText": "Regenerator:\nWhen my corpse is harvested, [<blood>1], and return me to a grave and I can't be harvested again until round end.\n\nColossal:\nYou may only have one creation with Colossal on your field. When you would take damage, I take that damage instead.\n\nDefiant:\nWhen I'm chosen by an opposing scheme or ability, draw a card.",
+      "might": 7,
+      "vigor": 7,
+      "artist": null,
+      "path": "Blood/Triplex Titan.png"
+    },
+    {
+      "name": "Wrath Augur",
+      "id": "CS01-072/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Cultist",
+        "Abomination"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, I deal 3 damage to one of your creations. Overkill damage dealt to that creation is dealt to you.",
+      "might": 3,
+      "vigor": 3,
+      "artist": null,
+      "path": "Blood/Wrath Augur.png"
+    },
+    {
+      "name": "Ominous Prelude",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Plot a card from your hand that costs 3 or less. It gains \"At round start, play this card without paying its cost.\"",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Blood/Ominous Prelude.png"
+    },
+    {
+      "name": "Reroute",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 2
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "[Pay 1 life]:\nA chosen lane becomes a frontline lane or a support lane until round end. (The connected opposing lanes are also affected this way. Creations in support lanes can't attack normally in combat.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Blood/Reroute.png"
+    },
+    {
+      "name": "Scarlet Oracle",
+      "id": "CS01-162/300 EN",
+      "deck": "main",
+      "group": "Blood",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 3
+      },
+      "subtypes": [
+        "Beast",
+        "Cultist"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, draw a card.\n\n[Pay 1 life while I'm in your hand]:\nPlot me. At round start, [<blood>2], and play me without paying my cost.",
+      "might": 2,
+      "vigor": 1,
+      "artist": null,
+      "path": "Blood/Scarlet Oracle.png"
+    },
+    {
+      "name": "Ambush",
+      "id": "CS01-162/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Put a creation card from your hand onto the field, then all of your creations attack a chosen opposing creation. Bury the creation you put onto the field afterwards.",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Heart/Ambush.png"
+    },
+    {
+      "name": "Gravesworn Brawler",
+      "id": "CS01-162/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Humanoid"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, [bury a creation from your hand], and draw a card.\n[<blood>1 while I'm in a frontline lane]: I attack a chosen creation for 4 damage, then bury me.",
+      "might": 2,
+      "vigor": 2,
+      "artist": "eg",
+      "path": "Heart/Gravesworn Brawler.png"
+    },
+    {
+      "name": "Lycanhead",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Canine",
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": "",
+      "might": 2,
+      "vigor": 2,
+      "artist": "Sachiel",
+      "path": "Heart/Lycanhead.png"
+    },
+    {
+      "name": "Rabid Hunt",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "One of your creations attacks another chosen creation for 2 damage plus your creation's might.",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W",
+      "path": "Heart/Rabid Hunt.png"
+    },
+    {
+      "name": "Sky Tyrant",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Avian",
+        "Beast"
+      ],
+      "keywords": [
+        "Soaring",
+        "Cadaverous Strength"
+      ],
+      "abilityText": "Soaring:\nWhen I attack normally, [halve my might rounded down until round end], and I deal that much damage directly to the defending lifestitcher.\n\nCadaverous Strength:\nI get +1 might for every 2 might of the corpse in the grave behind me.",
+      "might": 2,
+      "vigor": 3,
+      "artist": "YL0W",
+      "path": "Heart/Sky Tyrant.png"
+    },
+    {
+      "name": "Ursa Major",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Blood": 4
+      },
+      "subtypes": [
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": "",
+      "might": 4,
+      "vigor": 5,
+      "artist": "eg",
+      "path": "Heart/Ursa Major.png"
+    },
+    {
+      "name": "Venerable Alpha",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Blood": 3
+      },
+      "subtypes": [
+        "Canine",
+        "Beast"
+      ],
+      "keywords": [
+        "Lord"
+      ],
+      "abilityText": "Lord:\nYour creations to my left and right each get +1 might and +1 vigor.",
+      "might": 4,
+      "vigor": 4,
+      "artist": "whenlifegivesticks",
+      "path": "Heart/Venerable Alpha.png"
+    },
+    {
+      "name": "Wapiti",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Blood": 3
+      },
+      "subtypes": [
+        "Cervine",
+        "Beast"
+      ],
+      "keywords": [
+        "Shifty"
+      ],
+      "abilityText": "Shifty:\nAt the start of combat, you may move me by 1 lane in either direction.",
+      "might": 2,
+      "vigor": 4,
+      "artist": "whenlifegivesticks",
+      "path": "Heart/Wapiti.png"
+    },
+    {
+      "name": "Cornucopia Agent",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Beast",
+        "Valet"
+      ],
+      "keywords": [
+        "Pristine"
+      ],
+      "abilityText": "Pristine:\nWhen you harvest me, add one organ from my cost and one organ of any type.\n\nWhen I enter the field or a grave, you may draw a card.\n[<heart>1<blood>1]: Bury me from your hand.",
+      "might": 2,
+      "vigor": 2,
+      "artist": "eg",
+      "path": "Heart/Cornucopia Agent.png"
+    },
+    {
+      "name": "Indomitable Forte",
+      "id": "CS01-191/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Prevent the next 2 damage that would be dealt to a chosen creation and give it +2 vigor until round end.",
+      "might": null,
+      "vigor": null,
+      "artist": "zeekubeeku",
+      "path": "Heart/Indomitable Forte.png"
+    },
+    {
+      "name": "Aegis Familiar",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Feline",
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": "At round start, if I'm in a frontline lane, add <heart>.",
+      "might": 0,
+      "vigor": 3,
+      "artist": null,
+      "path": "Heart/Aegis Familiar.png"
+    },
+    {
+      "name": "The Hunted",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Cervine",
+        "Beast"
+      ],
+      "keywords": [
+        "Shifty"
+      ],
+      "abilityText": "Shifty:\nAt the start of combat, you may move me by 1 lane in either direction.\n\nWhen a scheme or ability would choose another creation, that scheme or ability instead chooses me.",
+      "might": 1,
+      "vigor": 3,
+      "artist": null,
+      "path": "Heart/The Hunted.png"
+    },
+    {
+      "name": "Centaurtle",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Reptilian",
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": null,
+      "might": 1,
+      "vigor": 3,
+      "artist": null,
+      "path": "Heart/Centaurtle.png"
+    },
+    {
+      "name": "Shell Bash",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "One of your creations attacks itself for 2 damage, then attacks another creation for 4 damage. (A dead creation can't attack.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Heart/Shell Bash.png"
+    },
+    {
+      "name": "Red Garra",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Aquatic",
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": "When I attack, you heal 2.",
+      "might": 1,
+      "vigor": 3,
+      "artist": null,
+      "path": "Heart/Red Garra.png"
+    },
+    {
+      "name": "Wisdom in Desperation",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Heart",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Until round end, give a chosen creation \"When I attack, draw a card,\" then if you have 5 life or less, give that creation +3 vigor.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Heart/Wisdom in Desperation.png"
+    },
+    {
+      "name": "Brain Blast",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "You deal 3 damage to a chosen creation.",
+      "might": null,
+      "vigor": null,
+      "artist": "whenlifegivesticks",
+      "path": "Brain/Brain Blast.png"
+    },
+    {
+      "name": "Cruel Ruin",
+      "id": "CS01-103/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Exceptional",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 3
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "You deal 3 damage to each of up to 3 chosen creations. The opposing lifestitcher deals 3 damage to each of up to 3 creations of their choice.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Brain/Cruel Ruin.png"
+    },
+    {
+      "name": "Defense Engineer",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Insectile",
+        "Humanoid"
+      ],
+      "keywords": [
+        "Guardian"
+      ],
+      "abilityText": "Guardian:\nI can't die until round end. When I die, you don't take overkill damage.",
+      "might": 1,
+      "vigor": 2,
+      "artist": "eg",
+      "path": "Brain/Defense Engineer.png"
+    },
+    {
+      "name": "Defense Systems",
+      "id": "CS01-072/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2
+      },
+      "subtypes": [
+        "Meticulous Plot"
+      ],
+      "keywords": [],
+      "abilityText": "Plot this scheme. (In a grave or lane.)\nAt the start of combat, if this scheme is plotted, [turn it to dust], and create a Barrier token with 0 might, 1 vigor, and Guardian on each open frontline lane.",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Brain/Defense Systems.png"
+    },
+    {
+      "name": "Draw Upon the Well",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Look at the top five cards of your deck, draw three of them, then put the rest on the bottom. Bury this scheme in a grave. While this scheme is in a grave, it can be harvested for <brain><brain>.",
+      "might": null,
+      "vigor": null,
+      "artist": "zeekubeeku",
+      "path": "Brain/Draw Upon the Well.png"
+    },
+    {
+      "name": "Neuron Dealer",
+      "id": "CS01-223/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2
+      },
+      "subtypes": [
+        "Insectile",
+        "Stranger"
+      ],
+      "keywords": [],
+      "abilityText": "When you play a scheme, [it costs <brain> less to play], and grant me a debt counter.\nWhile you're in debt, the opposing lifestitcher takes no damage from your creations attacking.\n[<blood>1]: Remove a debt counter. This is a quick ability.",
+      "might": 0,
+      "vigor": 1,
+      "artist": "eg",
+      "path": "Brain/Neuron Dealer.png"
+    },
+    {
+      "name": "Sigma Falls",
+      "id": "CS01-221/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "[Pay any amount of <blood>]:\nTurn a chosen creation to dust unless its owner pays <blood>1 for each organ paid for this scheme's costs. (Including the initial cost of <brain>1<blood>1.)",
+      "might": null,
+      "vigor": null,
+      "artist": "whenlifegivesticks",
+      "path": "Brain/Sigma Falls.png"
+    },
+    {
+      "name": "The Amygdala",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Blood": 3
+      },
+      "subtypes": [
+        "Stranger",
+        "Abomination"
+      ],
+      "keywords": [
+        "Neurotic Strength"
+      ],
+      "abilityText": "Neurotic Strength:\nI get +1 might for every 4 of your nontoken dusted cards.\n\n[Turn a card from your hand to dust]: Swap my might and vigor until round end. This is a quick ability. Use only once each round.",
+      "might": 1,
+      "vigor": 2,
+      "artist": "eg",
+      "path": "Brain/The Amygdala.png"
+    },
+    {
+      "name": "Warden of Lost Memories",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Stranger"
+      ],
+      "keywords": [],
+      "abilityText": "At the start of combat, [bury a scheme from your hand], and draw a card. Your schemes in graves can be harvested for <brain><brain>.",
+      "might": 2,
+      "vigor": 2,
+      "artist": "FluffyDragonEve",
+      "path": "Brain/Warden of Lost Memories.png"
+    },
+    {
+      "name": "Thunderbolt Agent",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Stranger",
+        "Valet"
+      ],
+      "keywords": [
+        "Pristine"
+      ],
+      "abilityText": "Pristine:\nWhen you harvest me, add one organ from my cost and one organ of any type.\n\nWhen I enter the field or a grave, you may deal 1 dmaage to a chosen creation.\n[<brain>1<blood>1]: Bury me from your hand.",
+      "might": 2,
+      "vigor": 2,
+      "artist": null,
+      "path": "Brain/Thunderbolt Agent.png"
+    },
+    {
+      "name": "Trawl the Minds",
+      "id": "CS01-221/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous",
+        "Plot"
+      ],
+      "keywords": [],
+      "abilityText": "Plot this scheme. (In a grave or lane.)\nAt round start, if this scheme is plotted, [turn it to dust], and look at the top three cards of your deck, draw one of them, then put the rest on the top or bottom in any order.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Brain/Trawl the Minds.png"
+    },
+    {
+      "name": "Accel Familiar",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Feline",
+        "Stranger"
+      ],
+      "keywords": [
+        "Blink"
+      ],
+      "abilityText": "Blink\n:I can be played as though I was a quick scheme.\n\nAt round start, if I'm in a support lane, add <brain>.",
+      "might": 0,
+      "vigor": 1,
+      "artist": null,
+      "path": "Brain/Accel Familiar.png"
+    },
+    {
+      "name": "Agonizing Analysis",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "You deal 2 damage to one of your chosen creations. If it survives, draw three cards, then put a card from your hand on the bottom of your deck.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Brain/Agonizing Analysis.png"
+    },
+    {
+      "name": "Channeler of Pain",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Blood": 3
+      },
+      "subtypes": [
+        "Reptilian",
+        "Stranger"
+      ],
+      "keywords": [
+        "Revolt"
+      ],
+      "abilityText": "Revolt:\nYou may have me attack last in combat. I get +1 might for every point of damage I've taken this round.\n\nWhen I take damage, you heal 1.",
+      "might": 0,
+      "vigor": 5,
+      "artist": null,
+      "path": "Brain/Channeler of Pain.png"
+    },
+    {
+      "name": "Spiral of the Mind",
+      "id": "CS01-072/300 EN",
+      "deck": "main",
+      "group": "Brain",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "You may deal 2 damage to one of your creations. If you do, draw a card and put a card from your hand on the bottom of your deck. If that creation has taken more total damage than its vigor, you lose 1 life. Then, repeat this process. (Until you decline to deal damage.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Brain/Spiral of the Mind.png"
+    },
+    {
+      "name": "Bearer of the Banner",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Cultist",
+        "Beast"
+      ],
+      "keywords": [
+        "Lord"
+      ],
+      "abilityText": "Lord:\nYour creations to my left and right each get +1 might and +1 vigor.",
+      "might": 2,
+      "vigor": 2,
+      "artist": "noc_hatt",
+      "path": "Soul/Bearer of the Banner.png"
+    },
+    {
+      "name": "Divine Blessing",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Grant each of your creations +1 might and +1 vigor.",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W+eg+uwais+zeek",
+      "path": "Soul/Divine Blessing.png"
+    },
+    {
+      "name": "Entwined Shadows",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Avian",
+        "Fiend"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, create a Shadow token with 1 might and 1 vigor.",
+      "might": 1,
+      "vigor": 1,
+      "artist": "Fail Gene",
+      "path": "Soul/Entwined Shadows.png"
+    },
+    {
+      "name": "False Idol",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Fiend"
+      ],
+      "keywords": [
+        "Bolstered Strength"
+      ],
+      "abilityText": "Bolstered Strength:\nI get the total might of each creation to my left and right that doesn't have Bolstered Strength.",
+      "might": 0,
+      "vigor": 3,
+      "artist": "eg",
+      "path": "Soul/False Idol.png"
+    },
+    {
+      "name": "Spirit Siphon",
+      "id": "CS01-131/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Until round end, give a chosen creation -2 might, then give a chosen creation +2 might.",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W+eg+uwais+zeek",
+      "path": "Soul/Spirit Siphon.png"
+    },
+    {
+      "name": "Summoning Circle",
+      "id": "CS01-192/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Look at the top six cards of your deck. You may put any number of creations with total cost 4 or less from among them onto the field. Put the rest on the bottom.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Soul/Summoning Circle.png"
+    },
+    {
+      "name": "Symbol of Violence",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 1
+      },
+      "subtypes": [
+        "Beast",
+        "Fiend"
+      ],
+      "keywords": [],
+      "abilityText": "At the start of combat, give a chosen creation +1 might until round end.",
+      "might": 0,
+      "vigor": 1,
+      "artist": "eg",
+      "path": "Soul/Symbol of Violence.png"
+    },
+    {
+      "name": "Tower Witch",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Cultist"
+      ],
+      "keywords": [
+        "Vantage Point"
+      ],
+      "abilityText": "Vantage Point: While I'm in a support lane, I can attack normally. When I do, choose a frontline lane for me to attack.",
+      "might": 1,
+      "vigor": 2,
+      "artist": "zeekubeeku",
+      "path": "Soul/Tower Witch.png"
+    },
+    {
+      "name": "Transient Malevolence",
+      "id": "CS01-131/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2
+      },
+      "subtypes": [
+        "Fiend"
+      ],
+      "keywords": [
+        "Ephemeral"
+      ],
+      "abilityText": "Ephemeral:\nI turn to dust at round end.\nWhen I die, I turn to dust.",
+      "might": 3,
+      "vigor": 3,
+      "artist": null,
+      "path": "Soul/Transient Malevolence.png"
+    },
+    {
+      "name": "Lightning in a Bottle",
+      "id": "CS01-102/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Primeval",
+        "Fiend"
+      ],
+      "keywords": [
+        "Blink"
+      ],
+      "abilityText": "Blink:\nI can be played as though I was a quick scheme.\n\nWhen I enter opposing a creation, [give me -2 might and -1 vigor until round end,] and I deal 2 damage to the opposing lane. (I can damage support lanes.)",
+      "might": 3,
+      "vigor": 2,
+      "artist": null,
+      "path": "Soul/Lightning in a Bottle.png"
+    },
+    {
+      "name": "Reverie Agent",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Fiend",
+        "Valet"
+      ],
+      "keywords": [
+        "Pristine"
+      ],
+      "abilityText": "Pristine:\nWhen you harvest me, add one organ from my cost and one organ of any type.\n\nWhen I enter the field or a grave, you may grant a chosen creation +1 might and +1 vigor.\n[<soul>1<blood>1]: Bury me from your hand.",
+      "might": 2,
+      "vigor": 2,
+      "artist": null,
+      "path": "Soul/Reverie Agent.png"
+    },
+    {
+      "name": "Anima Familiar",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Feline",
+        "Fiend"
+      ],
+      "keywords": [],
+      "abilityText": "At round start, if I'm in a support lane, add <soul>.\nIf I'm in a support lane, your creations to my left and right gets might equal to mine.",
+      "might": 0,
+      "vigor": 1,
+      "artist": "zeekubeeku",
+      "path": "Soul/Anima Familiar.png"
+    },
+    {
+      "name": "Cosmoworm",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Beast",
+        "Stranger",
+        "Distortion"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, if my cost wasn't paid, grant +1 might and +1 vigor to another chosen creation.\n[<soul>2<blood>1 while I'm in your hand]:\nPlot this creation. At round start, play me without paying my cost.",
+      "might": 1,
+      "vigor": 1,
+      "artist": null,
+      "path": "Soul/Cosmoworm.png"
+    },
+    {
+      "name": "Vastgate Apparitions",
+      "id": "CS01-102/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Fiend",
+        "Stranger"
+      ],
+      "keywords": [],
+      "abilityText": "When we enter, if our cost was paid, [plot one of your creations], then choose another creation. That creation's owner plots it. All creations plotted this way have \"At round start, play me without paying my cost.\" (You can only plot creations from the field this way.)",
+      "might": 1,
+      "vigor": 1,
+      "artist": null,
+      "path": "Soul/Vastgate Apparitions.png"
+    },
+    {
+      "name": "Bodysnatcher",
+      "id": "CS01-103/300 EN",
+      "deck": "main",
+      "group": "Soul",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {
+        "Soul": 2
+      },
+      "subtypes": [
+        "Fiend"
+      ],
+      "keywords": [
+        "Vantage Point"
+      ],
+      "abilityText": "Vantage Point:\nWhile I'm in a support lane, I can attack normally. when I do, choose a frontline lane for me to attack.\n\nUp to one other card can be placed in the same lane as me. If there is, I get +2 might. If that card is a creation, it has no abilities nor traits. (Choosing or attacking a lane, and not a specific card in that lane, affects all cards in that lane.)",
+      "might": 0,
+      "vigor": 1,
+      "artist": null,
+      "path": "Soul/Bodysnatcher.png"
+    },
+    {
+      "name": "Dimensional Weave",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Plot one of your creations from your field in a grave. It gains \"At round start, put me onto the field.\"",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Eye/Dimensional Weave.png"
+    },
+    {
+      "name": "Eye Collector",
+      "id": "CS01-163/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Witness",
+        "Abomination"
+      ],
+      "keywords": [],
+      "abilityText": "At the start of combat, [pay 1 life], and I attack a chosen creation for 1 damage. When I attack a creation, give me all traits of that creation until round end.",
+      "might": 2,
+      "vigor": 3,
+      "artist": null,
+      "path": "Eye/Eye Collector.png"
+    },
+    {
+      "name": "Eyeguy",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Witness"
+      ],
+      "keywords": [
+        "Double Vision"
+      ],
+      "abilityText": "Double Vision:\nMy normal attack instead attacks each opposing lane to the left and right of me.",
+      "might": 1,
+      "vigor": 1,
+      "artist": "zeekubeeku",
+      "path": "Eye/Eyeguy.png"
+    },
+    {
+      "name": "Focus Lens",
+      "id": "CS01-001/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "One of your creations deals 2 damage to a chosen creation for each trait your creation has, plus an additional 1 damage for each trait among cards in your graves.",
+      "might": null,
+      "vigor": null,
+      "artist": "whenlifegivesticks",
+      "path": "Eye/Focus Lens.png"
+    },
+    {
+      "name": "Grasp Possibility",
+      "id": "CS01-221/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "[Bury a creation from your hand, or turn a card from your hand to dust]: Draw two cards.",
+      "might": null,
+      "vigor": null,
+      "artist": "greed",
+      "path": "Eye/Grasp Possibility.png"
+    },
+    {
+      "name": "Nightgaze Colony",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Beast",
+        "Witness"
+      ],
+      "keywords": [
+        "Soaring",
+        "Double Vision"
+      ],
+      "abilityText": "Soaring:\nWhen we attack normally, [halve our might rounded down until round end], and we deal that much damage directly to the defending lifestitcher.\n\nDouble Vision:\nOur normal attack instead attacks each opposing lane to the left and right of us.",
+      "might": 2,
+      "vigor": 3,
+      "artist": null,
+      "path": "Eye/Nightgaze Colony.png"
+    },
+    {
+      "name": "Peer Through the Veil",
+      "id": "CS01-221/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Look at the top five cards of your deck, draw one of them, plot a creation from among them, then turn the rest to dust. The plotted creation has \"At round start, bury me.\" (It loses this text afterwards.)",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W",
+      "path": "Eye/Peer Through the Veil.png"
+    },
+    {
+      "name": "Quantum Jester",
+      "id": "CS01-131/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 2
+      },
+      "subtypes": [
+        "Cultist",
+        "Distortion"
+      ],
+      "keywords": [
+        "Shifty",
+        "Ephemeral"
+      ],
+      "abilityText": "Shifty:\nAt the start of combat, you may move me by 1 lane in either direction.\n\nEphemeral:\nI turn to dust at round end.\nWhen I die, I turn to dust.",
+      "might": 2,
+      "vigor": 4,
+      "artist": null,
+      "path": "Eye/Quantum Jester.png"
+    },
+    {
+      "name": "The Myriad",
+      "id": "CS01-002/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Witness"
+      ],
+      "keywords": [
+        "Aberrant Strength"
+      ],
+      "abilityText": "Aberrant Strength: I get +1 might for every 2 cards on all fields and in all graves.",
+      "might": 1,
+      "vigor": 4,
+      "artist": "greed",
+      "path": "Eye/The Myriad.png"
+    },
+    {
+      "name": "The Singularity",
+      "id": "CS01-223/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1
+      },
+      "subtypes": [
+        "Distortion"
+      ],
+      "keywords": [],
+      "abilityText": "As I enter, turn all of your other creations and corpses to dust, and grant me all original traits of everything turned to dust this way. Grant me +1 might and +1 vigor for each card turned to dust this way.\n[<eye>1<blood>1 while I'm in your hand]:\nPut me onto the field unless the opposing lifestitcher pays <blood>2.\nThis is a quick ability.",
+      "might": 1,
+      "vigor": 1,
+      "artist": "greed",
+      "path": "Eye/The Singularity.png"
+    },
+    {
+      "name": "Vigil Horizon",
+      "id": "CS01-132/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Distortion"
+      ],
+      "keywords": [
+        "Boundless"
+      ],
+      "abilityText": "Boundless:\nAt the start of combat, create a token in each lane to my left and right that have my exact stats and name. Those tokens have Ephemeral.",
+      "might": 1,
+      "vigor": 3,
+      "artist": "Sachiel",
+      "path": "Eye/Vigil Horizon.png"
+    },
+    {
+      "name": "Aura Familiar",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Feline",
+        "Distortion"
+      ],
+      "keywords": [
+        "Soaring"
+      ],
+      "abilityText": "Soaring:\nWhen I attack normally, [halve my might rounded down until round end], and I deal that much damage directly to the defending lifestitcher.\n\nAt round start, if I'm in a support lane, add <eye> for each trait I have.",
+      "might": 0,
+      "vigor": 1,
+      "artist": null,
+      "path": "Eye/Aura Familiar.png"
+    },
+    {
+      "name": "Visionary Agent",
+      "id": "CS01-251/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 2,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Distortion",
+        "Valet"
+      ],
+      "keywords": [
+        "Pristine"
+      ],
+      "abilityText": "Pristine:\nWhen you harvest me, add one organ from my cost and one organ of any type.\n\nWhen I enter the field or a grave, you may look at the top two cards of your deck. Turn any number of them to dust, and put the rest back on top in any order.\n[<eye>1<blood>1]: Bury me from your hand.",
+      "might": 2,
+      "vigor": 2,
+      "artist": null,
+      "path": "Eye/Visionary Agent.png"
+    },
+    {
+      "name": "Delve into the Deep",
+      "id": "CS01-162/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "[Pay 1 life]\nDraw two cards, then turn a card from your hand to dust.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Eye/Delve into the Deep.png"
+    },
+    {
+      "name": "Slumbering Deep",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Aquatic",
+        "Beast",
+        "Witness"
+      ],
+      "keywords": [],
+      "abilityText": "While you have 5 or less life, I get +3 might and Vampiric. (When a creation with Vampiric deals damage, you heal by that much if you've lost life this turn.)",
+      "might": 0,
+      "vigor": 2,
+      "artist": null,
+      "path": "Eye/Slumbering Deep.png"
+    },
+    {
+      "name": "Sunlight Zone Diviner",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Eye",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {
+        "Eye": 2
+      },
+      "subtypes": [
+        "Aquatic",
+        "Witness"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, [pay 1 life], and look at the top five cards of your deck. Put one of them into your hand and turn the rest to dust.",
+      "might": 2,
+      "vigor": 1,
+      "artist": null,
+      "path": "Eye/Sunlight Zone Diviner.png"
+    },
+    {
+      "name": "Old Thornback",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Reptilian",
+        "Beast"
+      ],
+      "keywords": [
+        "Revolt"
+      ],
+      "abilityText": "Revolt:\nYou may have me attack last in combat. I get +1 might for every point of damage I've taken this round.",
+      "might": 1,
+      "vigor": 4,
+      "artist": null,
+      "path": "Multi/Old Thornback.png"
+    },
+    {
+      "name": "Steadfast",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Give a chosen creation Revolt until round end, then you may deal up to 2 damage to that creation. (You may have a creation with Revolt attack last in combat. It gets +1 might for every point of damage it's taken this round.)",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Multi/Steadfast.png"
+    },
+    {
+      "name": "Hermit Carrionshell",
+      "id": "CS01-071/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Aquatic",
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": "When you harvest a corpse, give me +1 vigor until round end when the current action ends.",
+      "might": 1,
+      "vigor": 3,
+      "artist": null,
+      "path": "Multi/Hermit Carrionshell.png"
+    },
+    {
+      "name": "Vitaleum Phalanx",
+      "id": "CS01-072/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Stranger",
+        "&",
+        "Reptilian",
+        "Beast"
+      ],
+      "keywords": [],
+      "abilityText": "Your creations attack last in combat. (Including myself.)\nWhen one of your creations is dealt damage, you may have its base might become equal to its vigor until round end.",
+      "might": 0,
+      "vigor": 3,
+      "artist": null,
+      "path": "Multi/Vitaleum Phalanx.png"
+    },
+    {
+      "name": "Charismatic Orator",
+      "id": "CS01-072/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Humanoid"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, reveal cards from the top of your deck until you reveal a creation that costs 3 or less. If that creation has greater vigor than might, put it onto the field. Otherwise, put it into your hand.",
+      "might": 2,
+      "vigor": 3,
+      "artist": "whenlifegivesticks",
+      "path": "Multi/Charismatic Orator.png"
+    },
+    {
+      "name": "Mass Retribution",
+      "id": "CS01-073/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Exceptional",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "All creations deal damage to themselves equal to their might.",
+      "might": null,
+      "vigor": null,
+      "artist": "uwais + eg >",
+      "path": "Multi/Mass Retribution.png"
+    },
+    {
+      "name": "Ego Vitaleum",
+      "id": "CS01-074/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Brain": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Primeval",
+        "Reptilian",
+        "Stranger"
+      ],
+      "keywords": [
+        "Sui Generis"
+      ],
+      "abilityText": "Sui Generis:\nWhen I enter, reveal your deck, turn all of your cards with the same name as me to dust, then shuffle.\n\nDamage is dealt to me in the form of permanently reducing my vigor.\nWhen you harvest a corpse or play a meticulous scheme, grant me +2 vigor when the current action ends.\n[Deal 2 damage to me]:\nDraw a card, and you heal 1.",
+      "might": 1,
+      "vigor": 4,
+      "artist": null,
+      "path": "Multi/Ego Vitaleum.png"
+    },
+    {
+      "name": "Volatile Snapper",
+      "id": "CS01-073/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Reptilian",
+        "Beast"
+      ],
+      "keywords": [
+        "Guardian",
+        "Revolt"
+      ],
+      "abilityText": "Guardian:\nI can't die until round end. When I die, you don't take overkill damage.\n\nRevolt:\nYou may have me attack last in combat. I get +1 might for every point of damage I've taken this round.",
+      "might": 0,
+      "vigor": 1,
+      "artist": null,
+      "path": "Multi/Volatile Snapper.png"
+    },
+    {
+      "name": "Stevens",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Soul": 1
+      },
+      "subtypes": [
+        "Humanoid"
+      ],
+      "keywords": [
+        "Blink"
+      ],
+      "abilityText": "Blink:\nI can be played as though I was a quick scheme.",
+      "might": 2,
+      "vigor": 1,
+      "artist": null,
+      "path": "Multi/Stevens.png"
+    },
+    {
+      "name": "Warp",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Soul": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "You may play a card from your hand as though it had Blink. It costs <brain><soul> less to play this way.\n(Creations and schemes with Blink can be played as though they were quick schemes.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Warp.png"
+    },
+    {
+      "name": "Gamma Stingray",
+      "id": "CS01-101/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Aquatic",
+        "Primeval",
+        "Stranger"
+      ],
+      "keywords": [],
+      "abilityText": "At round end, I deal 3 damage to the opposing lane. (I can damage an empty lane, and I can damage support lanes.)",
+      "might": 0,
+      "vigor": 3,
+      "artist": "eg",
+      "path": "Multi/Gamma Stingray.png"
+    },
+    {
+      "name": "Hyperion Surgemaster",
+      "id": "CS01-102/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Fiend",
+        "Stranger"
+      ],
+      "keywords": [],
+      "abilityText": "When you play a card or trigger one of your plotted cards, if it isn't the main phase, I deal 1 damage to the opposing lane.\n(I can damage an empty lane, and I can damage support lanes.)",
+      "might": 1,
+      "vigor": 3,
+      "artist": null,
+      "path": "Multi/Hyperion Surgemaster.png"
+    },
+    {
+      "name": "Terra Sunder",
+      "id": "CS01-103/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Exceptional",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Up to one chosen lane becomes a support lane for the rest of the game. Then, up to one chosen lane becomes a frontline lane for the rest of the game. (The connected opposing lanes are also affected this way. Creations in support lanes can't attack or be attacked in combat.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Terra Sunder.png"
+    },
+    {
+      "name": "Doctors Daz & Vykk",
+      "id": "CS01-104/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Soul": 2
+      },
+      "subtypes": [
+        "Humanoid",
+        "Stranger",
+        "&",
+        "Fiend"
+      ],
+      "keywords": [
+        "Soaring",
+        "Sui Generis"
+      ],
+      "abilityText": "Soaring; Sui Generis:\nWhen we enter, reveal your deck, turn all of your cards with the same name as us to dust, then shuffle.\n\nWhen we enter, you may plot a scheme that costs 3 or less from your hand. It gains \"At the start of combat, play me without paying my cost.\"\nAll of your plotted cards trigger at the start of combat in addition to their normal conditions.",
+      "might": 2,
+      "vigor": 3,
+      "artist": null,
+      "path": "Multi/Doctors Daz & Vykk.png"
+    },
+    {
+      "name": "Expedite",
+      "id": "CS01-102/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Soul": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Trigger one of your plotted cards. (You may activate its effects as though its condition was fulfilled.)\nAdd <brain><soul>.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Expedite.png"
+    },
+    {
+      "name": "Ghost",
+      "id": "CS01-131/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Until round end, give a chosen creation Ephemeral and \"I can't attack this round. When I turn to dust, return me to your hand.\" (Creations with Ephemeral turn to dust at round end. If a creation with Ephemeral dies, it turns to dust.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Ghost.png"
+    },
+    {
+      "name": "Razzle Dazzle",
+      "id": "CS01-131/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Choose a creation that's opposing one of your creations. It can't attack until round end. Then, return your creation to your hand, and add organs equal to its exact cost.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Razzle Dazzle.png"
+    },
+    {
+      "name": "Motley Troupe Juggler",
+      "id": "CS01-132/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Witness",
+        "Cultist"
+      ],
+      "keywords": [],
+      "abilityText": "At the end of combat, [bury a creation from your field], and draw a card. Then, if that creation had Ephemeral, you may return it to your hand.",
+      "might": 1,
+      "vigor": 1,
+      "artist": "eg",
+      "path": "Multi/Motley Troupe Juggler.png"
+    },
+    {
+      "name": "Bottom of the Barrel",
+      "id": "CS01-132/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Witness",
+        "Cultist"
+      ],
+      "keywords": [
+        "Shifty"
+      ],
+      "abilityText": "Shifty:\nAt the start of combat, you may move me by 1 lane in either direction.\n\nWhen one of your creations or an opposing creation leaves the field, if I'm in a support lane, grant me +1 might and +1 vigor.\nWhen I enter, [bury a creation from your field], and draw a card.",
+      "might": 0,
+      "vigor": 2,
+      "artist": null,
+      "path": "Multi/Bottom of the Barrel.png"
+    },
+    {
+      "name": "Grim Conductor",
+      "id": "CS01-133/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Stranger",
+        "Cultist"
+      ],
+      "keywords": [],
+      "abilityText": "[Bury a creation from your field]:\nCreate a Puppet token with 1 might and 1 vigor. Then, if the buried creation had Ephemeral, grant all of your tokens +1 might and +1 vigor. This is a quick ability. Use only once each round.",
+      "might": 2,
+      "vigor": 2,
+      "artist": "zeekubeeku",
+      "path": "Multi/Grim Conductor.png"
+    },
+    {
+      "name": "Motley Circus Ringleader",
+      "id": "CS01-134/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Soul": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Canine",
+        "Distortion"
+      ],
+      "keywords": [
+        "Ephemeral",
+        "Sui Generis"
+      ],
+      "abilityText": "Ephemeral; Sui Generis:\nWhen I enter, reveal your deck, turn all of your cards with the same name as me to dust, then shuffle.\n\nYour dusted creations that share a name with me have \"[<blood>1]: Put me from dust into an open lane.\"\nWhen I enter, [turn three of your creations with the same name to dust], and create a Kerberros token with 3 might, 3 vigor, and \"When I enter, I deal 3 damage to the opposing lane.\"",
+      "might": 1,
+      "vigor": 1,
+      "artist": null,
+      "path": "Multi/Motley Circus Ringleader.png"
+    },
+    {
+      "name": "Coral Mother",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Aquatic",
+        "Beast"
+      ],
+      "keywords": [
+        "Vampiric"
+      ],
+      "abilityText": "Vampiric:\nWhen I deal damage, you heal by that much if you've lost life this round.",
+      "might": 3,
+      "vigor": 3,
+      "artist": "uwais",
+      "path": "Multi/Coral Mother.png"
+    },
+    {
+      "name": "Bloodthirst",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "[Pay 1 life]:\nGive a chosen creation Vampiric until round end. (When a creation with Vampiric deals damage, you heal by that much if you've lost life this turn.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Bloodthirst.png"
+    },
+    {
+      "name": "Recuperate",
+      "id": "CS01-161/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "If you have 5 life or less, choose one:\n- You heal 3.\nDraw two cards.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Recuperate.png"
+    },
+    {
+      "name": "Idol of the Red Tide",
+      "id": "CS01-162/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Amphibian",
+        "Distortion"
+      ],
+      "keywords": [],
+      "abilityText": "When you lose life due to a card effect, I attack a chosen creation for 1 damage.\n[Pay 1 life]:Give me Lord until round end. Use only once each round. (Creations to the left and right of creations with Lord get +1 might and +1 vigor.)",
+      "might": 0,
+      "vigor": 1,
+      "artist": "eg",
+      "path": "Multi/Idol of the Red Tide.png"
+    },
+    {
+      "name": "Duel at the Shoreline",
+      "id": "CS01-162/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "Start an additional combat phase, except only two chosen creations whose lanes oppose each other participate. Your creations can't deal overkill damage during that combat. (Then the main phase resumes.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Duel at the Shoreline.png"
+    },
+    {
+      "name": "Sanguine Alliance",
+      "id": "CS01-252/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Until round end, whenever you lose health, look at that many cards from the top of your deck, and you may put any number of them on the top or bottom in any order. Then, if you've looked at five or more cards this way this round, draw two cards.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Sanguine Alliance.png"
+    },
+    {
+      "name": "Crimson Sea Avatar",
+      "id": "CS01-163/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Eye": 1,
+        "Blood": 2
+      },
+      "subtypes": [
+        "Aquatic",
+        "Distortion"
+      ],
+      "keywords": [],
+      "abilityText": "I get -1 might for every point of life you have.\nWhile you have 5 life or less, I cost <blood>2 less.\nAt round start, you lose 1 life.",
+      "might": 6,
+      "vigor": 4,
+      "artist": null,
+      "path": "Multi/Crimson Sea Avatar.png"
+    },
+    {
+      "name": "Abyssal Blade Khtllith",
+      "id": "CS01-164/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {
+        "Eye": 1,
+        "Heart": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Humanoid",
+        "Aquatic",
+        "Beast"
+      ],
+      "keywords": [
+        "Sui Generis"
+      ],
+      "abilityText": "Sui Generis:\nWhen I enter, reveal your deck, turn all of your cards with the same name as me to dust, then shuffle.\n\nI cost <blood>1 more for every 2 points of life you have.\nWhen I enter, start an additional combat phase. Your creations get Vampiric during that combat phase. (Then the main phase resumes.)",
+      "might": 3,
+      "vigor": 3,
+      "artist": "uwais + Sachiel",
+      "path": "Multi/Abyssal Blade Khtllith.png"
+    },
+    {
+      "name": "Coda Merumana",
+      "id": "CS01-191/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Soul": 1
+      },
+      "subtypes": [
+        "Coda",
+        "Humanoid"
+      ],
+      "keywords": [
+        "Unite"
+      ],
+      "abilityText": "Unite:\nYour creations to my left and right are in a band with me. When a creation in the band would take damage, you may distribute it among all of its bandmates.",
+      "might": 2,
+      "vigor": 2,
+      "artist": "zeekubeeku",
+      "path": "Multi/Coda Merumana.png"
+    },
+    {
+      "name": "Unify",
+      "id": "CS01-191/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Soul": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Until round end, give a chosen creation Unite and +2 vigor. (Your creations to the left and right of creations with Unite are in a band with them. When a creation in the band would take damage, you may distribute it among all of its bandmates.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Unify.png"
+    },
+    {
+      "name": "Coda Sterbaro",
+      "id": "CS01-192/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Coda",
+        "Beast"
+      ],
+      "keywords": [
+        "Unite"
+      ],
+      "abilityText": "Unite:\nYour creations to my left and right are in a band with me. When a creation in the band would take damage, you may distribute it among all of its bandmates.\n\nWhen I or another of your creations would gain might or vigor, until round end, give all other creations in the band an additional point in that stat.",
+      "might": 1,
+      "vigor": 1,
+      "artist": null,
+      "path": "Multi/Coda Sterbaro.png"
+    },
+    {
+      "name": "Crescendo Aspirant",
+      "id": "CS01-192/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Soul": 2,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Fiend",
+        "Cultist"
+      ],
+      "keywords": [],
+      "abilityText": "At the start of combat, if I'm in a band, give me and all of my bandmates +1 might and +1 vigor until round end. Otherwise, give me +1 might until round end.",
+      "might": 2,
+      "vigor": 3,
+      "artist": null,
+      "path": "Multi/Crescendo Aspirant.png"
+    },
+    {
+      "name": "Dance as One",
+      "id": "CS01-193/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Exceptional",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Soul": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Meticulous",
+        "Plot"
+      ],
+      "keywords": [],
+      "abilityText": "Plot this scheme. (In a grave or lane.)\nAt the start of combat, if this scheme is plotted, [turn it to dust], and choose two of your creations. Until round end, they're in a band, their might and vigor are equal to their total might and vigor divided by two, and they have \"Whenever I'm chosen by a scheme or ability, the other creation is also chosen by the same scheme or ability.\"",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Multi/Dance as One.png"
+    },
+    {
+      "name": "The Grand Orchestra",
+      "id": "CS01-194/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {
+        "Heart": 2,
+        "Soul": 2,
+        "Blood": 4
+      },
+      "subtypes": [
+        "Primeval",
+        "Coda"
+      ],
+      "keywords": [
+        "Unite",
+        "Sui Generis"
+      ],
+      "abilityText": "Unite; Sui Generis:\nWhen I enter, reveal your deck, turn all of your cards with the same name as me to dust, then shuffle.\n\nI cost <blood>1 less for each of your creations. Creations to my left and right have Unite. At the start of combat, you may set each of your creations' might to the total might among your creations, divided by the total number of your frontline creations, rounded up.",
+      "might": 4,
+      "vigor": 4,
+      "artist": null,
+      "path": "Multi/The Grand Orchestra.png"
+    },
+    {
+      "name": "Terror in the Ice",
+      "id": "CS01-221/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Common",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Stranger",
+        "Abomination"
+      ],
+      "keywords": [
+        "Frozen"
+      ],
+      "abilityText": "Frozen:\nI have no other abilities, traits, nor might.\n[Turn a card from your hand to dust and pay my cost]: Permanently remove Frozen from me.",
+      "might": 4,
+      "vigor": 3,
+      "artist": "eg",
+      "path": "Multi/Terror in the Ice.png"
+    },
+    {
+      "name": "Glaciate",
+      "id": "CS01-221/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Common",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Quick"
+      ],
+      "keywords": [],
+      "abilityText": "Grant a chosen creation Frozen. Its cost becomes <blood>3 until it loses Frozen. (Creations with Frozen have no other abilities, traits, nor might, and have \"[Turn a card from your hand to dust and pay my cost]: Permanently remove Frozen from me.\")",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Glaciate.png"
+    },
+    {
+      "name": "Enforcer of Eternity",
+      "id": "CS01-222/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Eye": 1,
+        "Blood": 3
+      },
+      "subtypes": [
+        "Primeval",
+        "Automaton"
+      ],
+      "keywords": [],
+      "abilityText": "At round start, grant Frozen to the creation in the opposing lane, then I move 1 lane in either direction. (Creations with Frozen have no other abilities, traits, nor might, and have \"[Turn a card from your hand to dust and pay my cost]: Permanently remove Frozen from me.\")\nWhen a creation loses frozen, you heal 1 and I move to oppose it.",
+      "might": 2,
+      "vigor": 5,
+      "artist": null,
+      "path": "Multi/Enforcer of Eternity.png"
+    },
+    {
+      "name": "Omit",
+      "id": "CS01-222/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Scheme",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Meticulous"
+      ],
+      "keywords": [],
+      "abilityText": "A chosen lifestitcher reveals three cards from their hand. Turn one of the revealed cards to dust. (You may choose yourself as a target.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Multi/Omit.png"
+    },
+    {
+      "name": "Doomsday Herald",
+      "id": "CS01-223/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {
+        "Brain": 1,
+        "Eye": 1,
+        "Blood": 1
+      },
+      "subtypes": [
+        "Titan",
+        "Witness",
+        "Abomination"
+      ],
+      "keywords": [],
+      "abilityText": "When I enter, grant me five instances of Frozen, then my cost becomes <blood>1. (Creations with Frozen have no other abilities, traits, nor might, and have \"[Turn a card from your hand to dust and pay my cost]: Permanently remove Frozen from me.\" Each instance of Frozen must be removed separately.)",
+      "might": 7,
+      "vigor": 5,
+      "artist": null,
+      "path": "Multi/Doomsday Herald.png"
+    },
+    {
+      "name": "Archseer Ethera",
+      "id": "CS01-224/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {
+        "Brain": 2,
+        "Eye": 2
+      },
+      "subtypes": [
+        "Insectile",
+        "Witness"
+      ],
+      "keywords": [
+        "Neurotic Strength",
+        "Sui Generis"
+      ],
+      "abilityText": "Neurotic Strength:\nI get +1 might for every 4 of your nontoken dusted cards.\n\nSui Generis:\nWhen I enter, reveal your deck, turn all of your cards with the same name as me to dust, then shuffle.\n\nI can only be played to support lanes.\n[Turn a card from your hand to dust]: Choose a dusted scheme. If that scheme's cost is less than or equal to my might, play that scheme without paying its cost. Use only once each round.",
+      "might": 0,
+      "vigor": 4,
+      "artist": null,
+      "path": "Multi/Archseer Ethera.png"
+    },
+    {
+      "name": "Elite Servant",
+      "id": "CS01-252/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {
+        "Blood": 3
+      },
+      "subtypes": [
+        "Humanoid",
+        "Valet"
+      ],
+      "keywords": [
+        "Pristine"
+      ],
+      "abilityText": "Pristine:\nWhen you harvest me, add one organ from my cost and one organ of any type.\n\nSpend organs of different types to pay for my cost.\nWhen I enter, draw two cards, then bury a creation from your hand or turn a card from your hand to dust.\n[<blood>1]: Add one organ of any type. This is a quick ability. Use only once each round.",
+      "might": 2,
+      "vigor": 2,
+      "artist": null,
+      "path": "Multi/Elite Servant.png"
+    },
+    {
+      "name": "Driver of the Dead",
+      "id": "CS01-253/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation",
+      "rarity": "Exceptional",
+      "resources": [
+        "Heart",
+        "Brain",
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Soul": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Abomination"
+      ],
+      "keywords": [],
+      "abilityText": "When I attack normally, reveal the top two cards of your corpse deck, put them on the bottom in any order, then perform the following based on those corpses' types.\n<heart> Heart Donor - Give all of your frontline creations +1 might until round end.\n<brain> Brain Donor - You heal 2.\n<soul> Soul Donor - Give a chosen creation +2 might until round end.\n<eye> Eye Donor - Draw a card.",
+      "might": 2,
+      "vigor": 4,
+      "artist": null,
+      "path": "Multi/Driver of the Dead.png"
+    },
+    {
+      "name": "Leona Regulus, Omniarch",
+      "id": "CS01-254/300 EN",
+      "deck": "main",
+      "group": "Multi",
+      "type": "Creation?",
+      "rarity": "Ingenious",
+      "resources": [
+        "Heart",
+        "Brain",
+        "Soul",
+        "Eye"
+      ],
+      "cost": {
+        "Heart": 1,
+        "Brain": 1,
+        "Soul": 1,
+        "Eye": 1
+      },
+      "subtypes": [
+        "Humanoid"
+      ],
+      "keywords": [
+        "Pristine",
+        "Sui Generis"
+      ],
+      "abilityText": "Pristine; Sui Generis:\nWhen I enter, reveal your deck, turn all of your cards with the same name as me to dust, then shuffle.\n\nCorpses in your graves have Pristine.\nWhen you would play a creation onto my lane, it costs <heart><brain><soul><eye> less to play.\n[<soul>1]: Give me +1 might until round end.\n[<eye>2]: Give me a trait from a chosen creation until round end.\n[<brain>3]: Draw two cards.\n[<heart>4]: Until round end, all opposing creations have 1 vigor.",
+      "might": 2,
+      "vigor": 4,
+      "artist": null,
+      "path": "Multi/Leona Regulus, Omniarch.png"
+    },
+    {
+      "name": "Animal Carcass",
+      "id": "CS01-281/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Common Corpse",
+      "rarity": "Common",
+      "resources": [
+        "Heart"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Heart Donor"
+      ],
+      "keywords": [],
+      "abilityText": "",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W",
+      "path": "Resource/Common/Animal Carcass.png"
+    },
+    {
+      "name": "Deceased Intellectual",
+      "id": "CS01-282/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Common Corpse",
+      "rarity": "Common",
+      "resources": [
+        "Brain"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Brain Donor"
+      ],
+      "keywords": [],
+      "abilityText": "",
+      "might": null,
+      "vigor": null,
+      "artist": "eg",
+      "path": "Resource/Common/Deceased Intellectual.png"
+    },
+    {
+      "name": "Lesser Haunting",
+      "id": "CS01-283/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Common Corpse",
+      "rarity": "Common",
+      "resources": [
+        "Soul"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Soul Donor"
+      ],
+      "keywords": [],
+      "abilityText": "",
+      "might": null,
+      "vigor": null,
+      "artist": "YL0W+eg+uwais+zeek",
+      "path": "Resource/Common/Lesser Haunting.png"
+    },
+    {
+      "name": "Lifeless Aberration",
+      "id": "CS01-284/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Common Corpse",
+      "rarity": "Common",
+      "resources": [
+        "Eye"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Eye Donor"
+      ],
+      "keywords": [],
+      "abilityText": "",
+      "might": null,
+      "vigor": null,
+      "artist": "FluffyDragonEve",
+      "path": "Resource/Common/Lifeless Aberration.png"
+    },
+    {
+      "name": "Departed Gravedigger",
+      "id": "CS01-299/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Blood Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(I can be harvested normally to add <blood><blood>.)\n[Turn me to dust from your grave]: Bury the top card of your corpse deck.\n(This isn't a quick ability.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Departed Gravedigger.png"
+    },
+    {
+      "name": "Fallen Titan",
+      "id": "CS01-297/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Blood Donor"
+      ],
+      "keywords": [],
+      "abilityText": "When you harvest me, add <blood><blood><blood>.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Fallen Titan.png"
+    },
+    {
+      "name": "Fuel for the Tide",
+      "id": "CS01-291/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Eye & Heart Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(When you harvest me, add <eye><heart>.)",
+      "might": null,
+      "vigor": null,
+      "artist": "uwais",
+      "path": "Resource/Peculiar/Fuel for the Tide.png"
+    },
+    {
+      "name": "Hyperion Storage Unit",
+      "id": "CS01-287/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Brain & Soul Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(When you harvest me, add <brain><soul>.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Hyperion Storage Unit.png"
+    },
+    {
+      "name": "Ichor Catalyst",
+      "id": "CS01-298/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Blood Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(I can be harvested normally to add <blood><blood>.)\n[Turn a card from your hand to dust, and turn me to dust from your grave]: Add <blood><blood><blood><blood>. This is a quick ability.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Ichor Catalyst.png"
+    },
+    {
+      "name": "Miasmic Cambion",
+      "id": "CS01-288/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Soul"
+      ],
+      "cost": {},
+      "subtypes": [],
+      "keywords": [],
+      "abilityText": "When you harvest me, add your choice of <blood><blood>, <brain><brain>, <soul><soul> or <brain><soul>.\nHarvesting me for anything other than <blood><blood> costs 1 life.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Miasmic Cambion.png"
+    },
+    {
+      "name": "Miasmic Faithful",
+      "id": "CS01-294/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {},
+      "subtypes": [],
+      "keywords": [],
+      "abilityText": "When you harvest me, add your choice of <blood><blood>, <heart><heart>, <soul><soul> or <heart><soul>.\nHarvesting me for anything other than <blood><blood> costs 1 life.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Miasmic Faithful.png"
+    },
+    {
+      "name": "Miasmic Mummy",
+      "id": "CS01-296/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {},
+      "subtypes": [],
+      "keywords": [],
+      "abilityText": "When you harvest me, add your choice of <blood><blood>, <brain><brain>, <eye><eye> or <brain><eye>.\nHarvesting me for anything other than <blood><blood> costs 1 life.",
+      "might": null,
+      "vigor": null,
+      "artist": "azk",
+      "path": "Resource/Peculiar/Miasmic Mummy.png"
+    },
+    {
+      "name": "Miasmic Scintilla",
+      "id": "CS01-290/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {},
+      "subtypes": [],
+      "keywords": [],
+      "abilityText": "When you harvest me, add your choice of <blood><blood>, <soul><soul>, <eye><eye> or <soul><eye>.\nHarvesting me for anything other than <blood><blood> costs 1 life.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Miasmic Scintilla.png"
+    },
+    {
+      "name": "Miasmic Terrapin",
+      "id": "CS01-286/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {},
+      "subtypes": [],
+      "keywords": [],
+      "abilityText": "When you harvest me, add your choice of <blood><blood>, <heart><heart>, <brain><brain> or <heart><brain>.\nHarvesting me for anything other than <blood><blood> costs 1 life.",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Miasmic Terrapin.png"
+    },
+    {
+      "name": "Miasmic Warrior",
+      "id": "CS01-292/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Eye",
+        "Heart"
+      ],
+      "cost": {},
+      "subtypes": [],
+      "keywords": [],
+      "abilityText": "When you harvest me, add your choice of <blood><blood>, <eye><eye>, <heart><heart> or <eye><heart>.\nHarvesting me for anything other than <blood><blood> costs 1 life.",
+      "might": null,
+      "vigor": null,
+      "artist": "uwais",
+      "path": "Resource/Peculiar/Miasmic Warrior.png"
+    },
+    {
+      "name": "Motley Casualty",
+      "id": "CS01-289/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Soul",
+        "Eye"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Soul & Eye Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(When you harvest me, add <soul><eye>.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Motley Casualty.png"
+    },
+    {
+      "name": "Order Cryopod",
+      "id": "CS01-295/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Brain",
+        "Eye"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Brain & Eye Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(When you harvest me, add <brain><eye>.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Order Cryopod.png"
+    },
+    {
+      "name": "Regulus Memorial",
+      "id": "CS01-300/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Blood"
+      ],
+      "cost": {},
+      "subtypes": [],
+      "keywords": [],
+      "abilityText": "I can't be harvested normally.\n[Turn me to dust from your grave]: Search your corpse deck for any Common Corpse card, bury it, then shuffle.\n(This isn't a quick ability.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Regulus Memorial.png"
+    },
+    {
+      "name": "Victim of the Coda",
+      "id": "CS01-293/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Soul"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Heart & Soul Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(When you harvest me, add <heart><soul>.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Victim of the Coda.png"
+    },
+    {
+      "name": "Well of Vitaleum",
+      "id": "CS01-285/300 EN",
+      "deck": "corpse",
+      "group": "Resource",
+      "type": "Peculiar Corpse",
+      "rarity": "Peculiar",
+      "resources": [
+        "Heart",
+        "Brain"
+      ],
+      "cost": {},
+      "subtypes": [
+        "Heart & Brain Donor"
+      ],
+      "keywords": [],
+      "abilityText": "(When you harvest me, add <heart><brain>.)",
+      "might": null,
+      "vigor": null,
+      "artist": null,
+      "path": "Resource/Peculiar/Well of Vitaleum.png"
+    }
+  ]
+}
