@@ -3,9 +3,7 @@ import { mountModeMenu } from './shared/mode-menu.js';
 import { MODES, MAX_LIMITED_PACKS, STORAGE_KEY, identity, readState, limitDeck, grant, availableCopies } from './shared/inventory.js';
 const ATLAS_COLS = 10;
 const ATLAS_ROWS = 7;
-const MAX_DECK = 40;
 const MAX_COPIES = 3;
-const RESOURCE_DECK_SIZE = 20;
 const RESOURCE_MAX_PECULIAR = 3;
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
@@ -100,9 +98,11 @@ if (entry.legacy) {
 const modeMenu = mountModeMenu(document.getElementById('atlas-modes'), next => setMode(next));
 let mode = entry.mode || 'normal', inventory = {}, packsOpened = 0, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
 modeMenu.update(mode, false);
+function mainDeckSize() { return mode === 'pack' ? 30 : 40; }
+function resourceDeckSize() { return mode === 'pack' ? 15 : 20; }
 function owned(card) { return mode === 'pack' ? availableCopies(card, inventory) : Infinity; }
-function mainLimit() { return mode === 'normal' ? MAX_COPIES : MAX_DECK; }
-function resourceLimit(card) { return mode === 'normal' && card.resourceType === 'peculiar' ? RESOURCE_MAX_PECULIAR : RESOURCE_DECK_SIZE; }
+function mainLimit() { return mode === 'normal' ? MAX_COPIES : mainDeckSize(); }
+function resourceLimit(card) { return mode === 'normal' && card.resourceType === 'peculiar' ? RESOURCE_MAX_PECULIAR : resourceDeckSize(); }
 function snapshot() {
   return {main: Object.fromEntries(Object.values(myDeck).map(c => [identity(c), c.count])),
     resource: Object.fromEntries((allCards?.resources || []).map(c => [identity(c), resourceCounts[c.url] || 0]))};
@@ -111,9 +111,9 @@ function restoreDeck(value = {}) {
   value = value || {};
   const main = FOLDERS.flatMap(f => allCards.decks[f] || []);
   const allowed = mode === 'pack' ? inventory : null;
-  const counts = limitDeck(main, value.main, allowed, MAX_DECK, mainLimit);
+  const counts = limitDeck(main, value.main, allowed, mainDeckSize(), mainLimit);
   myDeck = Object.fromEntries(main.filter(c => counts[c.url]).map(c => [c.url, {...c, count: counts[c.url]}]));
-  resourceCounts = limitDeck(allCards.resources || [], value.resource, allowed, RESOURCE_DECK_SIZE, resourceLimit);
+  resourceCounts = limitDeck(allCards.resources || [], value.resource, allowed, resourceDeckSize(), resourceLimit);
 }
 function saveState() {
   if (!modesEnabled || !allCards) return;
@@ -798,8 +798,8 @@ function addCard(card) {
     showWarning(`max ${MAX_COPIES} copies per card`);
     return;
   }
-  if (total >= MAX_DECK) {
-    showWarning(`deck full — max ${MAX_DECK} cards`);
+  if (total >= mainDeckSize()) {
+    showWarning(`deck full — max ${mainDeckSize()} cards`);
     return;
   }
 
@@ -830,8 +830,8 @@ function addResourceCard(card) {
     showWarning(`max ${RESOURCE_MAX_PECULIAR} copies of a peculiar card`);
     return;
   }
-  if (total >= RESOURCE_DECK_SIZE) {
-    showWarning(`resource deck full — max ${RESOURCE_DECK_SIZE} cards`);
+  if (total >= resourceDeckSize()) {
+    showWarning(`resource deck full — max ${resourceDeckSize()} cards`);
     return;
   }
 
@@ -901,14 +901,14 @@ function renderDeckSidebar() {
   document.getElementById("sidebar-title").textContent = "Your Deck";
 
   const totalEl = document.getElementById("card-total");
-  totalEl.textContent = `${total} / ${MAX_DECK} card${total !== 1 ? "s" : ""}`;
-  totalEl.className = total >= MAX_DECK ? "at-max" : "";
+  totalEl.textContent = `${total} / ${mainDeckSize()} card${total !== 1 ? "s" : ""}`;
+  totalEl.className = total >= mainDeckSize() ? "at-max" : "";
 
   document.getElementById("export-btn").disabled = total === 0;
   document.getElementById("export-btn").hidden = false;
   document.getElementById("export-resource-btn").hidden = true;
 
-  updateDeckProgress(total, MAX_DECK);
+  updateDeckProgress(total, mainDeckSize());
   updateDeckEmpty(total === 0);
   updateDeckFab(total);
 
@@ -928,12 +928,12 @@ function renderDeckSidebar() {
 
 function renderResourceSidebar() {
   const resTotal = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
-  const isComplete = resTotal === RESOURCE_DECK_SIZE;
+  const isComplete = resTotal === resourceDeckSize();
 
   document.getElementById("sidebar-title").textContent = "Resource Deck";
 
   const totalEl = document.getElementById("card-total");
-  totalEl.textContent = `${resTotal} / ${RESOURCE_DECK_SIZE} cards`;
+  totalEl.textContent = `${resTotal} / ${resourceDeckSize()} cards`;
   totalEl.className = isComplete ? "complete" : "";
 
   document.getElementById("export-btn").hidden = true;
@@ -941,7 +941,7 @@ function renderResourceSidebar() {
   resExportBtn.hidden = false;
   resExportBtn.disabled = !isComplete;
 
-  updateDeckProgress(resTotal, RESOURCE_DECK_SIZE);
+  updateDeckProgress(resTotal, resourceDeckSize());
   updateDeckEmpty(resTotal === 0);
   updateDeckFab(resTotal);
 

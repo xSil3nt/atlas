@@ -32,8 +32,12 @@ function poolFor(cards, role) {
 }
 export function rollRarities(random = Math.random) {
   const upgrade = () => random() < .2 ? 'Ingenious' : 'Exceptional';
-  return [...Array(6).fill('Common'), random() < .5 ? 'Common' : 'Peculiar',
-    'Peculiar', 'Peculiar', random() < .5 ? 'Peculiar' : upgrade(), upgrade(), 'Peculiar Corpse'];
+  const commonOrPeculiar = random() < .5 ? 'Common' : 'Peculiar';
+  // A Peculiar in the mixed Common slot uses the pack's third Peculiar slot.
+  const peculiarOrRare = commonOrPeculiar === 'Peculiar' ? upgrade()
+    : random() < .5 ? 'Peculiar' : upgrade();
+  return [...Array(6).fill('Common'), commonOrPeculiar,
+    'Peculiar', 'Peculiar', peculiarOrRare, upgrade(), 'Peculiar Corpse'];
 }
 export function makePack(cards, random = Math.random) {
   return rollRarities(random).map(slotRole => {

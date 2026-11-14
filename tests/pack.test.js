@@ -14,8 +14,17 @@ test("fixed slots and 50/50 boundaries", () => {
   assert.equal(high[6], "Peculiar");
   assert.equal(high[9], "Exceptional");
   assert.equal(high[10], "Exceptional");
-  const sequence = [0.5, 0.5, 0.19, 0.2];
+  const sequence = [0.5, 0.19, 0.2];
   assert.equal(rollRarities(() => sequence.shift())[9], "Ingenious");
+});
+test("a Peculiar in the Common/Peculiar slot forces the Peculiar/rare slot to rare", () => {
+  for (const rareRoll of [0, 0.19, 0.2, 0.99]) {
+    const sequence = [0.5, rareRoll, 0.99];
+    const pack = rollRarities(() => sequence.shift());
+    assert.equal(pack[6], "Peculiar");
+    assert.equal(pack[9], rareRoll < 0.2 ? "Ingenious" : "Exceptional");
+    assert.equal(pack.filter(r => r === "Peculiar").length, 3);
+  }
 });
 test("independent exceptional upgrades and expected rates", () => {
   let seed = 724;
@@ -29,15 +38,16 @@ test("independent exceptional upgrades and expected rates", () => {
     ingenious = 0;
   for (let i = 0; i < 100000; i++) {
     const p = rollRarities(random);
+    assert.ok(p.filter(r => r === "Peculiar").length <= 3);
     common += p[6] === "Common";
     peculiar += p[9] === "Peculiar";
     exceptional += p.filter((r) => r === "Exceptional").length;
     ingenious += p.filter((r) => r === "Ingenious").length;
   }
   assert.ok(Math.abs(common / 100000 - 0.5) < 0.01);
-  assert.ok(Math.abs(peculiar / 100000 - 0.5) < 0.01);
-  assert.ok(Math.abs(exceptional / 100000 - 1.2) < 0.02);
-  assert.ok(Math.abs(ingenious / 100000 - 0.3) < 0.01);
+  assert.ok(Math.abs(peculiar / 100000 - 0.25) < 0.01);
+  assert.ok(Math.abs(exceptional / 100000 - 1.4) < 0.02);
+  assert.ok(Math.abs(ingenious / 100000 - 0.35) < 0.01);
 });
 // Snapshot of the public cards repo main/metadata.json, fetched 14 November 2026.
 // Runtime always fetches the repository, never this test fixture or the old submodule.
