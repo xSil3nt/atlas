@@ -16,38 +16,17 @@
     <h1>Lifestitchr Atlas</h1>
     <span class="header-subtitle">Deckbuilder</span>
   </div>
-  <div id="starter-deck-btns">
-    <button type="button" id="starter-deck-toggle" class="starter-deck-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="starter-deck-menu">
-      Starter Decks
-      <span class="starter-deck-chevron" aria-hidden="true">▾</span>
-    </button>
-    <div id="starter-deck-menu" class="starter-deck-menu" role="menu" hidden>
-      <button type="button" role="menuitem" class="starter-deck-option starter-deck-H" data-deck="Heart">
-        <span class="starter-option-name">Thrill of the Hunt</span>
-        <span class="starter-option-faction">Heart</span>
-      </button>
-      <button type="button" role="menuitem" class="starter-deck-option starter-deck-Br" data-deck="Brain">
-        <span class="starter-option-name">Academia</span>
-        <span class="starter-option-faction">Brain</span>
-      </button>
-      <button type="button" role="menuitem" class="starter-deck-option starter-deck-S" data-deck="Soul">
-        <span class="starter-option-name">Burn Fast, Burn Bright</span>
-        <span class="starter-option-faction">Soul</span>
-      </button>
-      <button type="button" role="menuitem" class="starter-deck-option starter-deck-E" data-deck="Eye">
-        <span class="starter-option-name">And Then There Was One</span>
-        <span class="starter-option-faction">Eye</span>
-      </button>
-    </div>
-  </div>
-  <nav id="header-nav">
+  <div id="atlas-modes"></div>
+  <nav id="header-nav" aria-label="Atlas">
     <button class="nav-tab active" data-tab="All">Main Deck</button>
     <button class="nav-tab" data-tab="Resource">Resource Deck</button>
+    <a href="#packs" class="nav-tab packs-link" hidden aria-controls="packs-view">Packs</a>
   </nav>
 </header>
 
 <div id="layout">
   <div id="browser">
+    <section id="packs-view" class="pack-experience" aria-label="Packs" hidden></section>
     <div id="filter-row"></div>
     <div id="grid-wrap">
       <div id="grid-meta">
@@ -78,6 +57,31 @@
     <div id="deck-progress" role="progressbar" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0">
       <div id="deck-progress-fill"></div>
     </div>
+    <section id="starter-decks" aria-labelledby="starter-title">
+      <h3 id="starter-title">Starter decks</h3>
+      <div class="starter-deck-grid">
+      <button type="button" class="starter-deck-option starter-deck-H" data-deck="Heart">
+        <span class="starter-emblem"><img src="tokens/heart.png" alt="Heart"></span>
+        <span class="starter-option-name">Thrill of the Hunt</span>
+        <span class="starter-availability" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="starter-deck-option starter-deck-Br" data-deck="Brain">
+        <span class="starter-emblem"><img src="tokens/brain.png" alt="Brain"></span>
+        <span class="starter-option-name">Academia</span>
+        <span class="starter-availability" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="starter-deck-option starter-deck-S" data-deck="Soul">
+        <span class="starter-emblem"><img src="tokens/soul.png" alt="Soul"></span>
+        <span class="starter-option-name">Burn Fast, Burn Bright</span>
+        <span class="starter-availability" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="starter-deck-option starter-deck-E" data-deck="Eye">
+        <span class="starter-emblem"><img src="tokens/eye.png" alt="Eye"></span>
+        <span class="starter-option-name">And Then There Was One</span>
+        <span class="starter-availability" aria-hidden="true"></span>
+      </button>
+      </div>
+    </section>
     <div id="deck-breakdown"></div>
     <div id="deck-list-wrap">
       <div id="deck-empty" class="visible" aria-hidden="false">
@@ -101,10 +105,11 @@
         <button id="atlas-link-copy" type="button">Copy</button>
       </div>
       <div class="sidebar-btn-row">
-        <button id="clear-btn" type="button">Clear</button>
+        <button id="clear-btn" type="button">Clear deck</button>
         <button id="export-btn" type="button" disabled>Copy Atlas Link</button>
         <button id="export-resource-btn" type="button" disabled hidden>Copy Resource Link</button>
       </div>
+      <button id="clear-packs-btn" type="button" hidden>Clear packs</button>
     </div>
   </aside>
 </div>
@@ -113,8 +118,9 @@
   Deck <span id="deck-fab-count">0</span>
 </button>
 
+<p id="storage-note" role="status" hidden>Storage unavailable. Keep this tab open to retain new cards.</p>
 <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-<script src="app.js"></script>
+<script type="module" src="/app.js"></script>
 </body>
 </html>

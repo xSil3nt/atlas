@@ -109,114 +109,6 @@ header h1 {
   text-transform: uppercase;
 }
 
-#starter-deck-btns {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.starter-deck-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
-  background: rgba(99, 102, 241, 0.07);
-  border: 1px dashed rgba(99, 102, 241, 0.28);
-  border-radius: var(--radius-md);
-  color: var(--accent-hover);
-  font-size: 0.72rem;
-  font-weight: 600;
-  font-family: inherit;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background var(--transition), border-color var(--transition);
-}
-
-.starter-deck-toggle:hover {
-  background: rgba(99, 102, 241, 0.12);
-  border-color: rgba(99, 102, 241, 0.45);
-}
-
-.starter-deck-toggle.open {
-  background: rgba(99, 102, 241, 0.14);
-  border-style: solid;
-  border-color: rgba(99, 102, 241, 0.4);
-}
-
-.starter-deck-chevron {
-  font-size: 0.9em;
-  line-height: 1;
-  transition: transform var(--transition);
-}
-
-.starter-deck-toggle.open .starter-deck-chevron {
-  transform: rotate(180deg);
-}
-
-.starter-deck-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 280px;
-  width: max-content;
-  max-width: min(360px, 92vw);
-  background: var(--surface-solid);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  padding: 6px;
-  z-index: 60;
-}
-
-.starter-deck-menu[hidden] { display: none; }
-
-.starter-deck-option {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  width: 100%;
-  padding: 10px 12px 10px 14px;
-  border: none;
-  border-left: 3px solid transparent;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background var(--transition);
-}
-
-.starter-option-name {
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.25;
-}
-
-.starter-option-faction {
-  font-size: 0.62rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.starter-deck-H { border-left-color: var(--c-h); }
-.starter-deck-Br { border-left-color: var(--c-br); }
-.starter-deck-S { border-left-color: var(--c-s); }
-.starter-deck-E { border-left-color: var(--c-e); }
-
-.starter-deck-option.starter-deck-H:hover { background: rgba(220, 38, 38, 0.12); }
-.starter-deck-option.starter-deck-Br:hover { background: rgba(147, 51, 234, 0.12); }
-.starter-deck-option.starter-deck-S:hover { background: rgba(22, 163, 74, 0.12); }
-.starter-deck-option.starter-deck-E:hover { background: rgba(232, 232, 232, 0.08); }
-
 #header-nav {
   display: flex;
   gap: 4px;
@@ -1574,26 +1466,8 @@ header h1 {
     justify-content: center;
   }
 
-  #starter-deck-btns {
-    grid-area: starters;
-    flex: unset;
-    width: auto;
-    justify-content: flex-end;
-    align-self: center;
-  }
 
-  .starter-deck-toggle {
-    width: auto;
-    padding: 6px 11px;
-    font-size: 0.66rem;
-  }
 
-  .starter-deck-menu {
-    left: auto;
-    right: 0;
-    transform: none;
-    width: min(320px, calc(100vw - 28px));
-  }
 
   #layout {
     flex-direction: column;
@@ -1704,11 +1578,6 @@ header h1 {
     width: min(148px, 38vw);
   }
 
-  .starter-deck-toggle {
-    padding: 6px 9px;
-    font-size: 0.62rem;
-    gap: 5px;
-  }
 
   #grid {
     padding: 10px 12px 14px;
@@ -1740,3 +1609,80 @@ header h1 {
     padding-top: max(16px, env(safe-area-inset-top, 0));
   }
 }
+
+/* Packs is a separate Atlas experience; card availability is unchanged. */
+.packs-link {display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:44px}
+
+@media(max-width:600px) {
+  #header-nav .nav-tab {min-width:0;padding:6px 8px;gap:4px;font-size:.75rem}
+}
+@media(max-width:360px) {
+  #header-nav .nav-tab-note {display:none}
+}
+
+#browser > [hidden] {display:none!important}
+/* Atlas modes and directly selectable starter decks */
+#atlas-modes {position:relative;margin-left:auto;margin-right:auto;flex-shrink:0;z-index:70;}
+#mode-toggle {display:flex;align-items:center;gap:9px;min-height:38px;padding:7px 11px;border:1px solid var(--border);border-radius:9px;background:var(--surface2);color:var(--text);font:500 .78rem Inter,sans-serif;cursor:pointer;box-shadow:inset 0 1px 0 #ffffff06,0 2px 5px #0002;transition:border-color var(--transition),background var(--transition);}
+#mode-toggle:hover,#mode-toggle[aria-expanded="true"] {border-color:#818cf85c;background:var(--surface-solid);}
+#mode-toggle:disabled {cursor:wait;opacity:.6;}
+#mode-icon,.mode-option-icon {display:grid;place-items:center;flex-shrink:0;color:var(--accent-hover);}
+#mode-icon svg {width:19px;height:19px;}
+.mode-chevron {width:14px;height:14px;margin-left:13px;fill:none;stroke:var(--muted);stroke-width:1.5;transition:transform var(--transition);}
+#mode-toggle[aria-expanded="true"] .mode-chevron {transform:rotate(180deg);}
+#mode-menu {position:absolute;top:calc(100% + 9px);left:50%;transform:translateX(-50%);width:274px;max-width:calc(100vw - 28px);padding:5px;background:var(--surface-solid);border:1px solid #ffffff16;border-radius:12px;box-shadow:0 16px 48px #0008,0 3px 10px #0005;}
+#mode-menu[hidden] {display:none;}
+#mode-menu button {display:flex;align-items:center;gap:11px;width:100%;min-height:60px;padding:10px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text);text-align:left;font-family:inherit;cursor:pointer;}
+#mode-menu button:hover,#mode-menu button:focus-visible {background:var(--surface2);outline:none;border-color:var(--border);}
+#mode-menu button[aria-checked="true"] {background:var(--accent-dim);}
+.mode-option-icon {width:31px;height:34px;border:1px solid var(--border);border-radius:7px;background:#ffffff03;}
+.mode-option-icon svg {width:21px;height:21px;}
+.mode-option-copy {display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;}
+.mode-option-name {font-size:.79rem;font-weight:600;}
+.mode-option-detail {color:var(--muted);font-size:.66rem;line-height:1.35;}
+.mode-check {font-size:.85rem;color:var(--accent-hover);visibility:hidden;}
+[aria-checked="true"] .mode-check {visibility:visible;}
+#starter-decks {padding:14px 16px 10px;flex-shrink:0;}
+#starter-decks[hidden] {display:none;}
+#starter-title {margin:0 0 10px;font-size:.72rem;font-weight:500;color:var(--muted);}
+.starter-deck-grid {display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
+#starter-decks .starter-deck-option {color:var(--text);font-family:inherit;text-align:left;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:10px;min-height:44px;padding:8px 10px;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;}
+#starter-decks .starter-deck-option:last-child {border-bottom:0;}
+#starter-decks .starter-option-name {flex:1;min-width:0;font-size:.74rem;line-height:1.35;font-weight:500;}
+.starter-emblem {display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:7px;background:color-mix(in srgb,var(--starter-color) 10%,transparent);}
+.starter-emblem img {width:17px;height:17px;object-fit:contain;}
+#starter-decks .starter-deck-H {--starter-color:var(--c-h);}
+#starter-decks .starter-deck-Br {--starter-color:var(--c-br);}
+#starter-decks .starter-deck-S {--starter-color:var(--c-s);}
+#starter-decks .starter-deck-E {--starter-color:var(--c-e);}
+.starter-availability {flex-shrink:0;color:var(--muted);font-size:.67rem;font-variant-numeric:tabular-nums;}
+body[data-mode="normal"] .starter-availability {font-size:1.1rem;font-weight:400;}
+#starter-decks button:disabled {cursor:not-allowed;}
+#starter-decks button:disabled .starter-option-name {color:var(--muted);}
+#starter-decks button:disabled .starter-emblem {opacity:.65;}
+#starter-decks button:focus-visible {outline-offset:-3px;}
+button:focus-visible {outline:2px solid var(--accent-hover);outline-offset:3px;}
+.owned-badge {position:absolute;bottom:5px;left:5px;background:#10141fee;color:#e1e5ef;border:1px solid #ffffff24;border-radius:4px;padding:3px 5px;font-size:.62rem;pointer-events:none;}
+.open-owned-pack {margin-top:14px;padding:9px 18px;background:var(--accent);color:white;border:1px solid var(--border);border-radius:8px;font:inherit;cursor:pointer;}
+#storage-note {position:fixed;bottom:8px;left:12px;z-index:150;max-width:calc(100vw - 24px);padding:8px 12px;border-radius:6px;background:var(--surface-solid);border:1px solid var(--border);color:var(--muted);font-size:.7rem;}
+@media(max-width:1024px){#atlas-modes {grid-area:starters;margin:0;}#mode-toggle{font-size:.74rem;min-height:36px;}#mode-menu{left:auto;right:0;transform:none;}#starter-decks{padding:12px 16px;}}
+@media(max-width:360px){#mode-toggle{gap:7px;padding:7px 9px;}.mode-chevron{margin-left:3px;}header{column-gap:6px;}header h1{font-size:.85rem;}}
+@media (max-height:620px) {
+  body[data-mode] #sidebar {overflow-y:auto;}
+  body[data-mode] #sidebar-top, body[data-mode] #sidebar-bottom, body[data-mode] #deck-progress, body[data-mode] #deck-breakdown {flex-shrink:0;}
+  body[data-mode] #deck-list-wrap {flex:0 0 auto;overflow:visible;}
+  body[data-mode] #deck-list {flex:none;overflow:visible;}
+}
+@media (max-height:620px) and (min-width:600px) {
+  .starter-deck-grid {display:grid;grid-template-columns:1fr 1fr;}
+  #starter-decks .starter-deck-option:nth-child(odd) {border-right:1px solid var(--border);}
+  #starter-decks .starter-deck-option:nth-last-child(-n+2) {border-bottom:0;}
+}
+
+.packs-link[hidden], #clear-packs-btn[hidden] {display:none;}
+#clear-packs-btn {align-self:stretch;min-height:36px;text-align:left;padding:8px 0;border:0;background:transparent;color:var(--muted);font:500 .72rem Inter,sans-serif;cursor:pointer;}
+#clear-packs-btn:hover {color:var(--danger);}
+
+@media(max-width:1024px){#clear-packs-btn {min-height:44px;}}
+
+#starter-decks .starter-deck-option:hover {background:color-mix(in srgb,var(--starter-color) 9%,transparent);}

@@ -1,11 +1,12 @@
+import { resolveModeUrl } from './shared/modes.js';
+import { mountModeMenu } from './shared/mode-menu.js';
+import { MODES, STORAGE_KEY, identity, readState, limitDeck, grant } from './shared/inventory.js';
 const ATLAS_COLS = 10;
 const ATLAS_ROWS = 7;
 const MAX_DECK = 40;
 const MAX_COPIES = 3;
 const RESOURCE_DECK_SIZE = 20;
 const RESOURCE_MAX_PECULIAR = 3;
-const UNRESTRICTED_COPIES = document.body?.dataset.unrestrictedCopies === "true";
-const LYCANHEAD_FEED = document.body?.dataset.mainDeck === "lycanhead-feed";
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 const RESOURCES = ["Blood", "Heart", "Brain", "Soul", "Eye"];
@@ -78,6 +79,7 @@ const STARTER_DECKS = {
 };
 
 let allCards = null;
+let packsActive = false, packsController, packsLoading, catalogReady;
 let myDeck = {};
 let resourceCounts = {};
 let activeTab = "All";
@@ -87,7 +89,93 @@ let costFilters = null;
 let activeFilters = new Set();
 let exclusiveFilter = false;
 let deckDrawerOpen = false;
-let lycanheadFeedObserver = null;
+
+const modesEnabled = !!document.getElementById('atlas-modes');
+const entry = resolveModeUrl(new URL(location.href));
+if (entry.legacy) {
+  const url = new URL(location.href); url.pathname = '/'; url.searchParams.set('mode', entry.mode);
+  if (entry.openPacks) url.hash = 'packs';
+  history.replaceState(null, '', url.pathname + url.search + url.hash);
+}
+const modeMenu = mountModeMenu(document.getElementById('atlas-modes'), next => setMode(next));
+let mode = entry.mode || 'normal', inventory = {}, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
+modeMenu.update(mode, false);
+function owned(card) { return mode === 'pack' ? inventory[identity(card)] || 0 : Infinity; }
+function mainLimit() { return mode === 'anarchy' ? MAX_DECK : MAX_COPIES; }
+function resourceLimit(card) { return mode !== 'anarchy' && card.resourceType === 'peculiar' ? RESOURCE_MAX_PECULIAR : RESOURCE_DECK_SIZE; }
+function snapshot() {
+  return {main: Object.fromEntries(Object.values(myDeck).map(c => [identity(c), c.count])),
+    resource: Object.fromEntries((allCards?.resources || []).map(c => [identity(c), resourceCounts[c.url] || 0]))};
+}
+function restoreDeck(value = {}) {
+  value = value || {};
+  const main = FOLDERS.flatMap(f => allCards.decks[f] || []);
+  const allowed = mode === 'pack' ? inventory : null;
+  const counts = limitDeck(main, value.main, allowed, MAX_DECK, mainLimit);
+  myDeck = Object.fromEntries(main.filter(c => counts[c.url]).map(c => [c.url, {...c, count: counts[c.url]}]));
+  resourceCounts = limitDeck(allCards.resources || [], value.resource, allowed, RESOURCE_DECK_SIZE, resourceLimit);
+}
+function saveState() {
+  if (!modesEnabled || !allCards) return;
+  savedDecks[mode] = snapshot();
+  if (!persistenceAvailable) return;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({version: 1, mode, inventory, decks: savedDecks})); }
+  catch { warnStorage(); }
+}
+function warnStorage() {
+  persistenceAvailable = false;
+  if (storageWarning) return;
+  storageWarning = true;
+  showWarning('Browser storage unavailable or invalid. Changes may only last this visit.');
+  const note = document.getElementById('storage-note');
+  if (note) note.hidden = false;
+}
+function renderMode() {
+  document.body.dataset.mode = mode;
+  document.querySelector('.packs-link')?.toggleAttribute('hidden', mode !== 'pack');
+  document.getElementById('clear-packs-btn')?.toggleAttribute('hidden', mode !== 'pack');
+  modeMenu.update(mode, !!allCards);
+}
+function setMode(next, openPack = true) {
+  if (!modesEnabled || !allCards || !MODES.includes(next)) return;
+  if (next !== mode) {
+    savedDecks[mode] = snapshot(); mode = next; restoreDeck(savedDecks[mode]);
+    clearAtlasLink(); hidePreview(); hoveredCard = null;
+    renderMode(); renderGrid(); renderSidebar();
+    const url = new URL(location.href); url.searchParams.delete('deck'); url.searchParams.delete('res');
+    url.pathname = '/';
+    if (mode !== 'normal') url.searchParams.set('mode', mode); else url.searchParams.delete('mode');
+    history.replaceState(null, '', url.pathname + url.search + url.hash);
+    saveState();
+  }
+  if (mode === 'pack' && openPack) showPacks();
+  else if (mode !== 'pack' && packsActive) switchTab(activeTab);
+}
+function clearPacks() {
+  if (mode !== 'pack') return;
+  if (!window.confirm('Clear all opened cards and both pack-mode decks? This cannot be undone.')) return;
+  inventory = {}; myDeck = {}; resourceCounts = {};
+  savedDecks.pack = {};
+  clearAtlasLink(); hidePreview(); hoveredCard = null;
+  const url = new URL(location.href);
+  url.searchParams.delete('deck'); url.searchParams.delete('res');
+  history.replaceState(null, '', url.pathname + url.search + url.hash);
+  packsController?.restart();
+  renderGrid(); renderSidebar();
+  showToast('Packs cleared', 'info');
+}
+
+function acquireCards(cards) {
+  inventory = grant(inventory, cards);
+  saveState(); renderStarters();
+  renderGrid();
+}
+function renderStarters() {
+  const section = document.getElementById('starter-decks');
+  if (!section || !allCards) return;
+  section.hidden = mode !== 'normal' || isResourceTab() || Object.keys(myDeck).length > 0;
+  section.querySelectorAll('.starter-availability').forEach(label => { label.textContent = '›'; });
+}
 
 const LAYOUT_BREAKPOINTS = { compact: 1024, narrow: 600 };
 
@@ -160,6 +248,7 @@ function updateDrawerA11y() {
 
 function openDeckDrawer() {
   deckDrawerOpen = true;
+  document.getElementById('sidebar').scrollTop = 0;
   document.getElementById("sidebar")?.classList.add("drawer-open");
   const backdrop = document.getElementById("drawer-backdrop");
   if (backdrop) {
@@ -201,10 +290,23 @@ async function loadCards() {
     return;
   }
 
+  if (modesEnabled) {
+    let loaded;
+    try { loaded = readState(localStorage); } catch { loaded = {failed: true}; }
+    if (loaded.failed) warnStorage();
+    if (loaded.state) { inventory = loaded.state.inventory; savedDecks = loaded.state.decks; mode = loaded.state.mode; }
+    if (entry.mode) mode = entry.mode;
+    else if (new URLSearchParams(location.search).has('deck') || new URLSearchParams(location.search).has('res')) mode = 'normal';
+    restoreDeck(savedDecks[mode]); renderMode();
+  }
   applyDeckFromUrl();
+  const before = JSON.stringify(snapshot());
+  restoreDeck(snapshot());
+  if (mode === 'pack' && before !== JSON.stringify(snapshot())) showWarning('Deck trimmed to your acquired copies and deck limits.');
   renderFilterRow();
   renderGrid();
   renderSidebar();
+  return allCards;
 }
 
 function encodeDeck(deckObj) {
@@ -255,17 +357,41 @@ function applyDeckFromUrl() {
   }
 }
 
+function setPacksVisible(visible) {
+  packsActive=visible;
+  document.body.dataset.experience=visible?'packs':'cards';
+  document.getElementById('packs-view').hidden=!visible;
+  document.getElementById('filter-row').hidden=visible;
+  document.getElementById('grid-wrap').hidden=visible;
+  document.querySelector('.packs-link')?.classList.toggle('active',visible);
+  document.querySelector('.packs-link')?.setAttribute('aria-current',visible?'page':'false');
+  packsController?.setActive(visible);
+  renderNavTabs();
+}
+async function showPacks() {
+  if (modesEnabled && !allCards) await catalogReady;
+  if (modesEnabled && mode !== 'pack') setMode('pack', false);
+  closeDeckDrawer(); modeMenu.close(); hidePreview(); hoveredCard=null;
+  setPacksVisible(true);
+  if(location.hash!=='#packs')history.replaceState(null,'',location.pathname+location.search+'#packs');
+  if(!packsLoading) {
+    packsLoading=import('./packs/src/main.js').then(({mountPacks})=>{
+      packsController=mountPacks(document.getElementById('packs-view'),catalogReady,acquireCards);
+      packsController.setActive(packsActive);
+    }).catch(()=>{
+      document.getElementById('packs-view').textContent='Packs could not load. Reload to try again.';
+      packsLoading=null;
+    });
+  }
+  await packsLoading;
+}
+
 function renderNavTabs() {
-  const deckTotal = Object.values(myDeck).reduce((s, e) => s + e.count, 0);
-  const resTotal  = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
-  document.querySelectorAll(".nav-tab").forEach(btn => {
-    const tab = btn.dataset.tab;
-    btn.classList.toggle("active", tab === activeTab);
-    if (tab === "All") {
-      btn.innerHTML = `Main Deck <span class="nav-tab-note">${deckTotal}/${MAX_DECK}</span>`;
-    } else if (tab === "Resource") {
-      btn.innerHTML = `Resource Deck <span class="nav-tab-note">${resTotal}/${RESOURCE_DECK_SIZE}</span>`;
-    }
+  document.querySelectorAll('.nav-tab[data-tab]').forEach(btn => {
+    const selected = !packsActive && btn.dataset.tab === activeTab;
+    btn.classList.toggle('active', selected);
+    btn.setAttribute('aria-current', selected ? 'page' : 'false');
+    btn.textContent = btn.dataset.tab === 'All' ? 'Main Deck' : 'Resource Deck';
   });
 }
 
@@ -408,11 +534,14 @@ function renderFilterRow() {
 }
 
 function loadStarterDeck(deckName) {
+  if (mode !== 'normal') return;
+  if(packsActive)switchTab('All');
   const deck = STARTER_DECKS[deckName];
   if (!deck || !allCards) return;
 
+  const starterCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
   myDeck = {};
-  const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
+  const allMainCards = starterCards;
   for (const { name, count } of deck) {
     const card = allMainCards.find(c => c.name === name);
     if (card) myDeck[card.url] = { ...card, count };
@@ -421,9 +550,19 @@ function loadStarterDeck(deckName) {
   clearAtlasLink();
   if (activeTab !== "All") switchTab("All");
   else { renderGrid(); renderSidebar(); }
+  if (document.getElementById('starter-decks')) {
+    const heading = document.getElementById('sidebar-title');
+    heading.setAttribute('tabindex', '-1');
+    heading.focus({preventScroll: true});
+  }
 }
 
 function switchTab(tab) {
+  const returning = packsActive && tab === activeTab;
+  if(document.getElementById('packs-view'))setPacksVisible(false);
+  if(location.hash==='#packs')history.replaceState(null,'',location.pathname+location.search);
+  if(returning)return;
+
   activeTab = tab;
   searchQuery = "";
   searchGroups = null;
@@ -532,8 +671,6 @@ function matchesFilter(card) {
 
 function renderGrid() {
   const grid = document.getElementById("grid");
-  lycanheadFeedObserver?.disconnect();
-  document.getElementById("lycanhead-feed-sentinel")?.remove();
   grid.innerHTML = "";
 
   if (isResourceTab()) {
@@ -541,18 +678,14 @@ function renderGrid() {
     return;
   }
 
-  if (LYCANHEAD_FEED) {
-    renderLycanheadFeed(grid);
-    return;
-  }
-
   const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
-  const cards = allMainCards.filter(matchesFilter);
+  const cards = allMainCards.filter(c => owned(c) > 0).filter(matchesFilter);
 
   updateResultsCount(cards.length);
 
   if (!cards.length) {
-    grid.innerHTML = '<div class="placeholder"><strong>No cards found</strong><small>Try adjusting your filters or search</small></div>';
+    grid.innerHTML = mode === 'pack' && !Object.keys(inventory).length ? '<div class="placeholder"><strong>No cards yet</strong><button class="open-owned-pack">Open a pack</button></div>' : '<div class="placeholder"><strong>No cards found</strong><small>Try adjusting your filters or search</small></div>';
+    grid.querySelector('.open-owned-pack')?.addEventListener('click', showPacks);
     return;
   }
 
@@ -562,7 +695,7 @@ function renderGrid() {
 function createMainCardSlot(card) {
   const entry = myDeck[card.url];
   const count = entry?.count ?? 0;
-  const isMaxed = !UNRESTRICTED_COPIES && count >= MAX_COPIES;
+  const isMaxed = count >= Math.min(mainLimit(), owned(card));
   const slot = document.createElement("div");
   slot.className = "card-slot" + (isMaxed ? " maxed" : "");
 
@@ -571,6 +704,10 @@ function createMainCardSlot(card) {
   img.src = card.url;
   prepCardImage(img, card.name);
   slot.appendChild(img);
+  if (mode === 'pack') {
+    const ownedBadge = document.createElement('span'); ownedBadge.className = 'owned-badge';
+    ownedBadge.textContent = `${owned(card)} owned`; slot.appendChild(ownedBadge);
+  }
 
   if (count > 0) {
     const badge = document.createElement("span");
@@ -591,39 +728,12 @@ function createMainCardSlot(card) {
   return slot;
 }
 
-function renderLycanheadFeed(grid) {
-  const lycanhead = allCards.decks.Heart?.find(card => card.name === "Lycanhead");
-  updateResultsCount(lycanhead ? 1 : 0);
-
-  if (!lycanhead) {
-    grid.innerHTML = '<div class="placeholder"><strong>Lycanhead not found</strong></div>';
-    return;
-  }
-
-  let sentinel = null;
-  const appendBatch = () => {
-    const cards = document.createDocumentFragment();
-    for (let i = 0; i < 24; i++) cards.appendChild(createMainCardSlot(lycanhead));
-    if (sentinel) grid.insertBefore(cards, sentinel);
-    else grid.appendChild(cards);
-  };
-
-  appendBatch();
-  sentinel = document.createElement("div");
-  sentinel.id = "lycanhead-feed-sentinel";
-  sentinel.setAttribute("aria-hidden", "true");
-  grid.appendChild(sentinel);
-  lycanheadFeedObserver = new IntersectionObserver(entries => {
-    if (entries.some(entry => entry.isIntersecting)) appendBatch();
-  }, { root: grid, rootMargin: "800px 0px" });
-  lycanheadFeedObserver.observe(sentinel);
-}
-
 function renderResourceGrid(grid) {
-  const cards = allCards?.resources ?? [];
+  const cards = (allCards?.resources ?? []).filter(c => owned(c) > 0);
 
   if (!cards.length) {
-    grid.innerHTML = '<div class="placeholder"><strong>No resource cards</strong><small>Card data may still be loading</small></div>';
+    grid.innerHTML = mode === 'pack' ? '<div class="placeholder"><strong>No resource cards acquired</strong><button class="open-owned-pack">Open a pack</button></div>' : '<div class="placeholder"><strong>No resource cards</strong></div>';
+    grid.querySelector('.open-owned-pack')?.addEventListener('click', showPacks);
     updateResultsCount(0);
     return;
   }
@@ -638,8 +748,7 @@ function renderResourceGrid(grid) {
 
   filtered.forEach(card => {
     const count = resourceCounts[card.url] ?? 0;
-    const isPeculiar = card.resourceType === "peculiar";
-    const isMaxed = !UNRESTRICTED_COPIES && isPeculiar && count >= RESOURCE_MAX_PECULIAR;
+    const isMaxed = count >= Math.min(resourceLimit(card), owned(card));
 
     const slot = document.createElement("div");
     slot.className = "card-slot" + (isMaxed ? " maxed" : "");
@@ -649,6 +758,10 @@ function renderResourceGrid(grid) {
     img.src = card.url;
     prepCardImage(img, card.name);
     slot.appendChild(img);
+  if (mode === 'pack') {
+    const ownedBadge = document.createElement('span'); ownedBadge.className = 'owned-badge';
+    ownedBadge.textContent = `${owned(card)} owned`; slot.appendChild(ownedBadge);
+  }
 
     if (count > 0) {
       const badge = document.createElement("span");
@@ -675,7 +788,8 @@ function addCard(card) {
   const entry = myDeck[card.url];
   const copies = entry?.count ?? 0;
 
-  if (!UNRESTRICTED_COPIES && copies >= MAX_COPIES) {
+  if (copies >= owned(card)) { showWarning('All owned copies are in your deck.'); return; }
+  if (mode !== 'anarchy' && copies >= MAX_COPIES) {
     showWarning(`max ${MAX_COPIES} copies per card`);
     return;
   }
@@ -706,7 +820,8 @@ function addResourceCard(card) {
   const total = Object.values(resourceCounts).reduce((s, c) => s + c, 0);
   const count = resourceCounts[card.url] ?? 0;
 
-  if (!UNRESTRICTED_COPIES && card.resourceType === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
+  if (count >= owned(card)) { showWarning('All owned copies are in your deck.'); return; }
+  if (mode !== 'anarchy' && card.resourceType === "peculiar" && count >= RESOURCE_MAX_PECULIAR) {
     showWarning(`max ${RESOURCE_MAX_PECULIAR} copies of a peculiar card`);
     return;
   }
@@ -764,6 +879,8 @@ function renderBreakdown(prefixLabel) {
 }
 
 function renderSidebar() {
+  renderStarters();
+  saveState();
   if (isResourceTab()) {
     renderResourceSidebar();
   } else {
@@ -1091,20 +1208,9 @@ function hideMobilePreview() {
 previewModal.querySelector(".preview-modal-backdrop").addEventListener("click", hideMobilePreview);
 previewModal.querySelector(".preview-modal-close").addEventListener("click", hideMobilePreview);
 
-function closeStarterMenu() {
-  const menu = document.getElementById("starter-deck-menu");
-  const toggle = document.getElementById("starter-deck-toggle");
-  if (!menu || menu.hidden) return false;
-  menu.hidden = true;
-  toggle?.classList.remove("open");
-  toggle?.setAttribute("aria-expanded", "false");
-  return true;
-}
-
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (previewModal.classList.contains("open")) hideMobilePreview();
-  else if (closeStarterMenu()) { /* closed */ }
   else if (deckDrawerOpen) closeDeckDrawer();
 });
 
@@ -1122,7 +1228,7 @@ document.addEventListener("mousemove", e => {
 
 document.addEventListener("keydown", e => {
   const key = previewKeyName(e.key);
-  if (!key || e.shiftKey || previewKeysHeld.has(key)) return;
+  if (packsActive || !key || e.shiftKey || previewKeysHeld.has(key)) return;
   previewKeysHeld.add(key);
   e.preventDefault();
   if (hoveredCard) showPreview(hoveredCard);
@@ -1311,6 +1417,9 @@ function attachPreviewListeners(slot, card) {
 function copyDeckLink() {
   const url = new URL(window.location.href);
   url.search = "";
+  url.hash = "";
+  url.pathname = "/";
+  url.searchParams.set("mode", mode);
 
   const deckEncoded = encodeDeck(myDeck);
   if (deckEncoded) url.searchParams.set("deck", deckEncoded);
@@ -1329,40 +1438,23 @@ function copyDeckLink() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadCards();
+  catalogReady=loadCards();
+  if(location.hash==='#packs' && document.getElementById('packs-view'))showPacks();
 
-  document.querySelectorAll(".nav-tab").forEach(btn => {
+  document.querySelectorAll(".nav-tab[data-tab]").forEach(btn => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
 
-  const starterToggle = document.getElementById("starter-deck-toggle");
-  const starterMenu = document.getElementById("starter-deck-menu");
-  const starterContainer = document.getElementById("starter-deck-btns");
+  document.querySelector('.packs-link')?.addEventListener('click', event => {
+    event.preventDefault(); showPacks();
+  });
+  window.addEventListener('hashchange',()=>{
+    if(!document.getElementById('packs-view'))return;
+    if(location.hash==='#packs')showPacks();
+    else if(packsActive)switchTab(activeTab);
+  });
 
-  if (starterToggle && starterMenu && starterContainer) {
-    function openStarterMenu() {
-      starterMenu.hidden = false;
-      starterToggle.classList.add("open");
-      starterToggle.setAttribute("aria-expanded", "true");
-    }
-
-    starterToggle.addEventListener("click", e => {
-      e.stopPropagation();
-      if (starterMenu.hidden) openStarterMenu();
-      else closeStarterMenu();
-    });
-
-    document.querySelectorAll(".starter-deck-option").forEach(btn => {
-      btn.addEventListener("click", () => {
-        loadStarterDeck(btn.dataset.deck);
-        closeStarterMenu();
-      });
-    });
-
-    document.addEventListener("click", e => {
-      if (!starterContainer.contains(e.target)) closeStarterMenu();
-    });
-  }
+  document.querySelectorAll('.starter-deck-option').forEach(button => button.addEventListener('click', () => loadStarterDeck(button.dataset.deck)));
 
   document.getElementById("share-btn").addEventListener("click", copyDeckLink);
   document.getElementById("export-btn").addEventListener("click", exportAtlas);
@@ -1377,6 +1469,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.textContent = "Copied!";
     setTimeout(() => { btn.textContent = orig; }, 1500);
   });
+
+  document.getElementById('clear-packs-btn')?.addEventListener('click', clearPacks);
 
   document.getElementById("clear-btn").addEventListener("click", () => {
     if (isResourceTab()) {
