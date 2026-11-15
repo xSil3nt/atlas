@@ -98,8 +98,8 @@ if (entry.legacy) {
 const modeMenu = mountModeMenu(document.getElementById('atlas-modes'), next => setMode(next));
 let mode = entry.mode || 'normal', inventory = {}, packsOpened = 0, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
 modeMenu.update(mode, false);
-function mainDeckSize() { return mode === 'pack' ? 30 : 40; }
-function resourceDeckSize() { return mode === 'pack' ? 15 : 20; }
+function mainDeckSize() { return mode === 'pack' ? 25 : 40; }
+function resourceDeckSize() { return mode === 'pack' ? 10 : 20; }
 function owned(card) { return mode === 'pack' ? availableCopies(card, inventory) : Infinity; }
 function mainLimit() { return mode === 'normal' ? MAX_COPIES : mainDeckSize(); }
 function resourceLimit(card) { return mode === 'normal' && card.resourceType === 'peculiar' ? RESOURCE_MAX_PECULIAR : resourceDeckSize(); }
