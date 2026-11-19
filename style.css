@@ -384,8 +384,6 @@ body[data-mode="pack"] #card-sort { display: block; }
 #card-sort-menu button {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
   width: 100%;
   min-height: 34px;
   padding: 5px 6px;
@@ -399,10 +397,15 @@ body[data-mode="pack"] #card-sort { display: block; }
   cursor: pointer;
 }
 
-#card-sort-menu button[aria-checked="true"] { background: var(--accent-dim); }
+#card-sort-menu button[aria-checked="true"],
+#mode-menu button[aria-checked="true"] {
+  background: var(--accent-dim);
+  border-color: #818cf85c;
+}
+
 #card-sort-menu button:hover,
 #card-sort-menu button:focus-visible {
-  border-color: #818cf85c;
+  border-color: var(--accent-hover);
   outline: none;
 }
 
@@ -1730,16 +1733,13 @@ body[data-mode="pack"] #search-input {
 #mode-menu[hidden] {display:none;}
 #mode-menu button {display:flex;align-items:center;gap:11px;width:100%;min-height:60px;padding:10px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text);text-align:left;font-family:inherit;cursor:pointer;}
 #mode-menu button:hover,#mode-menu button:focus-visible {background:var(--surface2);outline:none;border-color:var(--border);}
-#mode-menu button[aria-checked="true"] {background:var(--accent-dim);}
+#mode-menu button[aria-checked="true"]:hover,
+#mode-menu button[aria-checked="true"]:focus-visible {background:var(--accent-dim);border-color:var(--accent-hover);}
 .mode-option-icon {width:31px;height:34px;border:1px solid var(--border);border-radius:7px;background:#ffffff03;}
 .mode-option-icon svg {width:21px;height:21px;}
 .mode-option-copy {display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;}
 .mode-option-name {font-size:.79rem;font-weight:600;}
 .mode-option-detail {color:var(--muted);font-size:.66rem;line-height:1.35;}
-.mode-check {display:grid;place-items:center;flex:0 0 16px;width:16px;height:16px;border:1.5px solid var(--border);border-radius:50%;}
-.mode-check::after {content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-hover);transform:scale(0);}
-[aria-checked="true"] .mode-check {border-color:var(--accent-hover);}
-[aria-checked="true"] .mode-check::after {transform:scale(1);}
 #starter-decks {padding:14px 16px 10px;flex-shrink:0;}
 #starter-decks[hidden] {display:none;}
 #starter-title {margin:0 0 10px;font-size:.72rem;font-weight:500;color:var(--muted);}

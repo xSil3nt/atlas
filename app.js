@@ -546,7 +546,7 @@ function renderFilterRow() {
       <div id="card-sort-menu" role="menu" aria-label="Sort cards" hidden>
         ${Object.entries(CARD_SORTS).map(([value, label]) => `
           <button type="button" role="menuitemradio" tabindex="-1" data-sort="${value}">
-            ${label}<span class="mode-check" aria-hidden="true"></span>
+            ${label}
           </button>
         `).join("")}
       </div>
