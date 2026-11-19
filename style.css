@@ -328,22 +328,82 @@ header h1 {
 
 #card-sort {
   display: none;
-  color-scheme: dark;
+  position: relative;
+}
+
+body[data-mode="pack"] #card-sort { display: block; }
+#filter-row:has(#card-sort-toggle[aria-expanded="true"]) { z-index: 2; }
+
+#card-sort-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 132px;
+  height: 32px;
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 7px 8px;
+  padding: 0 12px;
   border-radius: var(--radius-md);
   font: inherit;
   font-size: 0.8rem;
   cursor: pointer;
 }
 
-body[data-mode="pack"] #card-sort { display: block; }
+#card-sort-toggle .mode-chevron {
+  width: 16px;
+  height: 16px;
+  margin-left: 0;
+}
 
-#card-sort:focus-visible {
+#card-sort-toggle:hover,
+#card-sort-toggle[aria-expanded="true"] {
+  border-color: #818cf85c;
+  background: var(--surface-solid);
+}
+
+#card-sort-toggle[aria-expanded="true"] .mode-chevron { transform: rotate(180deg); }
+
+#card-sort-toggle:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+#card-sort-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  inset-inline: 0;
+  padding: 5px;
+  background: var(--surface-solid);
+  border: 1px solid #ffffff16;
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 48px #0008, 0 3px 10px #0005;
+}
+
+#card-sort-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 34px;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+#card-sort-menu button[aria-checked="true"] { background: var(--accent-dim); }
+#card-sort-menu button:hover,
+#card-sort-menu button:focus-visible {
+  border-color: #818cf85c;
+  outline: none;
 }
 
 #search-input {
@@ -357,6 +417,11 @@ body[data-mode="pack"] #card-sort { display: block; }
   width: 220px;
   outline: none;
   transition: border-color var(--transition), width var(--transition), box-shadow var(--transition);
+}
+
+body[data-mode="pack"] #search-input {
+  display: block;
+  height: 32px;
 }
 
 .search-wrap::before {

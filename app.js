@@ -8,6 +8,7 @@ const RESOURCE_MAX_PECULIAR = 3;
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 const RESOURCES = ["Blood", "Heart", "Brain", "Soul", "Eye"];
+const CARD_SORTS = { amount: "Amount", name: "Alphabetical", resource: "Resource", type: "Card type" };
 
 const STARTER_DECKS = {
   Heart: [
@@ -537,21 +538,81 @@ function renderFilterRow() {
   el.appendChild(searchWrap);
 
   el.insertAdjacentHTML("beforeend", `
-    <select id="card-sort" aria-label="Sort cards" title="Sort cards">
-      <option value="amount">Amount</option>
-      <option value="name">Alphabetical</option>
-      <option value="resource">Resource</option>
-      <option value="type">Card type</option>
-    </select>
+    <div id="card-sort">
+      <button id="card-sort-toggle" type="button" aria-haspopup="menu" aria-controls="card-sort-menu" aria-expanded="false">
+        <span></span>
+        <svg class="mode-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+      </button>
+      <div id="card-sort-menu" role="menu" aria-label="Sort cards" hidden>
+        ${Object.entries(CARD_SORTS).map(([value, label]) => `
+          <button type="button" role="menuitemradio" tabindex="-1" data-sort="${value}">
+            ${label}<span class="mode-check" aria-hidden="true"></span>
+          </button>
+        `).join("")}
+      </div>
+    </div>
   `);
-  const sortSelect = el.querySelector("#card-sort");
-  sortSelect.value = cardSort;
-  sortSelect.addEventListener("change", () => {
-    cardSort = sortSelect.value;
-    renderGrid();
-  });
+  wireCardSort(el.querySelector("#card-sort"));
 
   wireSearchHelperDismiss();
+}
+
+function wireCardSort(root) {
+  const toggle = root.querySelector("#card-sort-toggle");
+  const menu = root.querySelector("#card-sort-menu");
+  const options = [...menu.querySelectorAll("[data-sort]")];
+
+  function updateSelection() {
+    toggle.firstElementChild.textContent = CARD_SORTS[cardSort];
+    toggle.setAttribute("aria-label", `Sort cards: ${CARD_SORTS[cardSort]}`);
+    options.forEach(option => option.setAttribute("aria-checked", String(option.dataset.sort === cardSort)));
+  }
+
+  function setOpen(open) {
+    menu.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    if (open) options.find(option => option.dataset.sort === cardSort).focus();
+  }
+
+  updateSelection();
+  toggle.addEventListener("click", () => setOpen(menu.hidden));
+  root.addEventListener("focusout", event => {
+    if (!root.contains(event.relatedTarget)) setOpen(false);
+  });
+  menu.addEventListener("click", event => {
+    const option = event.target.closest("[data-sort]");
+    if (!option) return;
+    cardSort = option.dataset.sort;
+    updateSelection();
+    toggle.focus();
+    setOpen(false);
+    renderGrid();
+  });
+  root.addEventListener("keydown", event => {
+    const index = options.indexOf(document.activeElement);
+    const last = options.length - 1;
+    switch (event.key) {
+      case "Escape":
+        if (menu.hidden) return;
+        toggle.focus();
+        setOpen(false);
+        break;
+      case "ArrowDown":
+      case "ArrowUp": {
+        if (menu.hidden) setOpen(true);
+        else options[(index + (event.key === "ArrowDown" ? 1 : last)) % options.length].focus();
+        break;
+      }
+      case "Home":
+      case "End":
+        if (menu.hidden) return;
+        options[event.key === "Home" ? 0 : last].focus();
+        break;
+      default: return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  });
 }
 
 function loadStarterDeck(deckName) {
