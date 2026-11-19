@@ -326,6 +326,26 @@ header h1 {
   flex-shrink: 0;
 }
 
+#card-sort {
+  display: none;
+  color-scheme: dark;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 8px;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+body[data-mode="pack"] #card-sort { display: block; }
+
+#card-sort:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 #search-input {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--border);
@@ -1567,6 +1587,19 @@ header h1 {
   .exclusive-label { display: none; }
 
   #filter-row { gap: 6px; }
+
+  body[data-mode="pack"] #filter-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  body[data-mode="pack"] #filter-row .search-wrap {
+    width: 100%;
+  }
+
+  body[data-mode="pack"] #filter-row #search-input {
+    width: 100%;
+  }
 
   #search-input {
     width: min(108px, 26vw);

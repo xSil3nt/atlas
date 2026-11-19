@@ -97,6 +97,7 @@ if (entry.legacy) {
 }
 const modeMenu = mountModeMenu(document.getElementById('atlas-modes'), next => setMode(next));
 let mode = entry.mode || 'normal', inventory = {}, packsOpened = 0, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
+let cardSort = "amount";
 modeMenu.update(mode, false);
 function mainDeckSize() { return mode === 'pack' ? 25 : 40; }
 function resourceDeckSize() { return mode === 'pack' ? 10 : 20; }
@@ -535,6 +536,21 @@ function renderFilterRow() {
   searchWrap.appendChild(searchInput);
   el.appendChild(searchWrap);
 
+  el.insertAdjacentHTML("beforeend", `
+    <select id="card-sort" aria-label="Sort cards" title="Sort cards">
+      <option value="amount">Amount</option>
+      <option value="name">Alphabetical</option>
+      <option value="resource">Resource</option>
+      <option value="type">Card type</option>
+    </select>
+  `);
+  const sortSelect = el.querySelector("#card-sort");
+  sortSelect.value = cardSort;
+  sortSelect.addEventListener("change", () => {
+    cardSort = sortSelect.value;
+    renderGrid();
+  });
+
   wireSearchHelperDismiss();
 }
 
@@ -674,6 +690,31 @@ function matchesFilter(card) {
   return searchMatch && costMatch && filterMatch;
 }
 
+function resourceSortRank(card) {
+  if (card.resources?.length > 1) return RESOURCES.length;
+  const index = RESOURCES.indexOf(card.resources?.[0]);
+  return index === -1 ? RESOURCES.length + 1 : index;
+}
+
+function sortLimitedCards(cards) {
+  if (mode !== "pack") return;
+
+  cards.sort((a, b) => {
+    let order = 0;
+    switch (cardSort) {
+      case "amount": {
+        const aCopies = owned(a);
+        const bCopies = owned(b);
+        order = aCopies === bCopies ? 0 : aCopies > bCopies ? -1 : 1;
+        break;
+      }
+      case "resource": order = resourceSortRank(a) - resourceSortRank(b); break;
+      case "type": order = (a.type ?? "").localeCompare(b.type ?? ""); break;
+    }
+    return order || a.name.localeCompare(b.name);
+  });
+}
+
 function renderGrid() {
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
@@ -685,6 +726,7 @@ function renderGrid() {
 
   const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
   const cards = allMainCards.filter(c => owned(c) > 0).filter(matchesFilter);
+  sortLimitedCards(cards);
 
   updateResultsCount(cards.length);
 
@@ -744,6 +786,7 @@ function renderResourceGrid(grid) {
   }
 
   const filtered = isSearchActive() ? cards.filter(matchesFilter) : cards;
+  sortLimitedCards(filtered);
   updateResultsCount(filtered.length);
 
   if (!filtered.length) {
