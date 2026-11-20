@@ -8,7 +8,7 @@ const RESOURCE_MAX_PECULIAR = 3;
 
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 const RESOURCES = ["Blood", "Heart", "Brain", "Soul", "Eye"];
-const CARD_SORTS = { amount: "Amount", name: "Alphabetical", resource: "Resource", type: "Card type" };
+const CARD_SORTS = { amount: "Amount", name: "Alphabetical", resource: "Resource", type: "Card type", cost: "Cost" };
 
 const STARTER_DECKS = {
   Heart: [
@@ -757,6 +757,10 @@ function resourceSortRank(card) {
   return index === -1 ? RESOURCES.length + 1 : index;
 }
 
+function totalOrganCost(card) {
+  return Object.values(card.cost ?? {}).reduce((total, amount) => total + amount, 0);
+}
+
 function sortLimitedCards(cards) {
   if (mode !== "pack") return;
 
@@ -771,6 +775,7 @@ function sortLimitedCards(cards) {
       }
       case "resource": order = resourceSortRank(a) - resourceSortRank(b); break;
       case "type": order = (a.type ?? "").localeCompare(b.type ?? ""); break;
+      case "cost": order = totalOrganCost(a) - totalOrganCost(b); break;
     }
     return order || a.name.localeCompare(b.name);
   });
