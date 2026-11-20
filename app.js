@@ -9,6 +9,13 @@ const RESOURCE_MAX_PECULIAR = 3;
 const FOLDERS = ["Blood", "Heart", "Brain", "Soul", "Eye", "Multi"];
 const RESOURCES = ["Blood", "Heart", "Brain", "Soul", "Eye"];
 const CARD_SORTS = { amount: "Amount", name: "Alphabetical", resource: "Resource", type: "Card type", cost: "Cost" };
+const CARD_SORT_DIRECTIONS = {
+  amount: ["high to low", "low to high"],
+  name: ["A to Z", "Z to A"],
+  resource: ["Blood first", "Blood last"],
+  type: ["A to Z", "Z to A"],
+  cost: ["high to low", "low to high"],
+};
 
 const STARTER_DECKS = {
   Heart: [
@@ -99,6 +106,7 @@ if (entry.legacy) {
 const modeMenu = mountModeMenu(document.getElementById('atlas-modes'), next => setMode(next));
 let mode = entry.mode || 'normal', inventory = {}, packsOpened = 0, savedDecks = {normal: {}, pack: {}}, storageWarning = false, persistenceAvailable = true;
 let cardSort = "amount";
+let cardSortReversed = false;
 modeMenu.update(mode, false);
 function mainDeckSize() { return mode === 'pack' ? 25 : 40; }
 function resourceDeckSize() { return mode === 'pack' ? 10 : 20; }
@@ -540,6 +548,7 @@ function renderFilterRow() {
   el.insertAdjacentHTML("beforeend", `
     <div id="card-sort">
       <button id="card-sort-toggle" type="button" aria-haspopup="menu" aria-controls="card-sort-menu" aria-expanded="false">
+        <svg class="sort-direction" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4"/></svg>
         <span></span>
         <svg class="mode-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
       </button>
@@ -559,12 +568,18 @@ function renderFilterRow() {
 
 function wireCardSort(root) {
   const toggle = root.querySelector("#card-sort-toggle");
+  const directionIcon = toggle.querySelector(".sort-direction");
   const menu = root.querySelector("#card-sort-menu");
   const options = [...menu.querySelectorAll("[data-sort]")];
 
   function updateSelection() {
-    toggle.firstElementChild.textContent = CARD_SORTS[cardSort];
-    toggle.setAttribute("aria-label", `Sort cards: ${CARD_SORTS[cardSort]}`);
+    const label = CARD_SORTS[cardSort];
+    const [defaultDirection, reverseDirection] = CARD_SORT_DIRECTIONS[cardSort];
+    const direction = cardSortReversed ? reverseDirection : defaultDirection;
+    const defaultDescending = cardSort === "amount" || cardSort === "cost";
+    directionIcon.classList.toggle("ascending", defaultDescending === cardSortReversed);
+    toggle.querySelector("span").textContent = label;
+    toggle.setAttribute("aria-label", `Sort cards: ${label}, ${direction}`);
     options.forEach(option => option.setAttribute("aria-checked", String(option.dataset.sort === cardSort)));
   }
 
@@ -582,6 +597,7 @@ function wireCardSort(root) {
   menu.addEventListener("click", event => {
     const option = event.target.closest("[data-sort]");
     if (!option) return;
+    cardSortReversed = option.dataset.sort === cardSort && !cardSortReversed;
     cardSort = option.dataset.sort;
     updateSelection();
     toggle.focus();
@@ -775,9 +791,10 @@ function sortLimitedCards(cards) {
       }
       case "resource": order = resourceSortRank(a) - resourceSortRank(b); break;
       case "type": order = (a.type ?? "").localeCompare(b.type ?? ""); break;
-      case "cost": order = totalOrganCost(a) - totalOrganCost(b); break;
+      case "cost": order = totalOrganCost(b) - totalOrganCost(a); break;
     }
-    return order || a.name.localeCompare(b.name);
+    order ||= a.name.localeCompare(b.name);
+    return cardSortReversed ? -order : order;
   });
 }
 
