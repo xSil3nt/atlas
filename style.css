@@ -876,6 +876,13 @@ body[data-mode="pack"] #search-input {
   height: 1.25em;
 }
 
+.deck-type-icon {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
 .rtoken {
   height: 1.1em;
   width: auto;

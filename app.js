@@ -1,3 +1,4 @@
+import { mdiGraveStone, mdiLightningBolt } from '@mdi/js';
 import { resolveModeUrl } from './shared/modes.js';
 import { mountModeMenu } from './shared/mode-menu.js';
 import { MODES, MAX_LIMITED_PACKS, STORAGE_KEY, identity, readState, limitDeck, grant, availableCopies } from './shared/inventory.js';
@@ -991,12 +992,30 @@ function deckResourceCost() {
   return totals;
 }
 
+function renderCardTypeChips() {
+  let creations = 0;
+  let schemes = 0;
+  for (const { type, count } of Object.values(myDeck)) {
+    if (type === "Creation" || type === "Creation?") creations += count;
+    if (type === "Scheme") schemes += count;
+  }
+
+  return [
+    { count: creations, name: "Creation", icon: mdiGraveStone },
+    { count: schemes, name: "Scheme", icon: mdiLightningBolt },
+  ].map(({ count, name, icon }) => {
+    const label = `${count} ${name}${count === 1 ? "" : "s"}`;
+    return `<span class="breakdown-chip" role="img" aria-label="${label}" title="${label}">
+      <svg class="deck-type-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${icon}"/></svg>${count}</span>`;
+  }).join("");
+}
+
 function renderBreakdown(prefixLabel) {
   const breakdown = document.getElementById("deck-breakdown");
   const totals = deckResourceCost();
   const present = RESOURCES.filter(r => totals[r] > 0);
 
-  if (!present.length) {
+  if (!present.length && prefixLabel) {
     breakdown.innerHTML = "";
     breakdown.style.display = "none";
     return;
@@ -1005,7 +1024,9 @@ function renderBreakdown(prefixLabel) {
   const chips = present
     .map(r => `<span class="breakdown-chip">${resourceIcon(r)}${totals[r]}</span>`)
     .join("");
-  breakdown.innerHTML = (prefixLabel ? `<span class="breakdown-label">${prefixLabel}</span>` : "") + chips;
+  breakdown.innerHTML = prefixLabel
+    ? `<span class="breakdown-label">${prefixLabel}</span>${chips}`
+    : chips + renderCardTypeChips();
   breakdown.style.display = "flex";
 }
 
