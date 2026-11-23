@@ -38,6 +38,9 @@ export function buildCardCatalog(metadata, imageUrl) {
 
     // folder is a compatibility alias for Atlas's existing response shape.
     const enriched = { ...card, folder: card.group, url: imageUrl(card.path) };
+    if (Array.isArray(card.subtypes)) {
+      enriched.subtypes = card.subtypes.filter(subtype => typeof subtype !== "string" || subtype.trim() !== "&");
+    }
     if (card.deck === "corpse") {
       if (card.group !== "Resource") invalid("corpse group must be Resource");
       if (!Object.hasOwn(CORPSE_TYPES, card.type)) invalid("unknown corpse type");

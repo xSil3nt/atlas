@@ -88,6 +88,10 @@ test('metadata, fronts and backs use the same live cards repository as Atlas',()
 test('packs consume the complete Atlas API catalog and its image URLs', async () => {
  const {buildCardCatalog} = await import('../api/cards.js');
  const response=buildCardCatalog(metadata,path=>'https://example.test/'+encodeURIComponent(path));
+ assert.deepEqual(Object.values(response.decks).flat().find(c=>c.name==="Vitaleum Phalanx").subtypes,
+  ["Stranger", "Reptilian", "Beast"]);
+ assert.deepEqual(response.resources.find(c=>c.name==="Fuel for the Tide").subtypes,
+  ["Eye & Heart Donor"]);
  const shared=catalogFrom(response);
  assert.equal(shared.length,catalog.length);
  assert.deepEqual(new Set(shared.map(c=>c.key)),new Set(catalog.map(c=>c.key)));
