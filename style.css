@@ -520,7 +520,7 @@ body[data-mode="pack"] #search-input {
 }
 
 .search-helper-group[data-layout="resources"] {
-  grid-template-columns: repeat(auto-fit, minmax(38px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .search-helper-option {
