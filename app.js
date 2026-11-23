@@ -1005,7 +1005,7 @@ function renderCardTypeChips() {
     { count: schemes, name: "Scheme", icon: mdiLightningBolt },
   ].map(({ count, name, icon }) => {
     const label = `${count} ${name}${count === 1 ? "" : "s"}`;
-    return `<span class="breakdown-chip" role="img" aria-label="${label}" title="${label}">
+    return `<span class="deck-type-chip" role="img" aria-label="${label}" data-tooltip="${label}" tabindex="0">
       <svg class="deck-type-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${icon}"/></svg>${count}</span>`;
   }).join("");
 }
@@ -1015,7 +1015,7 @@ function renderBreakdown(prefixLabel) {
   const totals = deckResourceCost();
   const present = RESOURCES.filter(r => totals[r] > 0);
 
-  if (!present.length && prefixLabel) {
+  if (!present.length) {
     breakdown.innerHTML = "";
     breakdown.style.display = "none";
     return;
@@ -1024,9 +1024,7 @@ function renderBreakdown(prefixLabel) {
   const chips = present
     .map(r => `<span class="breakdown-chip">${resourceIcon(r)}${totals[r]}</span>`)
     .join("");
-  breakdown.innerHTML = prefixLabel
-    ? `<span class="breakdown-label">${prefixLabel}</span>${chips}`
-    : chips + renderCardTypeChips();
+  breakdown.innerHTML = (prefixLabel ? `<span class="breakdown-label">${prefixLabel}</span>` : "") + chips;
   breakdown.style.display = "flex";
 }
 
@@ -1034,6 +1032,7 @@ function renderSidebar() {
   renderStarters();
   saveState();
   if (isResourceTab()) {
+    document.getElementById("deck-type-counts").hidden = true;
     renderResourceSidebar();
   } else {
     renderDeckSidebar();
@@ -1046,6 +1045,9 @@ function renderDeckSidebar() {
   const total = Object.values(myDeck).reduce((s, e) => s + e.count, 0);
 
   document.getElementById("sidebar-title").textContent = "Your Deck";
+  const typeCounts = document.getElementById("deck-type-counts");
+  typeCounts.innerHTML = renderCardTypeChips();
+  typeCounts.hidden = false;
 
   const totalEl = document.getElementById("card-total");
   totalEl.textContent = `${total} / ${mainDeckSize()} card${total !== 1 ? "s" : ""}`;
