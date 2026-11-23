@@ -1,0 +1,40 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { compileCardSearch } from "../shared/card-search.js";
+
+const creation = {
+  name: "Ersatz Titan",
+  type: "Creation?",
+  subtypes: ["Titan", "Abomination"],
+  rarity: "Ingenious",
+  abilityText: "Draw a card.",
+  cost: { Blood: 6 },
+};
+const scheme = {
+  name: "Brain Blast",
+  type: "Scheme",
+  abilityText: "Bury it OR damage a chosen creation.",
+  artist: "Eg",
+  keywords: ["Quick"],
+  cost: { Brain: 2 },
+};
+const names = query => [creation, scheme].filter(compileCardSearch(query)).map(card => card.name);
+
+test("broad searches include rules text while card-type searches use the type line", () => {
+  assert.deepEqual(names("creation"), [creation.name, scheme.name]);
+  assert.deepEqual(names("t:creation"), [creation.name]);
+  assert.deepEqual(names("type:scheme creation"), [scheme.name]);
+  assert.deepEqual(names('o:"chosen creation" n:brain'), [scheme.name]);
+  assert.deepEqual(names('text:"it OR damage"'), [scheme.name]);
+  assert.deepEqual(names("rarity:ingenious subtype:titan"), [creation.name]);
+  assert.deepEqual(names("artist:eg keyword:quick"), [scheme.name]);
+});
+
+test("grouping, exclusions and cost operators combine with field filters", () => {
+  assert.deepEqual(names("(t:creation OR t:scheme) -keyword:quick"), [creation.name]);
+  assert.deepEqual(names("-(t:creation OR name:missing)"), [scheme.name]);
+  assert.deepEqual(names("t:creation bl>=6 OR t:scheme br=2"), [creation.name, scheme.name]);
+  assert.deepEqual(names("t:creation bl<6 OR t:scheme br=2"), [scheme.name]);
+  assert.deepEqual(names('t:scheme AND "brain blast"'), [scheme.name]);
+  assert.deepEqual(names("eg"), [scheme.name]);
+});

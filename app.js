@@ -1,3 +1,4 @@
+import { compileCardSearch } from './shared/card-search.js';
 import { mdiGraveStone, mdiLightningBolt } from '@mdi/js';
 import { resolveModeUrl } from './shared/modes.js';
 import { mountModeMenu } from './shared/mode-menu.js';
@@ -91,8 +92,7 @@ let myDeck = {};
 let resourceCounts = {};
 let activeTab = "All";
 let searchQuery = "";
-let searchGroups = null;
-let costFilters = null;
+let searchPredicate = null;
 let activeFilters = new Set();
 let exclusiveFilter = false;
 let deckDrawerOpen = false;
@@ -421,24 +421,20 @@ function ensureSearchHelper() {
   searchHelperEl.innerHTML = `
     <div class="helper-section">
       <div class="helper-label">Search</div>
-      <div class="helper-row"><code>lord</code> keyword "lord"</div>
-      <div class="helper-row"><code>draw card</code> both words</div>
+      <div class="helper-row"><code>draw card</code> both words anywhere</div>
+      <div class="helper-row"><code>t:creation</code> only Creations</div>
+      <div class="helper-row"><code>text:"chosen creation"</code> rules text</div>
+      <div class="helper-row"><code>n:brain</code> card name</div>
+      <div class="helper-row"><code>keyword:quick</code> card keyword</div>
+      <div class="helper-row"><code>rarity:ingenious</code> card rarity</div>
+      <div class="helper-row"><code>artist:uwais</code> card artist</div>
+      <div class="helper-row"><code>subtype:titan</code> card subtype</div>
     </div>
     <div class="helper-section">
       <div class="helper-label">Operators</div>
-      <div class="helper-row"><code>uwais OR eg</code> either artist</div>
-      <div class="helper-row"><code>soar AND cadaverous</code> both words</div>
-      <div class="helper-row"><code>"quick scheme"</code> exact phrase</div>
-    </div>
-    <div class="helper-section">
-      <div class="helper-label">Cost</div>
-      <div class="helper-row"><code>blood<2</code> blood cost less than 2</div>
-      <div class="helper-row"><code>heart>=3</code> heart cost 3 or more</div>
-    </div>
-    <div class="helper-section">
-      <div class="helper-label">Tips</div>
-      <div class="helper-row"><code>eg</code> finds artist, not "regen"</div>
-      <div class="helper-row"><code>bury</code> finds text or keywords</div>
+      <div class="helper-row"><code>-t:scheme</code> exclude Schemes</div>
+      <div class="helper-row"><code>(draw OR bury) t:scheme</code></div>
+      <div class="helper-row"><code>blood&lt;2</code> blood cost below 2</div>
     </div>
   `;
   searchHelperEl.style.display = "none";
@@ -536,9 +532,7 @@ function renderFilterRow() {
   searchInput.value = searchQuery;
   searchInput.addEventListener("input", e => {
     searchQuery = e.target.value;
-    const parsed = parseQuery(searchQuery);
-    searchGroups = parsed?.searchGroups ?? null;
-    costFilters = parsed?.costFilters ?? null;
+    searchPredicate = compileCardSearch(searchQuery);
     renderGrid();
   });
   searchInput.addEventListener("focus", () => showSearchHelper(searchInput));
@@ -664,8 +658,7 @@ function switchTab(tab) {
 
   activeTab = tab;
   searchQuery = "";
-  searchGroups = null;
-  costFilters = null;
+  searchPredicate = null;
   activeFilters.clear();
   const searchInput = document.getElementById("search-input");
   if (searchInput) searchInput.value = "";
@@ -683,81 +676,8 @@ function isSearchActive() {
   return searchQuery.trim() !== "" || activeFilters.size > 0;
 }
 
-function cardSearchData(card) {
-  const text = [
-    card.name,
-    card.type,
-    card.artist,
-    card.abilityText,
-    ...(card.subtypes ?? []),
-    ...(card.keywords ?? []),
-  ].filter(Boolean).join(" ").toLowerCase();
-  return { text, words: text.split(/[^a-z0-9]+/).filter(Boolean) };
-}
-
-// A bare term matches a card if any word starts with it (so "eg" hits the
-// artist "eg" but not "regenerator", and "soar" still finds "Soaring").
-// A quoted phrase keeps its spaces and matches as a plain substring.
-function termMatches(term, data) {
-  if (term.includes(" ")) return data.text.includes(term);
-  return data.words.some(w => w.startsWith(term));
-}
-
-// Parse a query into OR-groups of AND-terms, plus cost filters.
-// Uppercase OR / AND are operators; space between terms is an implicit AND.
-// Cost filters: blood<2, heart>=3, brain=1, etc. (also bl, h, br, s, e shorthand)
-// Returns {searchGroups, costFilters} or null if empty.
-function parseQuery(raw) {
-  const q = raw.trim();
-  if (!q) return null;
-
-  const costFilters = [];
-  const resourceShorthand = { bl: "Blood", h: "Heart", br: "Brain", s: "Soul", e: "Eye" };
-
-  // Extract cost filters: resource(op)number patterns
-  const withoutCosts = q.replace(/([a-z]+)(<=|>=|=|<|>)(\d+)/gi, (match, res, op, num) => {
-    const resource = resourceShorthand[res.toLowerCase()] || (res.charAt(0).toUpperCase() + res.slice(1).toLowerCase());
-    costFilters.push({ resource, op, value: parseInt(num, 10) });
-    return "";
-  });
-
-  const searchGroups = withoutCosts.split(/\s+OR\s+/)
-    .map(group => {
-      const terms = [];
-      for (const m of group.matchAll(/"([^"]+)"|(\S+)/g)) {
-        if (m[1] != null) terms.push(m[1].toLowerCase());
-        else if (m[2] !== "AND") terms.push(m[2].toLowerCase());
-      }
-      return terms;
-    })
-    .filter(group => group.length > 0);
-
-  if (searchGroups.length === 0 && costFilters.length === 0) return null;
-  return { searchGroups, costFilters };
-}
-
 function matchesFilter(card) {
-  let searchMatch = true;
-  let costMatch = true;
-
-  if (searchGroups && searchGroups.length) {
-    const data = cardSearchData(card);
-    searchMatch = searchGroups.some(group => group.every(term => termMatches(term, data)));
-  }
-
-  if (costFilters && costFilters.length) {
-    costMatch = costFilters.every(filter => {
-      const cardCost = card.cost?.[filter.resource] ?? 0;
-      switch (filter.op) {
-        case "<": return cardCost < filter.value;
-        case ">": return cardCost > filter.value;
-        case "<=": return cardCost <= filter.value;
-        case ">=": return cardCost >= filter.value;
-        case "=": return cardCost === filter.value;
-        default: return true;
-      }
-    });
-  }
+  if (searchPredicate && !searchPredicate(card)) return false;
 
   let filterMatch = true;
   if (activeFilters.size > 0) {
@@ -765,7 +685,7 @@ function matchesFilter(card) {
       ? card.resources.length === activeFilters.size && card.resources.every(r => activeFilters.has(r))
       : card.resources.length > 0 && card.resources.every(r => activeFilters.has(r));
   }
-  return searchMatch && costMatch && filterMatch;
+  return filterMatch;
 }
 
 function resourceSortRank(card) {
