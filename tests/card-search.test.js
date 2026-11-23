@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { compileCardSearch } from "../shared/card-search.js";
+import { compileCardSearch, searchTokenAt } from "../shared/card-search.js";
 
 const creation = {
   name: "Ersatz Titan",
@@ -37,4 +37,14 @@ test("grouping, exclusions and cost operators combine with field filters", () =>
   assert.deepEqual(names("t:creation bl<6 OR t:scheme br=2"), [scheme.name]);
   assert.deepEqual(names('t:scheme AND "brain blast"'), [scheme.name]);
   assert.deepEqual(names("eg"), [scheme.name]);
+});
+
+test("autocomplete finds the complete token at the caret, including quoted values", () => {
+  const query = 't:scheme text:"chosen creation" br>=2';
+  assert.deepEqual(searchTokenAt(query, 21), {
+    start: 9, end: 31, prefix: 'text:"chosen',
+  });
+  assert.deepEqual(searchTokenAt('t:scheme (', 10), { start: 10, end: 10, prefix: "" });
+  assert.equal(compileCardSearch('text:""'), null);
+  assert.equal(compileCardSearch('text:"say \\"hello\\""')({ abilityText: 'Say "hello" twice.' }), true);
 });

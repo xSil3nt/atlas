@@ -1,3 +1,4 @@
+import { mountSearchHelper } from "./shared/search-helper.js";
 import { compileCardSearch } from './shared/card-search.js';
 import { mdiGraveStone, mdiLightningBolt } from '@mdi/js';
 import { resolveModeUrl } from './shared/modes.js';
@@ -411,75 +412,12 @@ function renderNavTabs() {
   });
 }
 
-let searchHelperEl = null;
-let searchHelperDismissWired = false;
-
-function ensureSearchHelper() {
-  if (searchHelperEl) return searchHelperEl;
-  searchHelperEl = document.createElement("div");
-  searchHelperEl.id = "search-helper";
-  searchHelperEl.innerHTML = `
-    <div class="helper-section">
-      <div class="helper-label">Search</div>
-      <div class="helper-row"><code>draw card</code> both words anywhere</div>
-      <div class="helper-row"><code>t:creation</code> only Creations</div>
-      <div class="helper-row"><code>text:"chosen creation"</code> rules text</div>
-      <div class="helper-row"><code>n:brain</code> card name</div>
-      <div class="helper-row"><code>keyword:quick</code> card keyword</div>
-      <div class="helper-row"><code>rarity:ingenious</code> card rarity</div>
-      <div class="helper-row"><code>artist:uwais</code> card artist</div>
-      <div class="helper-row"><code>subtype:titan</code> card subtype</div>
-    </div>
-    <div class="helper-section">
-      <div class="helper-label">Operators</div>
-      <div class="helper-row"><code>-t:scheme</code> exclude Schemes</div>
-      <div class="helper-row"><code>(draw OR bury) t:scheme</code></div>
-      <div class="helper-row"><code>blood&lt;2</code> blood cost below 2</div>
-    </div>
-  `;
-  searchHelperEl.style.display = "none";
-  document.body.appendChild(searchHelperEl);
-  return searchHelperEl;
-}
-
-function positionSearchHelper(input) {
-  const helper = ensureSearchHelper();
-  const rect = input.getBoundingClientRect();
-  helper.style.position = "fixed";
-  helper.style.top = (rect.bottom + 4) + "px";
-  helper.style.right = (window.innerWidth - rect.right) + "px";
-}
-
-function showSearchHelper(input) {
-  if (isTouchPreview()) return;
-  const helper = ensureSearchHelper();
-  positionSearchHelper(input);
-  helper.style.display = "block";
-  requestAnimationFrame(() => helper.classList.add("visible"));
-}
-
-function hideSearchHelper() {
-  if (!searchHelperEl) return;
-  searchHelperEl.classList.remove("visible");
-  setTimeout(() => {
-    if (!searchHelperEl.classList.contains("visible")) searchHelperEl.style.display = "none";
-  }, 150);
-}
-
-function wireSearchHelperDismiss() {
-  if (searchHelperDismissWired) return;
-  searchHelperDismissWired = true;
-  document.addEventListener("click", e => {
-    if (!searchHelperEl?.classList.contains("visible")) return;
-    const input = document.getElementById("search-input");
-    if (input?.contains(e.target) || searchHelperEl.contains(e.target)) return;
-    hideSearchHelper();
-  });
-}
+let unmountSearchHelper;
 
 function renderFilterRow() {
   const el = document.getElementById("filter-row");
   if (!el) return;
+  unmountSearchHelper?.();
   el.innerHTML = "";
 
   const pillGroup = document.createElement("div");
@@ -535,8 +473,6 @@ function renderFilterRow() {
     searchPredicate = compileCardSearch(searchQuery);
     renderGrid();
   });
-  searchInput.addEventListener("focus", () => showSearchHelper(searchInput));
-  searchInput.addEventListener("blur", hideSearchHelper);
   searchWrap.appendChild(searchInput);
   el.appendChild(searchWrap);
 
@@ -558,7 +494,8 @@ function renderFilterRow() {
   `);
   wireCardSort(el.querySelector("#card-sort"));
 
-  wireSearchHelperDismiss();
+  const searchableCards = isResourceTab() ? allCards.resources : FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
+  unmountSearchHelper = mountSearchHelper(searchInput, searchableCards);
 }
 
 function wireCardSort(root) {
