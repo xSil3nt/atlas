@@ -27,11 +27,12 @@ test("broad searches include rules text while card-type searches use the type li
   assert.deepEqual(names('o:"chosen creation" n:brain'), [scheme.name]);
   assert.deepEqual(names('text:"it OR damage"'), [scheme.name]);
   assert.deepEqual(names("rarity:ingenious subtype:titan"), [creation.name]);
-  assert.deepEqual(names("artist:eg keyword:quick"), [scheme.name]);
+  assert.deepEqual(names("artist:eg trait:quick"), [scheme.name]);
+  assert.deepEqual(names("keyword:quick"), []);
 });
 
 test("grouping, exclusions and cost operators combine with field filters", () => {
-  assert.deepEqual(names("(t:creation OR t:scheme) -keyword:quick"), [creation.name]);
+  assert.deepEqual(names("(t:creation OR t:scheme) -trait:quick"), [creation.name]);
   assert.deepEqual(names("-(t:creation OR name:missing)"), [scheme.name]);
   assert.deepEqual(names("t:creation bl>=6 OR t:scheme br=2"), [creation.name, scheme.name]);
   assert.deepEqual(names("t:creation bl<6 OR t:scheme br=2"), [scheme.name]);

@@ -3,7 +3,7 @@ export const searchFields = {
   n: "name", name: "name",
   o: "abilityText", oracle: "abilityText", text: "abilityText",
   a: "artist", artist: "artist",
-  k: "keywords", keyword: "keywords",
+  trait: "keywords",
   subtype: "subtypes", r: "rarity", rarity: "rarity",
 };
 

@@ -3,8 +3,8 @@ import { searchFields, searchResources, searchTokenAt } from "./card-search.js";
 const filters = [
   ["type", "Card type"],
   ["name", "Card name"],
-  ["text", "Rules text"],
-  ["keyword", "Keyword"],
+  ["text", "Text"],
+  ["trait", "Traits"],
   ["subtype", "Subtype"],
   ["rarity", "Rarity"],
   ["artist", "Artist"],
@@ -21,9 +21,9 @@ const comparisons = [
 const operators = new Map([
   ["AND", "Require both"],
   ["OR", "Match either"],
-  ["-", "Exclude a term or filter"],
+  ["-", "Exclude"],
   ["()", "Group conditions"],
-  ['""', "Search an exact phrase"],
+  ['""', "Exact phrase"],
 ]);
 
 const resourceNames = [...new Set(Object.values(searchResources))];
@@ -94,7 +94,9 @@ function getSuggestions(prefix, valuesFor, queryBefore, queryAfter, costLimit) {
     const phrase = ["name", "text", "artist"].includes(alias);
     return { label, detail: alias + ":", insert: exclude + alias + ":" + (phrase ? '""' : ""), caretOffset: phrase ? -1 : 0 };
   });
-  const costs = resourceNames.map(name => ({ label: name, insert: exclude + name.toLowerCase() }));
+  const costs = resourceNames.map(name => ({
+    label: name, icon: name.toLowerCase(), insert: exclude + name.toLowerCase(),
+  }));
   const actions = [...operators]
     .filter(([symbol]) => !negated && ((symbol !== "AND" && symbol !== "OR") || queryBefore.trim()))
     .map(([symbol, label]) => ({
@@ -113,9 +115,9 @@ function getSuggestions(prefix, valuesFor, queryBefore, queryAfter, costLimit) {
   const narrow = list => matches ? list.filter(matchesPrefix) : list;
   const append = list => list.map(option => ({ ...option, append: !!term && !matches }));
   return [
-    { label: "Filter cards", options: append(narrow(options)) },
-    { label: "Resource cost", options: append(narrow(costs)) },
-    { label: "Combine search terms", options: actions },
+    { label: "Filter cards", layout: "filters", options: append(narrow(options)) },
+    { label: "Resource cost", layout: "resources", options: append(narrow(costs)) },
+    { label: "Search options", layout: "filters", options: actions },
   ];
 }
 
@@ -148,9 +150,10 @@ export function mountSearchHelper(input, cards) {
     if (panel.hidden) return;
     const rect = input.getBoundingClientRect();
     panel.style.top = (rect.bottom + 5) + "px";
-    panel.style.left = Math.max(8, Math.min(rect.right - panel.offsetWidth, document.documentElement.clientWidth - panel.offsetWidth - 8)) + "px";
+    panel.style.left = rect.left + "px";
+    panel.style.width = rect.width + "px";
     const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-    panel.style.maxHeight = Math.min(360, Math.max(60, viewportHeight - rect.bottom - 13)) + "px";
+    panel.style.maxHeight = Math.min(450, Math.max(60, viewportHeight - rect.bottom - 13)) + "px";
   }
 
   function highlight(index) {
@@ -172,9 +175,11 @@ export function mountSearchHelper(input, cards) {
     const groups = getSuggestions(token.prefix, valuesFor, input.value.slice(0, caret), input.value.slice(caret), costLimit);
     options = [];
     panel.replaceChildren();
-    for (const { label, options: groupOptions } of groups) {
+    for (const { label, layout, options: groupOptions } of groups) {
       if (!groupOptions.length) continue;
       const group = document.createElement("div");
+      group.className = "search-helper-group";
+      if (layout) group.dataset.layout = layout;
       group.setAttribute("role", "group");
       group.setAttribute("aria-label", label);
       const heading = document.createElement("div");
@@ -190,7 +195,13 @@ export function mountSearchHelper(input, cards) {
         row.setAttribute("role", "option");
         row.setAttribute("aria-selected", "false");
         row.textContent = option.label;
-        if (option.detail) {
+        if (option.icon) {
+          const icon = document.createElement("img");
+          icon.src = "tokens/" + option.icon + ".png";
+          icon.alt = "";
+          row.prepend(icon);
+        }
+        if (option.detail && !layout) {
           const detail = document.createElement("span");
           detail.textContent = option.detail;
           row.appendChild(detail);
