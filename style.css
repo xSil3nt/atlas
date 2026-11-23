@@ -470,7 +470,6 @@ body[data-mode="pack"] #search-input {
 
 #search-input:focus {
   border-color: var(--accent);
-  width: 260px;
   box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
