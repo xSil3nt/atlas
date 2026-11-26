@@ -1081,7 +1081,7 @@ async function copyOpenedPool() {
   const names = new Map(cards.map(card => [identity(card), card.name]));
   const pool = Object.entries(inventory)
     .map(([path, count]) => ({ name: names.get(path) ?? path, count }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
   const text = pool.map(({ name, count }) => `${count}× ${name}`).join("\n");
 
   try {
