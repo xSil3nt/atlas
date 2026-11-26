@@ -195,6 +195,9 @@ header h1 {
 }
 
 #grid-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 10px 18px 0;
   flex-shrink: 0;
 }
@@ -207,6 +210,22 @@ header h1 {
 }
 
 #results-count:empty { display: none; }
+
+#copy-opened-pool {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+#copy-opened-pool:hover {
+  border-color: var(--accent);
+}
 
 /* ---- filter + search row ---- */
 

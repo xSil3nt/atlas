@@ -144,7 +144,9 @@ function warnStorage() {
 }
 function renderMode() {
   document.body.dataset.mode = mode;
-  document.querySelector('.packs-link')?.toggleAttribute('hidden', mode !== 'pack' || packsOpened >= MAX_LIMITED_PACKS);
+  const poolComplete = packsOpened >= MAX_LIMITED_PACKS;
+  document.querySelector('.packs-link')?.toggleAttribute('hidden', mode !== 'pack' || poolComplete);
+  document.getElementById('copy-opened-pool').hidden = mode !== 'pack' || !poolComplete;
   document.getElementById('clear-packs-btn')?.toggleAttribute('hidden', mode !== 'pack');
   modeMenu.update(mode, !!allCards);
 }
@@ -1065,10 +1067,29 @@ function copyTextFallback(text) {
     style: "position:fixed;opacity:0",
   });
   document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  document.execCommand("copy");
-  document.body.removeChild(ta);
+  try {
+    ta.focus();
+    ta.select();
+    return document.execCommand("copy");
+  } finally {
+    ta.remove();
+  }
+}
+
+async function copyOpenedPool() {
+  const cards = [...Object.values(allCards.decks).flat(), ...allCards.resources];
+  const names = new Map(cards.map(card => [identity(card), card.name]));
+  const pool = Object.entries(inventory)
+    .map(([path, count]) => ({ name: names.get(path) ?? path, count }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const text = pool.map(({ name, count }) => `${count}× ${name}`).join("\n");
+
+  try {
+    if (await copyText(text) === false) throw new Error("Clipboard unavailable");
+    showToast("Opened pool copied", "success");
+  } catch {
+    showWarning("Couldn't copy opened pool.");
+  }
 }
 
 let _imgbbKey = null;
@@ -1468,6 +1489,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('.starter-deck-option').forEach(button => button.addEventListener('click', () => loadStarterDeck(button.dataset.deck)));
 
   document.getElementById("share-btn").addEventListener("click", copyDeckLink);
+  document.getElementById("copy-opened-pool").addEventListener("click", copyOpenedPool);
   document.getElementById("export-btn").addEventListener("click", exportAtlas);
   document.getElementById("export-resource-btn").addEventListener("click", exportResourceAtlas);
   document.getElementById("atlas-link-copy").addEventListener("click", () => {
