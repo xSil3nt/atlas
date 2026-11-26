@@ -1194,6 +1194,7 @@ body[data-mode="pack"] #search-input {
 }
 
 #atlas-link-copy,
+.shared-deck-actions button,
 #share-btn,
 #clear-btn,
 #export-btn,
@@ -1211,6 +1212,34 @@ body[data-mode="pack"] #search-input {
 }
 
 #share-btn { flex: 1; }
+#shared-limited-deck {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: var(--shadow-card);
+}
+#shared-limited-deck::backdrop { background: rgba(0, 0, 0, 0.7); }
+.shared-deck-note { margin: 6px 0 16px; color: var(--muted); }
+.shared-deck-lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
+  gap: 16px;
+}
+.shared-deck-lists ul { list-style: none; margin-top: 4px; }
+.shared-deck-lists li { padding: 5px 0; border-bottom: 1px solid var(--border); }
+.shared-deck-lists small { color: var(--warning); margin-inline-start: 8px; }
+.shared-deck-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.shared-deck-actions button:hover,
+.shared-deck-actions button:focus-visible { border-color: var(--accent); color: var(--text); }
+.shared-deck-actions .shared-deck-import,
+.shared-deck-actions .shared-deck-confirm { background: var(--accent-dim); color: var(--text); }
 #share-btn:hover { border-color: var(--accent); color: var(--accent-hover); background: var(--accent-dim); }
 #clear-btn:hover { border-color: var(--danger); color: var(--danger); background: rgba(248, 113, 113, 0.08); }
 #atlas-link-copy { padding: 7px 12px; font-size: 0.75rem; white-space: nowrap; }

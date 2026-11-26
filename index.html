@@ -122,6 +122,25 @@
 </button>
 
 <p id="storage-note" role="status" hidden>Storage unavailable. Keep this tab open to retain new cards.</p>
+<dialog id="shared-limited-deck" aria-labelledby="shared-deck-title" aria-describedby="shared-deck-note">
+  <h2 id="shared-deck-title">Shared Limited deck</h2>
+  <p id="shared-deck-note" class="shared-deck-note" role="status">Read-only deck list</p>
+  <div class="shared-deck-lists">
+    <section>
+      <h3>Main deck</h3>
+      <ul data-shared-section="main"></ul>
+    </section>
+    <section>
+      <h3>Resource deck</h3>
+      <ul data-shared-section="resource"></ul>
+    </section>
+  </div>
+  <form method="dialog" class="shared-deck-actions">
+    <button class="shared-deck-close" autofocus>Close</button>
+    <button type="button" class="shared-deck-import">Import into my Limited deck</button>
+    <button type="button" class="shared-deck-confirm" hidden>Replace Limited deck</button>
+  </form>
+</dialog>
 <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 <script type="module" src="/app.js"></script>

@@ -120,12 +120,19 @@ function snapshot() {
     resource: Object.fromEntries((allCards?.resources || []).map(c => [identity(c), resourceCounts[c.url] || 0]))};
 }
 function restoreDeck(value = {}) {
+  const {main, resource} = getDeckCounts(value);
+  myDeck = Object.fromEntries(FOLDERS.flatMap(f => allCards.decks[f] || [])
+    .filter(c => main[c.url]).map(c => [c.url, {...c, count: main[c.url]}]));
+  resourceCounts = resource;
+}
+function getDeckCounts(value) {
   value = value || {};
   const main = FOLDERS.flatMap(f => allCards.decks[f] || []);
   const allowed = mode === 'pack' ? inventory : null;
-  const counts = limitDeck(main, value.main, allowed, mainDeckSize(), mainLimit);
-  myDeck = Object.fromEntries(main.filter(c => counts[c.url]).map(c => [c.url, {...c, count: counts[c.url]}]));
-  resourceCounts = limitDeck(allCards.resources || [], value.resource, allowed, resourceDeckSize(), resourceLimit);
+  return {
+    main: limitDeck(main, value.main, allowed, mainDeckSize(), mainLimit),
+    resource: limitDeck(allCards.resources || [], value.resource, allowed, resourceDeckSize(), resourceLimit),
+  };
 }
 function saveState() {
   if (!modesEnabled || !allCards) return;
@@ -317,13 +324,14 @@ async function loadCards() {
     else if (new URLSearchParams(location.search).has('deck') || new URLSearchParams(location.search).has('res')) mode = 'normal';
     restoreDeck(savedDecks[mode]); renderMode();
   }
-  applyDeckFromUrl();
-  const before = JSON.stringify(snapshot());
-  restoreDeck(snapshot());
-  if (mode === 'pack' && before !== JSON.stringify(snapshot())) showWarning('Deck trimmed to your acquired copies and deck limits.');
+  const params = new URLSearchParams(location.search);
+  const sharedLimitedDeck = modesEnabled && mode === 'pack' && (params.has('deck') || params.has('res'));
+  const shared = readDeckFromUrl(params);
+  if (!sharedLimitedDeck) restoreDeck({...snapshot(), ...shared});
   renderFilterRow();
   renderGrid();
-  renderSidebar();
+  renderSidebar({persist: !sharedLimitedDeck});
+  if (sharedLimitedDeck) showSharedLimitedDeck(shared);
   return allCards;
 }
 
@@ -339,40 +347,95 @@ function encodeResourceCounts(counts, resourceCards) {
   return btoa(entries.map(c => `${c.name}:${counts[c.url]}`).join(";"));
 }
 
-function applyDeckFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const deckParam = params.get("deck");
-  const resParam  = params.get("res");
-
-  if (deckParam) {
+function readDeckFromUrl(params) {
+  const shared = {};
+  const sections = [
+    ['deck', 'main', FOLDERS.flatMap(folder => allCards.decks[folder] ?? [])],
+    ['res', 'resource', allCards.resources ?? []],
+  ];
+  for (const [param, section, cards] of sections) {
+    const encoded = params.get(param);
+    if (!encoded) continue;
     try {
-      const allMainCards = FOLDERS.flatMap(folder => allCards.decks[folder] ?? []);
-      myDeck = {};
-      for (const part of atob(deckParam).split(";")) {
-        const sep = part.lastIndexOf(":");
+      const entries = [];
+      for (const part of atob(encoded).split(';')) {
+        const sep = part.lastIndexOf(':');
         if (sep === -1) continue;
-        const name  = part.slice(0, sep);
-        const count = parseInt(part.slice(sep + 1), 10);
-        const card  = allMainCards.find(c => c.name === name);
-        if (card && count > 0) myDeck[card.url] = { ...card, count };
+        const card = cards.find(c => c.name === part.slice(0, sep));
+        const count = Number(part.slice(sep + 1));
+        if (card && Number.isSafeInteger(count) && count > 0) entries.push([identity(card), count]);
       }
+      shared[section] = Object.fromEntries(entries);
     } catch { /* malformed param */ }
   }
+  return shared;
+}
 
-  if (resParam) {
-    try {
-      const resourceCards = allCards?.resources ?? [];
-      resourceCounts = {};
-      for (const part of atob(resParam).split(";")) {
-        const sep = part.lastIndexOf(":");
-        if (sep === -1) continue;
-        const name  = part.slice(0, sep);
-        const count = parseInt(part.slice(sep + 1), 10);
-        const card  = resourceCards.find(c => c.name === name);
-        if (card && count > 0) resourceCounts[card.url] = count;
+function showSharedLimitedDeck(shared) {
+  const dialog = document.getElementById('shared-limited-deck');
+  const importButton = dialog.querySelector('.shared-deck-import');
+  const note = dialog.querySelector('.shared-deck-note');
+  const importCounts = getDeckCounts(shared);
+  const omissions = [];
+  let canImport = false;
+
+  for (const [section, cards] of [
+    ['main', FOLDERS.flatMap(folder => allCards.decks[folder] ?? [])],
+    ['resource', allCards.resources ?? []],
+  ]) {
+    const list = dialog.querySelector(`[data-shared-section="${section}"]`);
+    list.replaceChildren();
+    for (const card of cards) {
+      const count = shared[section]?.[identity(card)] ?? 0;
+      if (!count) continue;
+      const row = document.createElement('li');
+      row.textContent = `${count} × ${card.name}`;
+      list.append(row);
+      const importing = importCounts[section][card.url] ?? 0;
+      if (importing > 0) canImport = true;
+      const missing = count - Math.min(count, availableCopies(card, inventory));
+      const overLimit = count - missing - importing;
+      if (missing || overLimit) {
+        const detail = document.createElement('small');
+        const reasons = [];
+        if (missing) reasons.push(`${missing} missing`);
+        if (overLimit) reasons.push(`${overLimit} over deck limits`);
+        detail.textContent = reasons.join(', ');
+        detail.hidden = true;
+        row.append(detail);
+        omissions.push(detail);
       }
-    } catch { /* malformed param */ }
+    }
+    if (!list.childElementCount) {
+      const row = document.createElement('li');
+      row.textContent = 'No cards';
+      list.append(row);
+    }
   }
+
+  importButton.addEventListener('click', () => {
+    omissions.forEach(detail => { detail.hidden = false; });
+    note.textContent = canImport
+      ? 'Confirming replaces your current Limited deck with the copies you can import.'
+      : 'You have no copies you can import from this deck.';
+    importButton.hidden = true;
+    dialog.querySelector('.shared-deck-confirm').hidden = !canImport;
+    dialog.querySelector('.shared-deck-close').focus();
+  });
+  dialog.querySelector('.shared-deck-confirm').addEventListener('click', () => {
+    restoreDeck(shared);
+    renderGrid();
+    renderSidebar();
+    dialog.close();
+    showToast('Limited deck imported', 'success');
+  });
+  dialog.addEventListener('close', () => {
+    const url = new URL(location.href);
+    url.searchParams.delete('deck');
+    url.searchParams.delete('res');
+    history.replaceState(null, '', url);
+  }, {once: true});
+  dialog.showModal();
 }
 
 function setPacksVisible(visible) {
@@ -388,6 +451,7 @@ function setPacksVisible(visible) {
 }
 async function showPacks() {
   if (modesEnabled && !allCards) await catalogReady;
+  if (document.getElementById('shared-limited-deck')?.open) return;
   if (modesEnabled && mode !== 'pack') setMode('pack', false);
   if (packsOpened >= MAX_LIMITED_PACKS) { switchTab(activeTab); return; }
   closeDeckDrawer(); modeMenu.close(); hidePreview(); hoveredCard=null;
@@ -887,9 +951,9 @@ function renderBreakdown(prefixLabel) {
   breakdown.style.display = "flex";
 }
 
-function renderSidebar() {
+function renderSidebar({persist = true} = {}) {
   renderStarters();
-  saveState();
+  if (persist) saveState();
   if (isResourceTab()) {
     document.getElementById("deck-type-counts").hidden = true;
     renderResourceSidebar();
@@ -1454,7 +1518,7 @@ function copyDeckLink() {
   url.searchParams.set("mode", mode);
 
   const deckEncoded = encodeDeck(myDeck);
-  if (deckEncoded) url.searchParams.set("deck", deckEncoded);
+  if (deckEncoded || mode === 'pack') url.searchParams.set("deck", deckEncoded);
 
   const resourceCards = allCards?.resources ?? [];
   const resEncoded = encodeResourceCounts(resourceCounts, resourceCards);
